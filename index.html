@@ -74,7 +74,7 @@
     .btn-icon:hover { background: #f8fafc; color: #0f172a; border-color: #94a3b8; }
     .btn-icon.danger:hover { color: #ef4444; border-color: #ef4444; background: #fef2f2; }
 
-    /* FILTERS & ADMIN - GRADIENT DASHBOARD */
+    /* FILTERS & ADMIN */
     .btn-filter-my { background: #ffffff; color: var(--primary); border: 1px solid var(--primary); }
     .btn-filter-my:hover, .btn-filter-my.active { background: var(--primary); color: white; }
     
@@ -140,9 +140,7 @@
         <button class="btn btn-sm btn-danger rounded-pill fw-bold px-3" onclick="tutupPreview()">TUTUP</button>
       </div>
     </div>
-    
     <iframe id="previewFrame" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
-
     <div id="geminiPlaceholder">
       <div class="mb-4 text-center"><span class="fa-stack fa-3x"><i class="fas fa-circle fa-stack-2x text-light opacity-25"></i><i class="fas fa-sparkles fa-stack-1x text-info"></i></span></div>
       <h3 class="fw-bold mb-2">Konten Storybook / Gemini</h3>
@@ -377,8 +375,8 @@
       }
     }
 
-    // --- FETCH DATA (GANTI GOOGLE.SCRIPT.RUN) ---
     function loadData() {
+      // GANTI DENGAN CALL API
       callApi('read').then(function(res) {
         if(res && res.status === "success") {
           STATE.allMedia = res.media; STATE.filtered = res.media; STATE.settings = res.settings;
@@ -527,6 +525,7 @@
       } else { fallbackTabBaru(); }
     }
 
+    // Compatibility Alias
     function masukFullscreen() { smartFullscreen(); }
 
     function fallbackTabBaru() {
