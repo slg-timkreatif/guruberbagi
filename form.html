@@ -80,6 +80,19 @@
         outline: none;
         box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
       }
+      
+      /* Style khusus untuk input manual jabatan */
+      #boxJabatanLainnya {
+        display: none; /* Tersembunyi secara default */
+        margin-top: 15px;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       .btn-submit {
         background-color: var(--primary-color);
         color: white;
@@ -169,6 +182,11 @@
           <select id="jabatan" name="jabatan" required>
             <option value="" disabled selected>Memuat data...</option>
           </select>
+          
+          <div id="boxJabatanLainnya">
+            <label class="required" for="jabatanLainnya">Sebutkan Jabatan Lainnya</label>
+            <input type="text" id="jabatanLainnya" name="jabatanLainnya" placeholder="Tuliskan jabatan Anda disini...">
+          </div>
         </div>
 
         <div class="form-group">
@@ -199,14 +217,14 @@
         <p>Halo, <span id="resNama" style="font-weight:bold;"></span>.</p>
         <p>PIN Anda adalah:</p>
         <div class="pin-box" id="resPIN">---</div>
-        <p style="font-size:12px; color:#7f8c8d;">Simpan PIN ini baik-baik. Data telah tersimpan di sistem.</p>
+        <p style="font-size:12px; color:#7f8c8d;">Simpan PIN ini baik-baik. Salinan PIN juga telah dikirim ke email Anda.</p>
         <button class="btn-close" onclick="closeModal()">Tutup</button>
       </div>
     </div>
 
     <script>
       // --- KONFIGURASI ---
-      // PASTE URL DARI GOOGLE APPS SCRIPT DI SINI (Pastikan diakhiri /exec)
+      // PASTIKAN URL INI ADALAH VERSI TERBARU (AKHIRAN /exec) DARI DEPLOYMENT ANDA
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec"; 
       // -------------------
 
@@ -215,15 +233,43 @@
         loadDropdowns();
       };
 
-      // Fungsi Ambil Dropdown (GET)
+      // Listener untuk Dropdown Jabatan (Tampilkan opsi Lainnya)
+      document.getElementById('jabatan').addEventListener('change', function() {
+        const boxLainnya = document.getElementById('boxJabatanLainnya');
+        const inputLainnya = document.getElementById('jabatanLainnya');
+
+        if (this.value === 'Lainnya') {
+          boxLainnya.style.display = 'block';
+          inputLainnya.setAttribute('required', 'true'); // Wajib diisi jika pilih Lainnya
+          inputLainnya.focus();
+        } else {
+          boxLainnya.style.display = 'none';
+          inputLainnya.removeAttribute('required'); // Tidak wajib jika pilih opsi biasa
+          inputLainnya.value = ''; // Reset nilai
+        }
+      });
+
       function loadDropdowns() {
         fetch(SCRIPT_URL + "?action=getDropdowns")
           .then(response => response.json())
           .then(data => {
-            populateSelect(document.getElementById('jabatan'), data.jabatan, "Pilih Jabatan");
-            populateSelect(document.getElementById('satuan'), data.satuan, "Pilih Satuan Pendidikan");
+            const jabatanSelect = document.getElementById('jabatan');
+            const satuanSelect = document.getElementById('satuan');
+
+            populateSelect(jabatanSelect, data.jabatan, "Pilih Jabatan");
+            
+            // Tambahkan opsi "Lainnya" secara manual di akhir
+            let optLain = document.createElement('option');
+            optLain.value = "Lainnya";
+            optLain.text = "Lainnya (Isi Manual)";
+            jabatanSelect.add(optLain);
+
+            populateSelect(satuanSelect, data.satuan, "Pilih Satuan Pendidikan");
           })
-          .catch(error => console.error('Error loading dropdowns:', error));
+          .catch(error => {
+            console.error('Error loading dropdowns:', error);
+            alert('Gagal memuat data dropdown. Coba refresh halaman.');
+          });
       }
 
       function populateSelect(el, items, placeholder) {
@@ -258,11 +304,17 @@
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
 
+        // LOGIKA KHUSUS: Jika Jabatan = "Lainnya", ambil nilai dari input manual
+        if (data.jabatan === 'Lainnya') {
+            data.jabatan = data.jabatanLainnya; 
+        }
+        // Hapus field jabatanLainnya agar tidak ikut terkirim sebagai sampah
+        delete data.jabatanLainnya;
+
         // Kirim ke Google Apps Script
         fetch(SCRIPT_URL, {
           method: 'POST',
           body: JSON.stringify(data),
-          // Menggunakan text/plain untuk menghindari CORS preflight (OPTIONS) error dari Google
           headers: { "Content-Type": "text/plain;charset=utf-8" }
         })
         .then(response => response.json())
@@ -272,12 +324,14 @@
               document.getElementById('resPIN').innerText = response.pin;
               document.getElementById('resultModal').style.display = 'flex';
               document.getElementById('guruForm').reset();
+              // Sembunyikan kembali input manual setelah reset
+              document.getElementById('boxJabatanLainnya').style.display = 'none';
            } else {
               alert('Terjadi kesalahan: ' + response.error);
            }
         })
         .catch(error => {
-           alert('Gagal menghubungi server. Pastikan URL Script benar.');
+           alert('Gagal menghubungi server. Pastikan koneksi internet lancar.');
            console.error(error);
         })
         .finally(() => {
