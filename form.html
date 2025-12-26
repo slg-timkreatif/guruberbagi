@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Akun Guru Berbagi - Selogiri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --accent-color: #3498db;
+        --bg-color: #f0f2f5;
+      }
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-color);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .card {
+        background: white;
+        width: 100%;
+        max-width: 480px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border-top: 5px solid var(--primary-color);
+      }
+      .header {
+        text-align: center;
+        padding: 30px 20px 10px 20px;
+      }
+      .header img {
+        width: 100px;
+        margin-bottom: 15px;
+      }
+      .header h2 {
+        margin: 0;
+        color: var(--primary-color);
+        font-size: 22px;
+      }
+      .header p {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+      form {
+        padding: 20px 30px 40px 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #34495e;
+        font-size: 14px;
+      }
+      .required::after {
+        content: " *";
+        color: red;
+      }
+      input, select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+      }
+      input:focus, select:focus {
+        border-color: var(--accent-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+      .btn-submit {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+      .btn-submit:hover {
+        background-color: #1a252f;
+      }
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+        font-size: 14px;
+        color: #7f8c8d;
+      }
+      
+      /* Modal Sukses */
+      #resultModal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+      }
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 80%;
+        width: 350px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      }
+      .pin-box {
+        background: #e8f6f3;
+        color: #1abc9c;
+        font-size: 32px;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px dashed #1abc9c;
+        letter-spacing: 2px;
+      }
+      .btn-close {
+        background: #95a5a6;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+      <div class="header">
+        <img src="https://i.imgur.com/4PToETN.png" alt="Logo">
+        <h2>Pendaftaran Akun Guru Berbagi</h2>
+        <p>Korwilcambidik Kecamatan Selogiri</p>
+      </div>
+
+      <form id="guruForm">
+        
+        <div class="form-group">
+          <label class="required" for="nama">Nama Lengkap (dengan gelar)</label>
+          <input type="text" id="nama" name="nama" placeholder="Contoh: S.Pd." required>
+        </div>
+
+        <div class="form-group">
+          <label for="nip">NIP (Opsional)</label>
+          <input type="number" id="nip" name="nip" placeholder="Masukkan NIP jika ada">
+        </div>
+
+        <div class="form-group">
+          <label class="required" for="jabatan">Jabatan</label>
+          <select id="jabatan" name="jabatan" required>
+            <option value="" disabled selected>Memuat data...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required" for="satuan">Satuan Pendidikan</label>
+          <select id="satuan" name="satuan" required>
+            <option value="" disabled selected>Memuat data...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="required" for="npsn">NPSN</label>
+          <input type="text" id="npsn" name="npsn" pattern="\d{8}" maxlength="8" minlength="8" placeholder="8 Digit Angka" required title="NPSN harus 8 digit angka">
+        </div>
+
+        <div class="form-group">
+          <label class="required" for="email">Email Aktif</label>
+          <input type="email" id="email" name="email" placeholder="nama@email.com" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">Daftarkan & Generate PIN</button>
+        <div class="loading" id="loadingText">Sedang memproses... Mohon tunggu.</div>
+      </form>
+    </div>
+
+    <div id="resultModal">
+      <div class="modal-content">
+        <h3 style="color: #2c3e50; margin-top:0;">Pendaftaran Berhasil!</h3>
+        <p>Halo, <span id="resNama" style="font-weight:bold;"></span>.</p>
+        <p>PIN Anda adalah:</p>
+        <div class="pin-box" id="resPIN">---</div>
+        <p style="font-size:12px; color:#7f8c8d;">Simpan PIN ini baik-baik. Data telah tersimpan di sistem.</p>
+        <button class="btn-close" onclick="closeModal()">Tutup</button>
+      </div>
+    </div>
+
+    <script>
+      // --- KONFIGURASI ---
+      // PASTE URL DARI GOOGLE APPS SCRIPT DI SINI (Pastikan diakhiri /exec)
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec"; 
+      // -------------------
+
+      // Load Dropdown saat halaman dibuka
+      window.onload = function() {
+        loadDropdowns();
+      };
+
+      // Fungsi Ambil Dropdown (GET)
+      function loadDropdowns() {
+        fetch(SCRIPT_URL + "?action=getDropdowns")
+          .then(response => response.json())
+          .then(data => {
+            populateSelect(document.getElementById('jabatan'), data.jabatan, "Pilih Jabatan");
+            populateSelect(document.getElementById('satuan'), data.satuan, "Pilih Satuan Pendidikan");
+          })
+          .catch(error => console.error('Error loading dropdowns:', error));
+      }
+
+      function populateSelect(el, items, placeholder) {
+        el.innerHTML = "";
+        let opt = document.createElement('option');
+        opt.value = "";
+        opt.text = placeholder;
+        opt.disabled = true;
+        opt.selected = true;
+        el.add(opt);
+
+        items.forEach(function(item) {
+          let option = document.createElement('option');
+          option.value = item;
+          option.text = item;
+          el.add(option);
+        });
+      }
+
+      // Handle Submit Form (POST)
+      document.getElementById('guruForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('btnSubmit');
+        const loading = document.getElementById('loadingText');
+        
+        // UI Loading State
+        btn.style.display = 'none';
+        loading.style.display = 'block';
+
+        // Ambil data form
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // Kirim ke Google Apps Script
+        fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          // Menggunakan text/plain untuk menghindari CORS preflight (OPTIONS) error dari Google
+          headers: { "Content-Type": "text/plain;charset=utf-8" }
+        })
+        .then(response => response.json())
+        .then(response => {
+           if (response.status === 'sukses') {
+              document.getElementById('resNama').innerText = response.nama;
+              document.getElementById('resPIN').innerText = response.pin;
+              document.getElementById('resultModal').style.display = 'flex';
+              document.getElementById('guruForm').reset();
+           } else {
+              alert('Terjadi kesalahan: ' + response.error);
+           }
+        })
+        .catch(error => {
+           alert('Gagal menghubungi server. Pastikan URL Script benar.');
+           console.error(error);
+        })
+        .finally(() => {
+           btn.style.display = 'block';
+           loading.style.display = 'none';
+        });
+      });
+
+      function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+      }
+    </script>
+</body>
+</html>
