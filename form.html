@@ -6,206 +6,49 @@
     <title>Pendaftaran Akun Guru Berbagi - Selogiri</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --primary-color: #2c3e50;
-        --accent-color: #3498db;
-        --bg-color: #f0f2f5;
-      }
-      body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--bg-color);
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-      .card {
-        background: white;
-        width: 100%;
-        max-width: 480px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        overflow: hidden;
-        border-top: 5px solid var(--primary-color);
-      }
-      .header {
-        text-align: center;
-        padding: 30px 20px 10px 20px;
-      }
-      .header img {
-        width: 100px;
-        margin-bottom: 15px;
-      }
-      .header h2 {
-        margin: 0;
-        color: var(--primary-color);
-        font-size: 22px;
-      }
-      .header p {
-        color: #7f8c8d;
-        font-size: 14px;
-        margin-top: 5px;
-      }
-      form {
-        padding: 20px 30px 40px 30px;
-      }
-      .form-group {
-        margin-bottom: 20px;
-      }
-      label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #34495e;
-        font-size: 14px;
-      }
-      .required::after {
-        content: " *";
-        color: red;
-      }
-      input, select {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-family: inherit;
-        font-size: 14px;
-        box-sizing: border-box;
-        transition: border-color 0.3s;
-      }
-      input:focus, select:focus {
-        border-color: var(--accent-color);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-      }
-      
-      /* Style khusus untuk input manual jabatan */
-      #boxJabatanLainnya {
-        display: none; /* Tersembunyi secara default */
-        margin-top: 15px;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-      
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      .btn-submit {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        width: 100%;
-        padding: 14px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background 0.3s;
-      }
-      .btn-submit:hover {
-        background-color: #1a252f;
-      }
-      .loading {
-        display: none;
-        text-align: center;
-        margin-top: 10px;
-        font-size: 14px;
-        color: #7f8c8d;
-      }
-      
-      /* Modal Sukses */
-      #resultModal {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-      }
-      .modal-content {
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        text-align: center;
-        max-width: 80%;
-        width: 350px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      }
-      .pin-box {
-        background: #e8f6f3;
-        color: #1abc9c;
-        font-size: 32px;
-        font-weight: bold;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 20px 0;
-        border: 2px dashed #1abc9c;
-        letter-spacing: 2px;
-      }
-      .btn-close {
-        background: #95a5a6;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-      }
+      :root { --primary: #2c3e50; --accent: #3498db; --bg: #f0f2f5; }
+      body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+      .card { background: white; width: 100%; max-width: 480px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; border-top: 5px solid var(--primary); }
+      .header { text-align: center; padding: 30px 20px 10px; }
+      .header img { width: 100px; margin-bottom: 15px; }
+      .header h2 { margin: 0; color: var(--primary); font-size: 22px; }
+      .header p { color: #7f8c8d; font-size: 14px; margin-top: 5px; }
+      form { padding: 20px 30px 40px; }
+      .form-group { margin-bottom: 20px; }
+      label { display: block; font-weight: 600; margin-bottom: 8px; color: #34495e; font-size: 14px; }
+      .required::after { content: " *"; color: red; }
+      input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+      input:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+      #boxJabatanLainnya { display: none; margin-top: 15px; animation: fadeIn 0.3s; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+      .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
+      .btn-submit:hover { background: #1a252f; }
+      .loading { display: none; text-align: center; margin-top: 10px; font-size: 14px; color: #7f8c8d; }
+      /* Modal */
+      #resultModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 999; }
+      .modal-content { background: white; padding: 30px; border-radius: 12px; text-align: center; max-width: 80%; width: 350px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+      .pin-box { background: #e8f6f3; color: #1abc9c; font-size: 32px; font-weight: bold; padding: 15px; border-radius: 8px; margin: 20px 0; border: 2px dashed #1abc9c; letter-spacing: 2px; }
+      .btn-close { background: #95a5a6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="card">
       <div class="header">
         <img src="https://i.imgur.com/4PToETN.png" alt="Logo">
         <h2>Pendaftaran Akun Guru Berbagi</h2>
         <p>Korwilcambidik Kecamatan Selogiri</p>
       </div>
-
       <form id="guruForm">
-        
+        <div class="form-group"><label class="required">Nama Lengkap (dengan gelar)</label><input type="text" name="nama" placeholder="Contoh: Budi Santoso, S.Pd." required></div>
+        <div class="form-group"><label>NIP (Opsional)</label><input type="number" name="nip" placeholder="Masukkan NIP jika ada"></div>
         <div class="form-group">
-          <label class="required" for="nama">Nama Lengkap (dengan gelar)</label>
-          <input type="text" id="nama" name="nama" placeholder="Contoh: S.Pd." required>
+          <label class="required">Jabatan</label>
+          <select id="jabatan" name="jabatan" required><option value="" disabled selected>Memuat data...</option></select>
+          <div id="boxJabatanLainnya"><label class="required">Sebutkan Jabatan Lainnya</label><input type="text" id="jabatanLainnya" name="jabatanLainnya" placeholder="Tuliskan jabatan..."></div>
         </div>
-
-        <div class="form-group">
-          <label for="nip">NIP (Opsional)</label>
-          <input type="number" id="nip" name="nip" placeholder="Masukkan NIP jika ada">
-        </div>
-
-        <div class="form-group">
-          <label class="required" for="jabatan">Jabatan</label>
-          <select id="jabatan" name="jabatan" required>
-            <option value="" disabled selected>Memuat data...</option>
-          </select>
-          
-          <div id="boxJabatanLainnya">
-            <label class="required" for="jabatanLainnya">Sebutkan Jabatan Lainnya</label>
-            <input type="text" id="jabatanLainnya" name="jabatanLainnya" placeholder="Tuliskan jabatan Anda disini...">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="required" for="satuan">Satuan Pendidikan</label>
-          <select id="satuan" name="satuan" required>
-            <option value="" disabled selected>Memuat data...</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="required" for="npsn">NPSN</label>
-          <input type="text" id="npsn" name="npsn" pattern="\d{8}" maxlength="8" minlength="8" placeholder="8 Digit Angka" required title="NPSN harus 8 digit angka">
-        </div>
-
-        <div class="form-group">
-          <label class="required" for="email">Email Aktif</label>
-          <input type="email" id="email" name="email" placeholder="nama@email.com" required>
-        </div>
-
+        <div class="form-group"><label class="required">Satuan Pendidikan</label><select id="satuan" name="satuan" required><option value="" disabled selected>Memuat data...</option></select></div>
+        <div class="form-group"><label class="required">NPSN</label><input type="text" name="npsn" pattern="\d{8}" maxlength="8" minlength="8" placeholder="8 Digit Angka" required></div>
+        <div class="form-group"><label class="required">Email Aktif</label><input type="email" name="email" placeholder="nama@email.com" required></div>
         <button type="submit" class="btn-submit" id="btnSubmit">Daftarkan & Generate PIN</button>
         <div class="loading" id="loadingText">Sedang memproses... Mohon tunggu.</div>
       </form>
@@ -217,132 +60,80 @@
         <p>Halo, <span id="resNama" style="font-weight:bold;"></span>.</p>
         <p>PIN Anda adalah:</p>
         <div class="pin-box" id="resPIN">---</div>
-        <p style="font-size:12px; color:#7f8c8d;">Simpan PIN ini baik-baik. Salinan PIN juga telah dikirim ke email Anda.</p>
-        <button class="btn-close" onclick="closeModal()">Tutup</button>
+        <p style="font-size:12px; color:#7f8c8d;">Simpan PIN ini. Salinan telah dikirim ke email.</p>
+        <button class="btn-close" onclick="document.getElementById('resultModal').style.display='none'">Tutup</button>
       </div>
     </div>
 
     <script>
-      // --- KONFIGURASI ---
-      // PASTIKAN URL INI ADALAH VERSI TERBARU (AKHIRAN /exec) DARI DEPLOYMENT ANDA
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec"; 
-      // -------------------
+      // ============================================================
+      // PASTE LINK GOOGLE SCRIPT (EXEC) DI BAWAH INI
+      // ============================================================
+      const SCRIPT_URL = "PASTE_LINK_SCRIPT_ANDA_DISINI"; 
 
-      // Load Dropdown saat halaman dibuka
-      window.onload = function() {
-        loadDropdowns();
-      };
+      window.onload = () => loadDropdowns();
 
-      // Listener untuk Dropdown Jabatan (Tampilkan opsi Lainnya)
+      // Logika Dropdown Jabatan & Lainnya
       document.getElementById('jabatan').addEventListener('change', function() {
-        const boxLainnya = document.getElementById('boxJabatanLainnya');
-        const inputLainnya = document.getElementById('jabatanLainnya');
-
+        const box = document.getElementById('boxJabatanLainnya');
+        const inp = document.getElementById('jabatanLainnya');
         if (this.value === 'Lainnya') {
-          boxLainnya.style.display = 'block';
-          inputLainnya.setAttribute('required', 'true'); // Wajib diisi jika pilih Lainnya
-          inputLainnya.focus();
+          box.style.display = 'block'; inp.required = true; inp.focus();
         } else {
-          boxLainnya.style.display = 'none';
-          inputLainnya.removeAttribute('required'); // Tidak wajib jika pilih opsi biasa
-          inputLainnya.value = ''; // Reset nilai
+          box.style.display = 'none'; inp.required = false; inp.value = '';
         }
       });
 
       function loadDropdowns() {
         fetch(SCRIPT_URL + "?action=getDropdowns")
-          .then(response => response.json())
+          .then(r => r.json())
           .then(data => {
-            const jabatanSelect = document.getElementById('jabatan');
-            const satuanSelect = document.getElementById('satuan');
-
-            populateSelect(jabatanSelect, data.jabatan, "Pilih Jabatan");
-            
-            // Tambahkan opsi "Lainnya" secara manual di akhir
-            let optLain = document.createElement('option');
-            optLain.value = "Lainnya";
-            optLain.text = "Lainnya (Isi Manual)";
-            jabatanSelect.add(optLain);
-
-            populateSelect(satuanSelect, data.satuan, "Pilih Satuan Pendidikan");
-          })
-          .catch(error => {
-            console.error('Error loading dropdowns:', error);
-            alert('Gagal memuat data dropdown. Coba refresh halaman.');
+            populate(document.getElementById('jabatan'), data.jabatan, "Pilih Jabatan", true);
+            populate(document.getElementById('satuan'), data.satuan, "Pilih Sekolah", false);
           });
       }
 
-      function populateSelect(el, items, placeholder) {
+      function populate(el, items, ph, addOther) {
         el.innerHTML = "";
-        let opt = document.createElement('option');
-        opt.value = "";
-        opt.text = placeholder;
-        opt.disabled = true;
-        opt.selected = true;
-        el.add(opt);
-
-        items.forEach(function(item) {
-          let option = document.createElement('option');
-          option.value = item;
-          option.text = item;
-          el.add(option);
-        });
+        let def = document.createElement('option'); def.text = ph; def.disabled = true; def.selected = true; el.add(def);
+        items.forEach(i => { let o = document.createElement('option'); o.value = i; o.text = i; el.add(o); });
+        if (addOther) { let o = document.createElement('option'); o.value = "Lainnya"; o.text = "Lainnya (Isi Manual)"; el.add(o); }
       }
 
-      // Handle Submit Form (POST)
+      // Handle Submit
       document.getElementById('guruForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const btn = document.getElementById('btnSubmit');
-        const loading = document.getElementById('loadingText');
-        
-        // UI Loading State
-        btn.style.display = 'none';
-        loading.style.display = 'block';
+        const load = document.getElementById('loadingText');
+        btn.style.display = 'none'; load.style.display = 'block';
 
-        // Ambil data form
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-
-        // LOGIKA KHUSUS: Jika Jabatan = "Lainnya", ambil nilai dari input manual
-        if (data.jabatan === 'Lainnya') {
-            data.jabatan = data.jabatanLainnya; 
-        }
-        // Hapus field jabatanLainnya agar tidak ikut terkirim sebagai sampah
+        const fd = new FormData(this);
+        const data = Object.fromEntries(fd.entries());
+        if (data.jabatan === 'Lainnya') data.jabatan = data.jabatanLainnya;
         delete data.jabatanLainnya;
 
-        // Kirim ke Google Apps Script
         fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify(data),
+          method: 'POST', body: JSON.stringify(data),
           headers: { "Content-Type": "text/plain;charset=utf-8" }
         })
-        .then(response => response.json())
-        .then(response => {
-           if (response.status === 'sukses') {
-              document.getElementById('resNama').innerText = response.nama;
-              document.getElementById('resPIN').innerText = response.pin;
+        .then(r => r.json())
+        .then(res => {
+           if (res.status === 'sukses') {
+              document.getElementById('resNama').innerText = res.nama;
+              document.getElementById('resPIN').innerText = res.pin;
               document.getElementById('resultModal').style.display = 'flex';
               document.getElementById('guruForm').reset();
-              // Sembunyikan kembali input manual setelah reset
               document.getElementById('boxJabatanLainnya').style.display = 'none';
+           } else if (res.status === 'duplikat') {
+              alert("⚠️ DATA DUPLIKAT TERDETEKSI ⚠️\n\n" + res.message);
+              document.getElementById('guruForm').reset();
            } else {
-              alert('Terjadi kesalahan: ' + response.error);
+              alert('Error: ' + res.error);
            }
         })
-        .catch(error => {
-           alert('Gagal menghubungi server. Pastikan koneksi internet lancar.');
-           console.error(error);
-        })
-        .finally(() => {
-           btn.style.display = 'block';
-           loading.style.display = 'none';
-        });
+        .catch(err => alert('Gagal koneksi server.'))
+        .finally(() => { btn.style.display = 'block'; load.style.display = 'none'; });
       });
-
-      function closeModal() {
-        document.getElementById('resultModal').style.display = 'none';
-      }
     </script>
 </body>
 </html>
