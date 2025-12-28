@@ -23,7 +23,7 @@
 
     body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); font-size: 0.9rem; padding-bottom: 80px; }
 
-    /* LAYOUT */
+    /* NAVBAR & LAYOUT */
     .navbar { z-index: 1000; position: sticky; top: 0; background: #fff; border-bottom: 1px solid #e2e8f0; }
     .fade-in { animation: fadeIn 0.5s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -32,6 +32,11 @@
     .brand-text { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
     .brand-main { font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: -0.5px; }
     .brand-sub { font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* FILTERS AREA */
+    .filter-container { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: var(--card-shadow); }
+    .form-select-filter { border-radius: 20px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; color: #475569; }
+    .form-select-filter:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(45, 139, 131, 0.2); }
 
     /* CARD SYSTEM */
     .card-karya { 
@@ -80,7 +85,6 @@
     
     .dashboard-header { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     
-    /* GRADIENT STATS */
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px; }
     .stat-widget { position: relative; overflow: hidden; padding: 24px; border-radius: 16px; border: none; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: transform 0.2s; }
     .stat-widget:hover { transform: translateY(-5px); }
@@ -147,10 +151,12 @@
         <img src="https://i.imgur.com/4PToETN.png" alt="Logo" style="height: 52px;">
         <div class="brand-text"><div class="brand-main">GURU BERBAGI</div><div class="brand-sub">Korwilcambidik Kecamatan Selogiri</div></div>
       </div>
+      
       <div id="searchWrapper" class="d-flex align-items-center bg-white px-3 py-2 rounded-pill border" style="width:100%; max-width:450px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
         <i class="fas fa-search text-muted me-2"></i>
-        <input type="text" id="searchInput" oninput="handleSearchInput(this.value)" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
+        <input type="text" id="searchInput" oninput="applyFilters()" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
       </div>
+
       <div class="d-flex align-items-center gap-2">
         <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
         <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard</button>
@@ -164,13 +170,32 @@
   </nav>
 
   <div id="view-galeri" class="container mt-4 fade-in">
-    <div class="d-flex justify-content-center gap-2 mb-4">
-      <button onclick="filterSemua()" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold shadow-sm">Semua Karya</button>
-      <button id="btnFilterMy" onclick="filterSaya()" class="btn btn-sm btn-filter-my rounded-pill px-4 fw-bold shadow-sm d-none"><i class="fas fa-user-edit me-1"></i> Karya Saya</button>
-      <button onclick="filterSimpanan()" class="btn btn-sm btn-white border rounded-pill px-4 fw-bold text-danger shadow-sm"><i class="fas fa-heart me-1"></i> Favorit</button>
+    <div class="filter-container row g-2 mb-4 align-items-center">
+       <div class="col-md-3">
+         <select id="filterMapel" class="form-select form-select-filter" onchange="applyFilters()">
+            <option value="">Semua Mata Pelajaran</option>
+         </select>
+       </div>
+       <div class="col-md-3">
+         <select id="filterFase" class="form-select form-select-filter" onchange="applyFilters()">
+            <option value="">Semua Fase / Kelas</option>
+         </select>
+       </div>
+       <div class="col-md-6 d-flex justify-content-md-end gap-2">
+          <button onclick="filterSemua()" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold shadow-sm">Semua</button>
+          <button id="btnFilterMy" onclick="filterSaya()" class="btn btn-sm btn-filter-my rounded-pill px-4 fw-bold shadow-sm d-none"><i class="fas fa-user-edit me-1"></i> Karya Saya</button>
+          <button onclick="filterSimpanan()" class="btn btn-sm btn-white border rounded-pill px-4 fw-bold text-danger shadow-sm"><i class="fas fa-heart me-1"></i> Favorit</button>
+       </div>
     </div>
+
     <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
     <div id="galeri-container" class="row gx-3 gx-md-4 gy-4"></div>
+    
+    <div id="loadMoreContainer" class="text-center mt-5 d-none">
+       <button onclick="loadMoreItems()" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+         Muat Lebih Banyak <i class="fas fa-chevron-down ms-1"></i>
+       </button>
+    </div>
   </div>
 
   <div id="view-admin" class="container mt-4 d-none">
@@ -242,6 +267,7 @@
                     <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="checkKaih" onchange="toggleKaih(this.checked)"></div>
                   </div>
                 </div>
+                
                 <div class="mb-3">
                   <label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label>
                   <select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)">
@@ -250,6 +276,7 @@
                     <option value="HTML">💻 Kode Embed HTML (Prioritas)</option>
                   </select>
                 </div>
+                
                 <div id="groupLink" class="mb-2"><label class="small fw-bold mb-1 text-muted">Link Media</label><input type="url" id="inLink" class="form-control" placeholder="Paste link disini (termasuk link Gemini)..." oninput="updateLivePreview()"><div class="form-text small text-muted">Jika memasukkan link Gemini Storybook, sistem akan otomatis menyesuaikannya.</div></div>
                 <div id="groupStory" class="mb-2 d-none"><label class="small fw-bold mb-1 text-primary">Link Storybook (Gemini)</label><input type="url" id="inLinkStory" class="form-control border-primary" placeholder="Paste link Storybook disini..." oninput="updateLivePreview()"><div class="form-text small text-muted"><i class="fas fa-info-circle me-1"></i>Link ini akan otomatis dibuka di Tab Baru.</div></div>
                 <div id="groupHtml" class="mb-0 d-none"><label class="small fw-bold mb-1 text-muted">Kode Embed HTML</label><textarea id="inHtml" class="form-control small font-monospace bg-light" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div>
@@ -276,15 +303,16 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script>
-    // MASUKKAN URL API DISINI:
+    // MASUKKAN URL API ANDA DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
 
-    var STATE = { allMedia: [], filtered: [], users: [], user: { name: "Tamu", role: "GUEST" }, settings: [] };
+    // STATE BARU: limit & pagination
+    var STATE = { allMedia: [], filtered: [], users: [], user: { name: "Tamu", role: "GUEST" }, settings: [], displayedLimit: 12, itemsPerPage: 12 };
     var ACTIVE_CONTENT = { type: null, data: null };
     var searchTimeout = null;
     var modalInputInstance = null;
 
-    // --- PENGGANTI GOOGLE.SCRIPT.RUN (FETCH API) ---
+    // --- API HANDLER ---
     async function callApi(action, payload = null) {
       try {
         if (action === 'read') {
@@ -364,17 +392,114 @@
     }
 
     function loadData() {
-      // GANTI DENGAN CALL API
       callApi('read').then(function(res) {
         if(res && res.status === "success") {
-          STATE.allMedia = res.media; STATE.filtered = res.media; STATE.settings = res.settings;
-          renderGaleri(); populateDropdowns();
+          STATE.allMedia = res.media; STATE.settings = res.settings;
+          populateDropdowns(); // Isi dropdown filter & modal
+          applyFilters();      // Terapkan filter awal
           document.getElementById('statTotal').innerText = res.media.length;
           document.getElementById('statPending').innerText = res.media.filter(function(i){ return i[9] === "BARU" }).length;
           document.getElementById('statApproved').innerText = res.media.filter(function(i){ return i[9] === "DISETUJUI" }).length;
         }
         document.getElementById('loader').style.display = 'none';
       });
+    }
+
+    // --- FUNGSI FILTER & PAGINATION UTAMA ---
+    function applyFilters() {
+      // 1. Ambil nilai filter
+      var q = document.getElementById('searchInput').value.toLowerCase();
+      var fMapel = document.getElementById('filterMapel').value;
+      var fFase = document.getElementById('filterFase').value;
+      
+      // 2. Filter data
+      STATE.filtered = STATE.allMedia.filter(function(i) {
+         // Pencarian Teks
+         var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
+         var matchSearch = haystack.indexOf(q) !== -1;
+         
+         // Filter Dropdown
+         // i[6] = Mapel, i[3] = Fase
+         var matchMapel = (fMapel === "") || (i[6] === fMapel);
+         var matchFase = (fFase === "") || (i[3] === fFase);
+         
+         return matchSearch && matchMapel && matchFase;
+      });
+
+      // 3. Reset Pagination
+      STATE.displayedLimit = STATE.itemsPerPage;
+      
+      // 4. Render
+      renderGaleri();
+    }
+
+    function loadMoreItems() {
+      STATE.displayedLimit += STATE.itemsPerPage;
+      renderGaleri();
+    }
+
+    function renderGaleri() {
+      var c = document.getElementById('galeri-container');
+      c.innerHTML = '';
+      
+      var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
+      var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
+      
+      // PAGINATION: Hanya ambil data sesuai limit
+      var dataToShow = STATE.filtered.slice(0, STATE.displayedLimit);
+      
+      dataToShow.forEach(function(item, i) {
+        var realIndex = STATE.allMedia.indexOf(item); // Penting untuk tombol edit/hapus
+        var id = cleanStr(item[13]);
+        var isApproved = item[9] === "DISETUJUI";
+        var isOwner = (STATE.user.name === item[1]);
+        var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
+        var isSaved = saved.includes(id);
+        var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
+        var activeClass = isSaved ? 'active' : '';
+        
+        var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
+        var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
+        
+        var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
+
+        // SMART QR
+        var finalQrLink = cleanStr(item[8]);
+        if (!finalQrLink || finalQrLink.length < 5) {
+            var htmlVal = cleanStr(item[7]);
+            var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
+            if (extractSrc && extractSrc[1]) finalQrLink = extractSrc[1];
+        }
+        var qrBtn = (finalQrLink && finalQrLink.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
+
+        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+activeClass+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
+        c.insertAdjacentHTML('beforeend', html);
+      });
+
+      // Show/Hide Load More Button
+      var btnMore = document.getElementById('loadMoreContainer');
+      if (STATE.filtered.length > STATE.displayedLimit) {
+         btnMore.classList.remove('d-none');
+      } else {
+         btnMore.classList.add('d-none');
+      }
+    }
+
+    // --- HELPER LAINNYA SAMA SEPERTI SEBELUMNYA ---
+    function handleSearchInput(val) {
+      if (searchTimeout) clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => { applyFilters(); }, 300);
+    }
+    
+    function filterSaya() { document.getElementById('searchInput').value = STATE.user.name; applyFilters(); }
+    function filterSemua() { document.getElementById('searchInput').value = ""; document.getElementById('filterMapel').value = ""; document.getElementById('filterFase').value = ""; applyFilters(); }
+    function filterSimpanan() { 
+       // Logic khusus untuk favorit (sedikit beda karena pakai LocalStorage)
+       var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
+       var s = JSON.parse(localStorage.getItem(favKey) || '[]');
+       STATE.filtered = STATE.allMedia.filter(function(i){ return s.includes(i[13]) });
+       STATE.displayedLimit = STATE.itemsPerPage;
+       renderGaleri();
     }
 
     function getYoutubeId(url) {
@@ -395,57 +520,12 @@
       return `<div style="background:${bg}; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;"><i class="${ic} fa-3x mb-2"></i><span style="font-size:0.6rem; font-weight:800;">${j}</span></div>`;
     }
 
-    function renderGaleri() {
-      var c = document.getElementById('galeri-container'); c.innerHTML = '';
-      var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
-      var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
-      
-      STATE.filtered.forEach(function(item, i) {
-        var id = cleanStr(item[13]);
-        var isApproved = item[9] === "DISETUJUI";
-        var isOwner = (STATE.user.name === item[1]);
-        var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
-        var isSaved = saved.includes(id);
-        var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
-        var activeClass = isSaved ? 'active' : '';
-        
-        var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
-        var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
-        
-        var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${i})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${i})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
-
-        // SMART QR LOGIC
-        var finalQrLink = cleanStr(item[8]);
-        if (!finalQrLink || finalQrLink.length < 5) {
-            var htmlVal = cleanStr(item[7]);
-            var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
-            if (extractSrc && extractSrc[1]) {
-                finalQrLink = extractSrc[1];
-            }
-        }
-        var qrBtn = (finalQrLink && finalQrLink.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
-
-        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+activeClass+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + i + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
-        c.insertAdjacentHTML('beforeend', html);
-      });
-    }
-
-    function handleSearchInput(val) {
-      if (searchTimeout) clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        var q = val.toLowerCase(); 
-        STATE.filtered = STATE.allMedia.filter(function(i){ var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase(); return haystack.indexOf(q) !== -1; }); 
-        renderGaleri();
-      }, 300);
-    }
-
     function bukaPreview(index) {
-      var item = STATE.filtered[index]; if(!item) return;
+      var item = STATE.allMedia[index]; if(!item) return; // Note: Use allMedia with realIndex
       var rawHtml = (item[7] || "").trim();
       var rawLink = (item[8] || "").trim();
       var id = item[13];
 
-      // GANTI DENGAN API VIEW
       callApi('view', { id: id });
 
       document.getElementById('previewTitle').innerText = cleanStr(item[5]);
@@ -453,20 +533,21 @@
       var frame = document.getElementById('previewFrame');
       var btnFs = document.getElementById('btnFs');
 
-      // 1. GEMINI & STORYBOOK (Auto New Tab)
-      if (rawLink && (rawLink.includes('gemini.google.com') || rawLink.includes('g.co') || rawLink.includes('story'))) {
-          // KONVERSI LINK GEMINI JIKA PERLU
+      // 1. GEMINI
+      if (rawLink && (rawLink.indexOf('gemini.google.com') !== -1 || rawLink.indexOf('g.co') !== -1)) {
+          ACTIVE_CONTENT = { type: 'GEMINI', data: rawLink };
           var finalUrl = rawLink;
           if(finalUrl.includes('gemini.google.com/share')) {
              finalUrl = finalUrl.replace('gemini.google.com/share', 'g.co/gemini/share');
           }
           window.open(finalUrl, '_blank');
-          return; // STOP DISINI
+          return;
       }
 
       overlay.style.display = 'flex';
       frame.style.display = 'block';
       frame.src = "about:blank"; 
+      btnFs.style.display = 'block';
 
       // 2. HTML
       if (rawHtml.length > 10) {
@@ -474,7 +555,6 @@
           var blob = new Blob([rawHtml], { type: 'text/html' });
           var blobUrl = URL.createObjectURL(blob);
           frame.src = blobUrl;
-          frame.dataset.blob = blobUrl; 
           return;
       }
 
@@ -491,9 +571,7 @@
       Swal.fire('Info', 'Konten kosong.', 'info'); tutupPreview();
     }
 
-    // ============================================
-    // DOM-BASED FULLSCREEN BUTTON INJECTION
-    // ============================================
+    // DOM FULLSCREEN
     function smartFullscreen() {
       var elem = document.getElementById("previewOverlay");
       var req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
@@ -501,28 +579,21 @@
         var promise = req.call(elem);
         if (promise && typeof promise.catch === 'function') {
            promise.catch(function(err) {
-             console.warn("Fullscreen diblokir, buka tab baru...", err);
              fallbackTabBaru();
            });
         }
       } else { fallbackTabBaru(); }
     }
-
-    // Compatibility Alias
     function masukFullscreen() { smartFullscreen(); }
 
     function fallbackTabBaru() {
       Swal.fire({ title: 'Mode Tab Baru', text: 'Membuka konten di tab baru agar tampilan maksimal.', icon: 'info', timer: 1500, showConfirmButton: false });
       setTimeout(function() {
         if (!ACTIVE_CONTENT.data) return;
-        
         if (ACTIVE_CONTENT.type === 'HTML') {
             var win = window.open("", "_blank");
             if (win) {
-                // Tulis HTML Dasar
                 win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Layar Penuh</title><style>body{margin:0;padding:0;overflow-y:auto;} #content{width:100%;min-height:100vh;border:none;}</style></head><body><div id="content">' + ACTIVE_CONTENT.data + '</div></body></html>');
-                
-                // INJECT TOMBOL FULLSCREEN VIA DOM (AMAN!)
                 var btn = win.document.createElement('button');
                 btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>';
                 btn.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:9999;width:50px;height:50px;background:rgba(0,0,0,0.7);color:white;border-radius:50%;border:2px solid white;cursor:pointer;display:flex;justify-content:center;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,0.3);";
@@ -581,7 +652,8 @@
     }
 
     function bukaEdit(index) {
-      var d = STATE.filtered[index]; if(!d) return;
+      // NOTE: index yang dikirim harus index dari ALLMEDIA, bukan filtered
+      var d = STATE.allMedia[index]; if(!d) return;
       document.getElementById('formMode').value = "EDIT";
       document.getElementById('editRowIdx').value = d[13];
       document.getElementById('inJudul').value = d[5];
@@ -629,14 +701,24 @@
 
     function populateDropdowns() { 
       var f = function(id,idx,oth) { 
-        var el=document.getElementById(id); if(!el)return; el.innerHTML='<option value="">Pilih</option>'; 
+        var el=document.getElementById(id); if(!el)return; 
+        el.innerHTML='<option value="">Pilih</option>'; 
         STATE.settings.forEach(r => {if(r[idx])el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`}); 
         if(oth)el.innerHTML+='<option value="LAINNYA">LAINNYA</option>'; 
       }; 
+      // Populate Modal Dropdowns
       f('inJenis',0,true); f('inMapel',1,true); f('inFase',2); f('inKaihType',3); f('inSem', 4);
+      
+      // Populate Filter Dropdowns (New)
+      var fFilter = function(id, idx) {
+         var el = document.getElementById(id); if(!el) return;
+         el.innerHTML = '<option value="">Semua</option>';
+         STATE.settings.forEach(r => { if(r[idx]) el.innerHTML += `<option value="${r[idx]}">${r[idx]}</option>` });
+      }
+      fFilter('filterMapel', 1);
+      fFilter('filterFase', 2);
     }
 
-    // UPDATE: LIVE PREVIEW AMAN
     function updateLivePreview() { 
       var type = document.getElementById('inputSourceType').value;
       var val = "";
@@ -648,70 +730,20 @@
       doc.open();
       var baseStyle = `<style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; color: #333; } img { max-width: 100%; height: auto; } iframe { width: 100%; aspect-ratio: 16/9; border: none; }</style>`;
 
-      // Hanya tampilkan placeholder Storybook jika TIPE adalah STORY atau URL mengandung indikator
-      // FIX: Jika Type HTML, jangan pernah anggap itu Storybook meskipun ada kata 'story'
-      var isStory = (type === 'STORY') || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')));
-
-      if (isStory) { 
+      if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { 
          doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">祷 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); 
       } 
-      else if(type==='HTML' && val.length > 5) { 
-         // Render HTML Murni + Style Dasar
-         doc.write(baseStyle + val); 
-      } 
+      else if(type==='HTML' && val.length > 5) { doc.write(baseStyle + val); } 
       else if (val.length > 5) {
          var ytId = getYoutubeId(val);
          var src = ytId ? "https://www.youtube.com/embed/"+ytId : val;
          doc.write(`<body style="margin:0;overflow:hidden;"><iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe></body>`);
-      } else { 
-         doc.write('<div style="text-align:center;color:#ccc;font-family:sans-serif;padding-top:40px;">Preview</div>'); 
-      }
+      } else { doc.write('<div style="text-align:center;color:#ccc;font-family:sans-serif;padding-top:40px;">Preview</div>'); }
       doc.close(); 
     }
 
-    function prosesSimpan() {
-      var j = document.getElementById('inJudul').value;
-      var mapelVal = document.getElementById('inMapel').value;
-      var jenisVal = document.getElementById('inJenis').value;
-      var finalMapel = mapelVal === 'LAINNYA' ? document.getElementById('manMapel').value : mapelVal;
-      var finalJenis = jenisVal === 'LAINNYA' ? document.getElementById('manJenis').value : jenisVal;
-
-      if (!j) return Swal.fire('Error', 'Judul Wajib Diisi', 'warning');
-      if (!finalMapel) return Swal.fire('Error', 'Mapel Wajib Diisi', 'warning');
-
-      var type = document.getElementById('inputSourceType').value;
-      var finalLink = "";
-      var finalHtml = "";
-      
-      if (type === 'LINK') finalLink = document.getElementById('inLink').value;
-      else if (type === 'STORY') { 
-         finalLink = document.getElementById('inLinkStory').value; 
-         if(finalLink.includes('gemini.google.com/share')) finalLink = finalLink.replace('gemini.google.com/share', 'g.co/gemini/share');
-      }
-      else if (type === 'HTML') finalHtml = document.getElementById('inHtml').value;
-
-      var p = {
-        mode: document.getElementById('formMode').value, idUnik: document.getElementById('editRowIdx').value,
-        nama: STATE.user.name, sekolah: STATE.user.school, 
-        fase: document.getElementById('inFase').value, semester: document.getElementById('inSem').value,
-        judul: j, mapel: finalMapel, jenis: finalJenis,
-        kodeHtml: finalHtml, linkLuar: finalLink,
-        kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : ""
-      };
-      
-      Swal.fire({title: 'Menyimpan...', didOpen: function() { Swal.showLoading() }});
-      callApi('simpan', p).then(function(res){
-          if(res.status==='success'){
-             if(modalInputInstance) modalInputInstance.hide();
-             loadData(); Swal.fire('Tersimpan', '', 'success');
-          } else {
-             Swal.fire('Error', res.message, 'error');
-          }
-      });
-    }
-
     function hapusKarya(index) { 
-        var item = STATE.filtered[index];
+        var item = STATE.allMedia[index]; // Use allMedia with real index
         if(!item) return;
         var id = item[13];
         Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{
@@ -722,9 +754,18 @@
     }
 
     function toggleSimpan(id) { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(i=>i!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
-    function filterSimpanan() { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered=STATE.allMedia.filter(i=>s.includes(i[13])); renderGaleri(); }
+    function filterSimpanan() { 
+       var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); 
+       STATE.filtered=STATE.allMedia.filter(i=>s.includes(i[13])); 
+       renderGaleri(); 
+    }
     function filterSaya() { STATE.filtered = STATE.allMedia.filter(i => i[1] === STATE.user.name); renderGaleri(); }
-    function filterSemua() { STATE.filtered=STATE.allMedia; renderGaleri(); }
+    function filterSemua() { 
+       document.getElementById('searchInput').value = ""; 
+       document.getElementById('filterMapel').value = ""; 
+       document.getElementById('filterFase').value = "";
+       applyFilters(); 
+    }
     function showQR(link) { Swal.fire({ title: 'Scan', html: `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}" class="img-fluid"><br><a href="${link}" target="_blank" class="btn btn-sm btn-link mt-2">Buka Link</a>`, showConfirmButton: false, showCloseButton: true }); }
 
     function loginModal() { 
@@ -784,9 +825,6 @@
     
     function prosesSimpanUser() { 
         var p={nama:document.getElementById('userName').value,sekolah:document.getElementById('userSchool').value,pin:document.getElementById('userPin').value,role:document.getElementById('userRole').value,oldPin:document.getElementById('oldPin').value}; 
-        var mode = document.getElementById('userMode').value==="ADD"?"simpanUser":"updateUser"; // Di API kita perlu bedakan logic update/simpan nanti, untuk sekarang anggap simpanUser handle keduanya atau sesuaikan di API
-        // Untuk sederhananya di sini kita panggil simpanUser, tapi di backend perlu penanganan update
-        // Mari kita asumsikan untuk sekarang simpan user baru dulu.
         callApi('simpanUser', p).then(function(res){
             if(res.status==='success'){
                 Swal.fire('Sukses','','success'); loadUserList(); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide();
