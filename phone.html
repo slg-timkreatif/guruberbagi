@@ -76,34 +76,7 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    /* 3. Filters (Horizontal Scroll) */
-    .filter-scroll {
-      display: flex;
-      overflow-x: auto;
-      gap: 8px;
-      padding: 4px 0px 12px 0px; /* Adjusted padding */
-      scrollbar-width: none; /* Firefox */
-    }
-    .filter-scroll::-webkit-scrollbar { display: none; }
-    .filter-chip {
-      white-space: nowrap;
-      padding: 6px 14px;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-    .filter-chip.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-      box-shadow: 0 2px 5px rgba(45, 139, 131, 0.3);
-    }
-
-    /* 4. Mobile Cards (List View) */
+    /* 3. Mobile Cards (List View) */
     .m-card {
       background: white;
       border-radius: 12px;
@@ -162,12 +135,12 @@
     .st-baru { background: #fef3c7; color: #b45309; }
     .st-rev { background: #fee2e2; color: #b91c1c; }
 
-    /* 5. Admin Stats Cards */
+    /* 4. Admin Stats Cards */
     .stat-card { background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
     .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
     .stat-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 
-    /* 6. Floating Action Button */
+    /* 5. Floating Action Button */
     .fab {
       position: fixed;
       bottom: 24px;
@@ -188,7 +161,7 @@
     }
     .fab:active { transform: scale(0.9); }
 
-    /* 7. Modals Fullscreen on Mobile */
+    /* 6. Modals Fullscreen on Mobile */
     .modal-fullscreen-mobile .modal-dialog { margin: 0; width: 100%; max-width: none; height: 100%; }
     .modal-fullscreen-mobile .modal-content { height: 100%; border: 0; border-radius: 0; }
     
@@ -273,15 +246,7 @@
     
     <!-- VIEW: GALERI (List) -->
     <div id="view-galeri">
-      <!-- Quick Filter Chips -->
-      <div class="filter-scroll mb-2">
-        <div class="filter-chip active" onclick="quickFilter(this, '')">Semua</div>
-        <div class="filter-chip" onclick="quickFilter(this, 'PAUD')">PAUD</div>
-        <div class="filter-chip" onclick="quickFilter(this, 'SD')">SD</div>
-        <div class="filter-chip" onclick="quickFilter(this, 'SMP')">SMP</div>
-        <div class="filter-chip" onclick="quickFilter(this, 'Modul Ajar')">Modul</div>
-        <div class="filter-chip" onclick="quickFilter(this, 'Video')">Video</div>
-      </div>
+      <!-- Removed Quick Filter Chips -->
 
       <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
       
@@ -344,6 +309,30 @@
   <button id="fabAdd" class="fab d-none" onclick="openInputModal()">
     <i class="fas fa-plus"></i>
   </button>
+
+  <!-- MODAL: LOGIN -->
+  <div class="modal fade" id="modalLogin" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header border-0 pb-0">
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3 text-primary"><i class="fas fa-user-lock fa-3x"></i></div>
+          <h4 class="fw-bold mb-3">Login Guru</h4>
+          <p class="text-muted small mb-4">Masukkan PIN 6 digit Anda untuk masuk dan mengelola karya.</p>
+          
+          <form onsubmit="submitLogin(event)">
+             <div class="form-floating mb-4">
+                <input type="password" inputmode="numeric" id="loginPin" class="form-control rounded-pill text-center fs-4 letter-spacing-2" placeholder="PIN" required autocomplete="off">
+                <label for="loginPin" class="w-100 text-center">PIN ANDA</label>
+             </div>
+             <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow-sm">MASUK SEKARANG</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: INPUT/EDIT (Fullscreen on Mobile) -->
   <div class="modal fade modal-fullscreen-mobile" id="modalInput" tabindex="-1">
@@ -574,11 +563,6 @@
         if(tab === 'ALL') document.getElementById('tab-all').classList.add('active');
         if(tab === 'MINE') document.getElementById('tab-mine').classList.add('active');
         if(tab === 'FAV') document.getElementById('tab-fav').classList.add('active');
-
-        // Reset search/chips for a clean state when switching major tabs
-        // document.getElementById('searchInput').value = '';
-        // document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        // document.querySelector('.filter-chip').classList.add('active'); // Activate 'Semua' chip
         
         applyFilters();
     }
@@ -696,25 +680,11 @@
     
     function loadMore() { APP.page++; renderList(); }
     
-    function quickFilter(el, key) {
-       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-       el.classList.add('active');
-       // This works in tandem with the search/tab logic
-       applyFilters(key);
-    }
-
-    function handleSearch(val, chipKey) {
+    function handleSearch(val) {
        const q = val.toLowerCase();
        const fMapel = document.getElementById('filterMapel').value;
        const fFase = document.getElementById('filterFase').value;
        
-       // Determine Active Chip if not passed
-       let activeChip = chipKey;
-       if(activeChip === undefined) {
-           const chip = document.querySelector('.filter-chip.active');
-           activeChip = chip && chip.innerText !== 'Semua' ? chip.innerText : '';
-       }
-
        APP.filtered = APP.data.filter(i => {
           // 1. Basic Search
           const str = (i[1]+' '+i[5]+' '+i[6]).toLowerCase();
@@ -724,14 +694,7 @@
           const matchMapel = fMapel ? i[6] === fMapel : true;
           const matchFase = fFase ? i[3] === fFase : true;
           
-          // 3. Quick Chip Filter
-          let matchChip = true;
-          if(activeChip) {
-              const chipStr = (i[5]+' '+i[6]+' '+i[3]+' '+i[11]).toLowerCase();
-              matchChip = chipStr.includes(activeChip.toLowerCase());
-          }
-
-          // 4. Tab Filter
+          // 3. Tab Filter
           let matchTab = true;
           if(APP.activeTab === 'MINE') {
               if(APP.user.role === 'GUEST') matchTab = false;
@@ -740,18 +703,18 @@
               matchTab = APP.favorites.has(i[13]);
           }
 
-          // 5. Visibility Rule (Approved OR Own OR Admin)
+          // 4. Visibility Rule (Approved OR Own OR Admin)
           const visible = (i[9]==='DISETUJUI') || (APP.user.name === i[1]) || (['ADMIN','MODERATOR'].includes(APP.user.role));
           
-          return matchSearch && matchMapel && matchFase && matchChip && matchTab && visible;
+          return matchSearch && matchMapel && matchFase && matchTab && visible;
        });
        
        APP.page = 1;
        renderList();
     }
     
-    function applyFilters(chipKey) { 
-        handleSearch(document.getElementById('searchInput').value, chipKey); 
+    function applyFilters() { 
+        handleSearch(document.getElementById('searchInput').value); 
     }
 
     /* --- ITEM ACTIONS --- */
@@ -937,20 +900,28 @@
 
     /* --- AUTH --- */
     function loginModal() {
-       Swal.fire({title:'Masukkan PIN', input:'password', inputAttributes:{autocapitalize:'off'}}).then(r => {
-          if(r.value) {
-             api('login', {pin: r.value}).then(res => {
-                if(res.status === 'success') {
-                   APP.user = res.user;
-                   localStorage.setItem('gb_user', JSON.stringify(res.user));
-                   Swal.fire('Login Berhasil','','success').then(()=>{ location.reload() });
-                } else {
-                   Swal.fire('Gagal', res.message, 'error');
-                }
-             });
+       document.getElementById('loginPin').value = '';
+       new bootstrap.Modal(document.getElementById('modalLogin')).show();
+    }
+
+    function submitLogin(e) {
+       e.preventDefault();
+       const pin = document.getElementById('loginPin').value;
+       
+       bootstrap.Modal.getInstance(document.getElementById('modalLogin')).hide();
+       Swal.fire({title:'Memeriksa...', didOpen:()=>Swal.showLoading()});
+
+       api('login', {pin: pin}).then(res => {
+          if(res.status === 'success') {
+             APP.user = res.user;
+             localStorage.setItem('gb_user', JSON.stringify(res.user));
+             Swal.fire('Login Berhasil','','success').then(()=>{ location.reload() });
+          } else {
+             Swal.fire('Gagal', res.message, 'error');
           }
        });
     }
+
     function logout() {
        localStorage.removeItem('gb_user');
        location.reload();
