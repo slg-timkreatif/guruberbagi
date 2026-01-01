@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Guru Berbagi - Mobile</title>
+  
+  <!-- CSS Framework: Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons: FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    :root { 
+      --primary: #2D8B83; 
+      --primary-dark: #1F6660;
+      --bg-body: #f8fafc; 
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    body { 
+      background-color: var(--bg-body); 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      color: var(--text-main); 
+      padding-top: 125px; /* Space for sticky header + nav tabs */
+      padding-bottom: 90px; /* Space for FAB */
+    }
+
+    /* --- MOBILE COMPONENTS --- */
+
+    /* 1. Header & Nav */
+    .mobile-header {
+      background: white;
+      height: 60px;
+      box-shadow: 0 1px 0px rgba(0,0,0,0.05);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .brand-logo { font-weight: 800; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .brand-logo img { height: 32px; }
+
+    /* 2. Top Tabs Navigation */
+    .top-tabs-container {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 8px 16px 12px 16px;
+      z-index: 1020;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .nav-pills-custom { background: #f1f5f9; padding: 4px; border-radius: 50rem; }
+    .nav-pills-custom .nav-link {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 50rem;
+        transition: all 0.2s;
+    }
+    .nav-pills-custom .nav-link.active {
+        background-color: white;
+        color: var(--primary);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* 3. Filters (Horizontal Scroll) */
+    .filter-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 4px 0px 12px 0px; /* Adjusted padding */
+      scrollbar-width: none; /* Firefox */
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      white-space: nowrap;
+      padding: 6px 14px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .filter-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 2px 5px rgba(45, 139, 131, 0.3);
+    }
+
+    /* 4. Mobile Cards (List View) */
+    .m-card {
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      gap: 12px;
+      align-items: start;
+      position: relative;
+    }
+    .m-card:active { transform: scale(0.99); }
+    
+    .m-thumb {
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      background: #e2e8f0;
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+    .m-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .m-content { flex-grow: 1; min-width: 0; padding-right: 20px; } /* padding for heart icon */
+    .m-title { font-weight: 700; font-size: 0.9rem; line-height: 1.3; margin-bottom: 4px; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .m-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+    .m-badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; display: inline-block; margin-top: 4px; }
+    .badge-mapel { background: #e0f2f1; color: #00695c; }
+    
+    /* Heart Icon on Card */
+    .btn-fav {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #cbd5e1;
+        background: transparent;
+        border: none;
+        font-size: 1.1rem;
+        z-index: 5;
+    }
+    .btn-fav.is-fav { color: #ef4444; }
+    .btn-fav:active { transform: scale(1.2); }
+
+    .m-status { position: absolute; bottom: 12px; right: 12px; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; }
+    .st-baru { background: #fef3c7; color: #b45309; }
+    .st-rev { background: #fee2e2; color: #b91c1c; }
+
+    /* 5. Admin Stats Cards */
+    .stat-card { background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+    .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+    .stat-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+
+    /* 6. Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 4px 12px rgba(45, 139, 131, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      z-index: 1040;
+      transition: transform 0.2s;
+    }
+    .fab:active { transform: scale(0.9); }
+
+    /* 7. Modals Fullscreen on Mobile */
+    .modal-fullscreen-mobile .modal-dialog { margin: 0; width: 100%; max-width: none; height: 100%; }
+    .modal-fullscreen-mobile .modal-content { height: 100%; border: 0; border-radius: 0; }
+    
+    .d-none { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. HEADER -->
+  <nav class="mobile-header">
+    <div class="brand-logo">
+      <img src="https://i.imgur.com/kNgOisY.png" alt="Logo">
+      <div>Guru Berbagi<br><small style="font-size:0.6rem; color:#64748b; font-weight:600;">Korwilcambidik Selogiri</small></div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <i class="fas fa-search text-secondary" style="font-size: 1.1rem;" onclick="toggleSearch()"></i>
+      <button class="btn btn-light rounded-circle border-0 p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
+        <i class="fas fa-bars text-dark"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 2. TOP TABS NAVIGATION -->
+  <div class="top-tabs-container">
+    <ul class="nav nav-pills nav-fill nav-pills-custom">
+      <li class="nav-item">
+        <a class="nav-link active" id="tab-all" href="#" onclick="switchTab('ALL')">Semua Karya</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tab-mine" href="#" onclick="switchTab('MINE')">Karya Saya</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tab-fav" href="#" onclick="switchTab('FAV')">Favorit</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Search Bar (Collapsible) -->
+  <div id="searchBar" class="bg-white px-3 py-2 border-bottom d-none" style="position:fixed; top:115px; left:0; right:0; z-index:1015;">
+    <input type="text" id="searchInput" class="form-control rounded-pill bg-light border-0" placeholder="Cari karya, guru, mapel..." oninput="handleSearch(this.value)">
+  </div>
+
+  <!-- OFFCANVAS MENU (Profile & Extra Filters) -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="menuOffcanvas">
+    <div class="offcanvas-header bg-light">
+      <h5 class="offcanvas-title fw-bold text-primary">Menu</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <!-- User Profile Section -->
+      <div id="guestPanel" class="text-center py-4">
+        <div class="mb-3 text-muted">Anda belum login</div>
+        <button onclick="loginModal()" class="btn btn-primary w-100 rounded-pill fw-bold">Login Guru</button>
+      </div>
+      <div id="userPanel" class="d-none">
+        <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-3">
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px;" id="uAvatar">G</div>
+          <div>
+            <div id="uName" class="fw-bold text-dark lh-1">Nama Guru</div>
+            <small id="uRole" class="text-muted" style="font-size:0.75rem">GURU</small>
+          </div>
+        </div>
+        
+        <h6 class="fw-bold text-muted small mt-4">NAVIGASI ADMIN</h6>
+        <div class="list-group list-group-flush mb-3">
+           <button id="menuDashboard" onclick="switchView('ADMIN'); hideMenu();" class="list-group-item list-group-item-action border-0 px-0 d-none"><i class="fas fa-chart-pie me-2 text-warning"></i> Dashboard Admin</button>
+        </div>
+
+        <h6 class="fw-bold text-muted small mt-3">FILTER TAMBAHAN</h6>
+        <div class="mb-3">
+            <select id="filterMapel" class="form-select mb-2" onchange="applyFilters()"><option value="">Semua Mapel</option></select>
+            <select id="filterFase" class="form-select mb-2" onchange="applyFilters()"><option value="">Semua Fase</option></select>
+        </div>
+
+        <button onclick="logout()" class="btn btn-outline-danger w-100 rounded-pill mt-4">Keluar / Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <div class="container px-3 mt-2">
+    
+    <!-- VIEW: GALERI (List) -->
+    <div id="view-galeri">
+      <!-- Quick Filter Chips -->
+      <div class="filter-scroll mb-2">
+        <div class="filter-chip active" onclick="quickFilter(this, '')">Semua</div>
+        <div class="filter-chip" onclick="quickFilter(this, 'PAUD')">PAUD</div>
+        <div class="filter-chip" onclick="quickFilter(this, 'SD')">SD</div>
+        <div class="filter-chip" onclick="quickFilter(this, 'SMP')">SMP</div>
+        <div class="filter-chip" onclick="quickFilter(this, 'Modul Ajar')">Modul</div>
+        <div class="filter-chip" onclick="quickFilter(this, 'Video')">Video</div>
+      </div>
+
+      <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+      
+      <!-- Container for Cards -->
+      <div id="list-container"></div>
+      
+      <div class="text-center mt-4 mb-5">
+        <button id="btnLoadMore" onclick="loadMore()" class="btn btn-sm btn-outline-secondary rounded-pill px-4 d-none">Muat Lebih Banyak</button>
+      </div>
+    </div>
+
+    <!-- VIEW: ADMIN DASHBOARD -->
+    <div id="view-admin" class="d-none">
+       <button onclick="switchView('GALERI')" class="btn btn-sm btn-light mb-3"><i class="fas fa-arrow-left"></i> Kembali ke Galeri</button>
+       <div class="d-flex justify-content-between align-items-center mb-3">
+         <h5 class="fw-bold mb-0">Dashboard</h5>
+         <span class="badge bg-warning text-dark" id="admRoleBadge">ADMIN</span>
+       </div>
+
+       <div class="row g-2 mb-4">
+         <div class="col-6">
+           <div class="stat-card flex-column align-items-start">
+             <div class="stat-label">Total Karya</div>
+             <div class="stat-val" id="statTotal">0</div>
+           </div>
+         </div>
+         <div class="col-6">
+           <div class="stat-card flex-column align-items-start border-warning">
+             <div class="stat-label text-warning">Menunggu</div>
+             <div class="stat-val text-warning" id="statPending">0</div>
+           </div>
+         </div>
+       </div>
+
+       <div class="bg-white rounded-3 border p-1 mb-3">
+         <div class="nav nav-pills nav-fill">
+            <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#adm-karya">Karya</button>
+            <button class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-user" onclick="loadUserList()">User</button>
+         </div>
+       </div>
+
+       <div class="tab-content">
+         <!-- Tab Karya Management -->
+         <div class="tab-pane fade show active" id="adm-karya">
+            <input type="text" class="form-control mb-3" placeholder="Cari judul/guru..." oninput="searchAdmin(this.value)">
+            <div id="admin-list-container"></div>
+         </div>
+         
+         <!-- Tab User Management -->
+         <div class="tab-pane fade" id="adm-user">
+            <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold" onclick="showUserModal()"><i class="fas fa-plus"></i> Tambah Guru</button>
+            <div id="user-list-container"></div>
+         </div>
+       </div>
+    </div>
+
+  </div>
+
+  <!-- FAB (Add Button) -->
+  <button id="fabAdd" class="fab d-none" onclick="openInputModal()">
+    <i class="fas fa-plus"></i>
+  </button>
+
+  <!-- MODAL: INPUT/EDIT (Fullscreen on Mobile) -->
+  <div class="modal fade modal-fullscreen-mobile" id="modalInput" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0 bg-light">
+          <h5 class="modal-title fw-bold text-primary">Input Karya</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body bg-white">
+          <form id="formInput">
+            <input type="hidden" id="formMode" value="ADD">
+            <input type="hidden" id="editId">
+            
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">Judul Karya</label>
+              <input type="text" id="inJudul" class="form-control fw-bold" placeholder="Contoh: Modul Ajar Matematika...">
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">Mapel</label>
+                <select id="inMapel" class="form-select"></select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">Jenis</label>
+                <select id="inJenis" class="form-select"></select>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">Fase</label>
+                <select id="inFase" class="form-select"></select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">Semester</label>
+                <select id="inSem" class="form-select"></select>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">Link Media / Karya</label>
+              <input type="url" id="inLink" class="form-control" placeholder="https://...">
+              <div class="form-text small">Masukkan link Youtube, Google Drive, Canva, dll.</div>
+            </div>
+
+            <div class="form-check form-switch bg-light p-3 rounded mb-3">
+               <input class="form-check-input" type="checkbox" id="checkKaih">
+               <label class="form-check-label small fw-bold ms-2" for="checkKaih">Program KAIH</label>
+            </div>
+            <select id="inKaih" class="form-select mb-3 d-none"></select>
+
+          </form>
+        </div>
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-secondary flex-grow-1 rounded-pill" data-bs-dismiss="modal">Batal</button>
+          <button type="button" onclick="saveData()" class="btn btn-primary flex-grow-1 rounded-pill fw-bold">SIMPAN</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETAIL / ACTION -->
+  <div class="modal fade" id="modalDetail" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-body text-center p-4">
+          <h5 class="fw-bold mb-2" id="detTitle">Judul Karya</h5>
+          <p class="text-muted small mb-4" id="detGuru">Oleh: Guru</p>
+          
+          <div class="d-grid gap-2">
+            <a href="#" id="btnOpenLink" target="_blank" class="btn btn-primary rounded-pill fw-bold py-2"><i class="fas fa-external-link-alt me-2"></i> BUKA KARYA</a>
+            <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Tutup</button>
+          </div>
+          
+          <div id="ownerActions" class="mt-3 pt-3 border-top d-none">
+             <div class="small text-muted mb-2">Kelola Karya Anda</div>
+             <div class="d-flex justify-content-center gap-2">
+               <button id="btnEdit" class="btn btn-sm btn-warning rounded-pill px-3"><i class="fas fa-edit"></i> Edit</button>
+               <button id="btnDelete" class="btn btn-sm btn-danger rounded-pill px-3"><i class="fas fa-trash"></i> Hapus</button>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KURASI (Admin) -->
+  <div class="modal fade" id="modalKurasi" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header border-0"><h5 class="modal-title fw-bold">Kurasi Karya</h5></div>
+        <div class="modal-body">
+           <input type="hidden" id="kurId">
+           <label class="small fw-bold">Status</label>
+           <select id="kurStatus" class="form-select mb-3">
+             <option value="BARU">BARU (Pending)</option>
+             <option value="DISETUJUI">DISETUJUI (Tayang)</option>
+             <option value="REVISI">REVISI</option>
+           </select>
+           <label class="small fw-bold">Catatan Moderator</label>
+           <textarea id="kurNote" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="modal-footer border-0">
+           <button onclick="saveKurasi()" class="btn btn-primary w-100 rounded-pill">Update Status</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: USER INPUT -->
+  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h5 class="fw-bold">Data Guru</h5></div><div class="modal-body"><form id="formUser"><input type="hidden" id="uMode" value="ADD"><input type="hidden" id="uOldPin"><input type="text" id="uInputName" class="form-control mb-2" placeholder="Nama Lengkap"><input type="text" id="uInputSchool" class="form-control mb-2" placeholder="Sekolah"><div class="row g-2"><div class="col-6"><input type="text" id="uInputPin" class="form-control" placeholder="PIN (Angka)"></div><div class="col-6"><select id="uInputRole" class="form-select"><option value="GURU">GURU</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="saveUser()" class="btn btn-primary w-100 rounded-pill">Simpan</button></div></div></div></div>
+
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    /* --- CONFIG & STATE --- */
+    const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
+    
+    let APP = {
+       data: [],
+       filtered: [],
+       users: [],
+       settings: [],
+       user: { name: "Tamu", role: "GUEST", school: "-" },
+       page: 1,
+       perPage: 15,
+       activeTab: 'ALL',
+       favorites: new Set()
+    };
+
+    /* --- INIT --- */
+    window.onload = () => {
+       const saved = localStorage.getItem('gb_user');
+       if(saved) APP.user = JSON.parse(saved);
+       
+       // Load favorites
+       const favs = localStorage.getItem('gb_favorites');
+       if(favs) APP.favorites = new Set(JSON.parse(favs));
+       
+       updateUI();
+       fetchData();
+    };
+
+    /* --- API CALLS --- */
+    async function api(action, payload=null) {
+       // Simple cache logic for 'read'
+       if(action === 'read') {
+          const cache = localStorage.getItem('gb_cache');
+          if(cache) {
+             const c = JSON.parse(cache);
+             if(Date.now() - c.ts < 300000) return c.data; // 5 min cache
+          }
+       }
+       
+       if(['simpan','hapus','updateKurasi','simpanUser'].includes(action)) {
+          localStorage.removeItem('gb_cache'); // Invalidate cache
+       }
+
+       try {
+         let url = API_URL;
+         let opts = {};
+         if(action === 'read') url += "?action=read";
+         else {
+            opts = { method: "POST", body: JSON.stringify({action, payload}) };
+         }
+         
+         const req = await fetch(url, opts);
+         const res = await req.json();
+         
+         if(action === 'read' && res.status === 'success') {
+            localStorage.setItem('gb_cache', JSON.stringify({ts: Date.now(), data: res}));
+         }
+         return res;
+       } catch(e) {
+         console.error(e);
+         return {status:'error', message: e.toString()};
+       }
+    }
+
+    function fetchData() {
+       document.getElementById('loader').classList.remove('d-none');
+       api('read').then(res => {
+          document.getElementById('loader').classList.add('d-none');
+          if(res.status === 'success') {
+             APP.data = res.media;
+             APP.settings = res.settings;
+             populateSelects();
+             applyFilters();
+             updateStats();
+          }
+       });
+    }
+
+    /* --- UI LOGIC --- */
+    function updateUI() {
+       const isGuest = APP.user.role === 'GUEST';
+       const isAdmin = ['ADMIN','MODERATOR'].includes(APP.user.role);
+       
+       document.getElementById('guestPanel').classList.toggle('d-none', !isGuest);
+       document.getElementById('userPanel').classList.toggle('d-none', isGuest);
+       document.getElementById('fabAdd').classList.toggle('d-none', isGuest);
+       
+       if(!isGuest) {
+          document.getElementById('uName').innerText = APP.user.name;
+          document.getElementById('uAvatar').innerText = APP.user.name.charAt(0);
+          document.getElementById('uRole').innerText = APP.user.role;
+          document.getElementById('menuDashboard').classList.toggle('d-none', !isAdmin);
+          document.getElementById('admRoleBadge').innerText = APP.user.role;
+       }
+    }
+
+    function switchView(viewName) {
+       document.getElementById('view-galeri').classList.toggle('d-none', viewName !== 'GALERI');
+       document.getElementById('view-admin').classList.toggle('d-none', viewName !== 'ADMIN');
+       document.getElementById('fabAdd').classList.toggle('d-none', viewName === 'ADMIN' || APP.user.role === 'GUEST');
+    }
+    
+    /* --- TAB LOGIC --- */
+    function switchTab(tab) {
+        APP.activeTab = tab;
+        
+        // UI Updates
+        document.querySelectorAll('.nav-pills-custom .nav-link').forEach(el => el.classList.remove('active'));
+        if(tab === 'ALL') document.getElementById('tab-all').classList.add('active');
+        if(tab === 'MINE') document.getElementById('tab-mine').classList.add('active');
+        if(tab === 'FAV') document.getElementById('tab-fav').classList.add('active');
+
+        // Reset search/chips for a clean state when switching major tabs
+        // document.getElementById('searchInput').value = '';
+        // document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        // document.querySelector('.filter-chip').classList.add('active'); // Activate 'Semua' chip
+        
+        applyFilters();
+    }
+
+    function toggleFavorite(e, id) {
+        e.stopPropagation(); // Prevent card click
+        if(APP.favorites.has(id)) {
+            APP.favorites.delete(id);
+        } else {
+            APP.favorites.add(id);
+        }
+        localStorage.setItem('gb_favorites', JSON.stringify([...APP.favorites]));
+        
+        // Re-render
+        if(APP.activeTab === 'FAV') {
+            applyFilters();
+        } else {
+            // Just toggle icon class on the existing element
+            const btn = e.currentTarget;
+            btn.classList.toggle('is-fav');
+            const icon = btn.querySelector('i');
+            icon.classList.toggle('fas');
+            icon.classList.toggle('far');
+        }
+    }
+
+    function toggleSearch() {
+       document.getElementById('searchBar').classList.toggle('d-none');
+       document.getElementById('searchInput').focus();
+    }
+    
+    function hideMenu() {
+       const el = document.getElementById('menuOffcanvas');
+       const bsOffcanvas = bootstrap.Offcanvas.getInstance(el);
+       if(bsOffcanvas) bsOffcanvas.hide();
+    }
+
+    /* --- RENDER LIST (Mobile) --- */
+    function renderList() {
+       const container = document.getElementById('list-container');
+       if(APP.page === 1) container.innerHTML = '';
+       
+       const start = 0;
+       const end = APP.page * APP.perPage;
+       const sliced = APP.filtered.slice(0, end);
+       
+       // Empty State Logic
+       if(sliced.length === 0) {
+          let msg = "Tidak ada karya ditemukan.";
+          if(APP.activeTab === 'MINE' && APP.user.role === 'GUEST') msg = "Silahkan Login untuk melihat karya Anda.";
+          else if(APP.activeTab === 'FAV') msg = "Belum ada karya difavoritkan.";
+          
+          container.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-box-open fa-3x mb-3 opacity-25"></i><br>${msg}</div>`;
+          document.getElementById('btnLoadMore').classList.add('d-none');
+          return;
+       }
+
+       let html = '';
+       sliced.forEach(item => {
+          const id = item[13];
+          // Index: 1=Guru, 5=Judul, 6=Mapel, 8=Link, 9=Status, 11=Jenis, 13=ID
+          const title = item[5] || "Tanpa Judul";
+          const guru = item[1] || "Anonim";
+          const mapel = item[6] || "-";
+          const jenis = item[11] || "Media";
+          const status = item[9];
+          const isMy = APP.user.name === guru;
+          const isApproved = status === 'DISETUJUI';
+          const isFav = APP.favorites.has(id);
+          
+          // Logic: Show item if Approved OR if (My Item OR Admin)
+          // Double check, though filter logic handles this too.
+          if (!isApproved && !isMy && APP.user.role === 'GUEST') return; 
+
+          // Thumbnail Logic
+          let icon = "fa-file"; let color = "#94a3b8";
+          if(jenis.includes("Video")) { icon="fa-play"; color="#ef4444"; }
+          else if(jenis.includes("Modul")) { icon="fa-book"; color="#0f766e"; }
+          else if(jenis.includes("Game")) { icon="fa-gamepad"; color="#8b5cf6"; }
+          
+          let thumbHtml = `<div class="m-thumb" style="background:${color}"><i class="fas ${icon}"></i></div>`;
+          const ytId = getYoutubeId(item[8]);
+          if(ytId) thumbHtml = `<div class="m-thumb"><img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg"></div>`;
+
+          // Status Badge for Owner
+          let statusBadge = '';
+          if(isMy || APP.user.role !== 'GUEST') {
+             if(status === 'BARU') statusBadge = `<span class="m-status st-baru">MENUNGGU</span>`;
+             else if(status === 'REVISI') statusBadge = `<span class="m-status st-rev">REVISI</span>`;
+          }
+          
+          // Fav Icon Class
+          const favClass = isFav ? 'is-fav' : '';
+          const favIcon = isFav ? 'fas' : 'far';
+
+          html += `
+          <div class="m-card" onclick="showDetail('${id}')">
+             <button class="btn-fav ${favClass}" onclick="toggleFavorite(event, '${id}')">
+                <i class="${favIcon} fa-heart"></i>
+             </button>
+             ${thumbHtml}
+             <div class="m-content">
+                <div class="m-title">${title}</div>
+                <div class="m-meta"><i class="fas fa-user-circle me-1"></i> ${guru}</div>
+                <span class="m-badge badge-mapel">${mapel}</span>
+                <span class="m-badge bg-light text-secondary border">${jenis}</span>
+             </div>
+             ${statusBadge}
+          </div>`;
+       });
+       
+       container.innerHTML = html;
+       document.getElementById('btnLoadMore').classList.toggle('d-none', APP.filtered.length <= end);
+    }
+    
+    function loadMore() { APP.page++; renderList(); }
+    
+    function quickFilter(el, key) {
+       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+       el.classList.add('active');
+       // This works in tandem with the search/tab logic
+       applyFilters(key);
+    }
+
+    function handleSearch(val, chipKey) {
+       const q = val.toLowerCase();
+       const fMapel = document.getElementById('filterMapel').value;
+       const fFase = document.getElementById('filterFase').value;
+       
+       // Determine Active Chip if not passed
+       let activeChip = chipKey;
+       if(activeChip === undefined) {
+           const chip = document.querySelector('.filter-chip.active');
+           activeChip = chip && chip.innerText !== 'Semua' ? chip.innerText : '';
+       }
+
+       APP.filtered = APP.data.filter(i => {
+          // 1. Basic Search
+          const str = (i[1]+' '+i[5]+' '+i[6]).toLowerCase();
+          const matchSearch = str.includes(q);
+          
+          // 2. Dropdown Filters
+          const matchMapel = fMapel ? i[6] === fMapel : true;
+          const matchFase = fFase ? i[3] === fFase : true;
+          
+          // 3. Quick Chip Filter
+          let matchChip = true;
+          if(activeChip) {
+              const chipStr = (i[5]+' '+i[6]+' '+i[3]+' '+i[11]).toLowerCase();
+              matchChip = chipStr.includes(activeChip.toLowerCase());
+          }
+
+          // 4. Tab Filter
+          let matchTab = true;
+          if(APP.activeTab === 'MINE') {
+              if(APP.user.role === 'GUEST') matchTab = false;
+              else matchTab = (i[1] === APP.user.name);
+          } else if(APP.activeTab === 'FAV') {
+              matchTab = APP.favorites.has(i[13]);
+          }
+
+          // 5. Visibility Rule (Approved OR Own OR Admin)
+          const visible = (i[9]==='DISETUJUI') || (APP.user.name === i[1]) || (['ADMIN','MODERATOR'].includes(APP.user.role));
+          
+          return matchSearch && matchMapel && matchFase && matchChip && matchTab && visible;
+       });
+       
+       APP.page = 1;
+       renderList();
+    }
+    
+    function applyFilters(chipKey) { 
+        handleSearch(document.getElementById('searchInput').value, chipKey); 
+    }
+
+    /* --- ITEM ACTIONS --- */
+    function showDetail(id) {
+       const item = APP.data.find(i => i[13] === id);
+       if(!item) return;
+       
+       document.getElementById('detTitle').innerText = item[5];
+       document.getElementById('detGuru').innerText = "Oleh: " + item[1] + " ("+item[2]+")";
+       document.getElementById('btnOpenLink').href = item[8];
+       
+       const isMy = APP.user.name === item[1];
+       const isAdmin = ['ADMIN','MODERATOR'].includes(APP.user.role);
+       
+       const divAction = document.getElementById('ownerActions');
+       divAction.classList.toggle('d-none', !(isMy || isAdmin));
+       
+       if(isMy || isAdmin) {
+          document.getElementById('btnEdit').onclick = () => { bootstrap.Modal.getInstance(document.getElementById('modalDetail')).hide(); editItem(id); };
+          document.getElementById('btnDelete').onclick = () => { deleteItem(id); };
+       }
+       
+       new bootstrap.Modal(document.getElementById('modalDetail')).show();
+    }
+
+    /* --- CRUD --- */
+    function openInputModal() {
+       document.getElementById('formInput').reset();
+       document.getElementById('formMode').value = "ADD";
+       document.getElementById('checkKaih').checked = false;
+       document.getElementById('inKaih').classList.add('d-none');
+       new bootstrap.Modal(document.getElementById('modalInput')).show();
+    }
+    
+    function editItem(id) {
+       const item = APP.data.find(i => i[13] === id);
+       document.getElementById('formMode').value = "EDIT";
+       document.getElementById('editId').value = id;
+       
+       document.getElementById('inJudul').value = item[5];
+       document.getElementById('inMapel').value = item[6];
+       document.getElementById('inJenis').value = item[11];
+       document.getElementById('inFase').value = item[3];
+       document.getElementById('inSem').value = item[4];
+       document.getElementById('inLink').value = item[8];
+       
+       const isKaih = !!item[10];
+       document.getElementById('checkKaih').checked = isKaih;
+       const elKaih = document.getElementById('inKaih');
+       elKaih.classList.toggle('d-none', !isKaih);
+       if(isKaih) elKaih.value = item[10];
+       
+       new bootstrap.Modal(document.getElementById('modalInput')).show();
+    }
+    
+    document.getElementById('checkKaih').onchange = (e) => {
+       document.getElementById('inKaih').classList.toggle('d-none', !e.target.checked);
+    };
+
+    function saveData() {
+       const title = document.getElementById('inJudul').value;
+       if(!title) return Swal.fire('Error','Judul wajib diisi','warning');
+       
+       const mode = document.getElementById('formMode').value;
+       const payload = {
+          nama: APP.user.name,
+          sekolah: APP.user.school,
+          judul: title,
+          mapel: document.getElementById('inMapel').value,
+          jenis: document.getElementById('inJenis').value,
+          fase: document.getElementById('inFase').value,
+          semester: document.getElementById('inSem').value,
+          linkLuar: document.getElementById('inLink').value,
+          kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaih').value : "",
+          mode: mode,
+          idUnik: document.getElementById('editId').value
+       };
+       
+       Swal.fire({title:'Menyimpan...', didOpen:()=>Swal.showLoading()});
+       api('simpan', payload).then(res => {
+          if(res.status === 'success') {
+             Swal.fire('Berhasil', 'Data tersimpan', 'success');
+             bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide();
+             fetchData();
+          } else {
+             Swal.fire('Gagal', res.message, 'error');
+          }
+       });
+    }
+
+    function deleteItem(id) {
+       Swal.fire({title:'Hapus Karya?', icon:'warning', showCancelButton:true}).then(r => {
+          if(r.isConfirmed) {
+             bootstrap.Modal.getInstance(document.getElementById('modalDetail')).hide();
+             api('hapus', {id}).then(() => {
+                Swal.fire('Terhapus','','success');
+                fetchData();
+             });
+          }
+       });
+    }
+
+    /* --- ADMIN LOGIC --- */
+    function updateStats() {
+       document.getElementById('statTotal').innerText = APP.data.length;
+       document.getElementById('statPending').innerText = APP.data.filter(i => i[9] === 'BARU').length;
+    }
+    
+    function searchAdmin(val) {
+       const q = val.toLowerCase();
+       const list = APP.data.filter(i => (i[5]+' '+i[1]).toLowerCase().includes(q));
+       
+       let html = '';
+       list.forEach(i => {
+           let badge = 'bg-secondary';
+           if(i[9]==='BARU') badge = 'bg-warning text-dark';
+           else if(i[9]==='DISETUJUI') badge = 'bg-success';
+           else if(i[9]==='REVISI') badge = 'bg-danger';
+
+           html += `
+           <div class="m-card flex-column align-items-stretch">
+              <div class="d-flex justify-content-between">
+                 <div class="fw-bold text-truncate">${i[5]}</div>
+                 <span class="badge ${badge}" style="height:fit-content">${i[9]}</span>
+              </div>
+              <div class="small text-muted">${i[1]} - ${i[2]}</div>
+              <div class="d-flex gap-2 mt-2">
+                 <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="openKurasi('${i[13]}','${i[9]}')">Kurasi / Status</button>
+                 <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${i[13]}')"><i class="fas fa-trash"></i></button>
+              </div>
+           </div>`;
+       });
+       document.getElementById('admin-list-container').innerHTML = html;
+    }
+    
+    function openKurasi(id, status) {
+       document.getElementById('kurId').value = id;
+       document.getElementById('kurStatus').value = status;
+       const item = APP.data.find(i=>i[13]===id);
+       document.getElementById('kurNote').value = item[12] || "";
+       new bootstrap.Modal(document.getElementById('modalKurasi')).show();
+    }
+    
+    function saveKurasi() {
+       const payload = {
+          id: document.getElementById('kurId').value,
+          status: document.getElementById('kurStatus').value,
+          feedback: document.getElementById('kurNote').value
+       };
+       api('updateKurasi', payload).then(res => {
+          bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide();
+          Swal.fire('Updated','','success');
+          fetchData();
+       });
+    }
+    
+    function loadUserList() {
+       api('users').then(res => {
+          APP.users = res.data;
+          let html = '';
+          APP.users.forEach(u => {
+             html += `<div class="d-flex justify-content-between align-items-center border-bottom py-2">
+               <div><div class="fw-bold">${u[0]}</div><div class="small text-muted">${u[1]}</div></div>
+               <div class="text-end"><div class="badge bg-light text-dark border">${u[3]}</div><div class="small font-monospace">${u[2]}</div></div>
+             </div>`;
+          });
+          document.getElementById('user-list-container').innerHTML = html;
+       });
+    }
+    function showUserModal() { document.getElementById('formUser').reset(); new bootstrap.Modal(document.getElementById('modalUser')).show(); }
+    function saveUser() {
+       const p = {
+          nama: document.getElementById('uInputName').value,
+          sekolah: document.getElementById('uInputSchool').value,
+          pin: document.getElementById('uInputPin').value,
+          role: document.getElementById('uInputRole').value
+       };
+       api('simpanUser', p).then(res => {
+          bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide();
+          loadUserList();
+       });
+    }
+
+    /* --- AUTH --- */
+    function loginModal() {
+       Swal.fire({title:'Masukkan PIN', input:'password', inputAttributes:{autocapitalize:'off'}}).then(r => {
+          if(r.value) {
+             api('login', {pin: r.value}).then(res => {
+                if(res.status === 'success') {
+                   APP.user = res.user;
+                   localStorage.setItem('gb_user', JSON.stringify(res.user));
+                   Swal.fire('Login Berhasil','','success').then(()=>{ location.reload() });
+                } else {
+                   Swal.fire('Gagal', res.message, 'error');
+                }
+             });
+          }
+       });
+    }
+    function logout() {
+       localStorage.removeItem('gb_user');
+       location.reload();
+    }
+
+    /* --- HELPERS --- */
+    function populateSelects() {
+       const setOptions = (id, idx) => {
+          const el = document.getElementById(id);
+          el.innerHTML = '<option value="">Pilih</option>';
+          APP.settings.forEach(r => { if(r[idx]) el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>` });
+       };
+       setOptions('inJenis', 0); setOptions('inMapel', 1); setOptions('filterMapel', 1);
+       setOptions('inFase', 2); setOptions('filterFase', 2); setOptions('inKaih', 3); setOptions('inSem', 4);
+    }
+    function getYoutubeId(url) { if(!url) return false; const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (m && m[2].length == 11) ? m[2] : false; }
+  </script>
+</body>
+</html>
