@@ -35,7 +35,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 1030;
       display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
     }
-    .brand-logo { font-weight: 800; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .brand-logo { font-weight: 800; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 10px; line-height: 1.1; }
     .brand-logo img { height: 32px; }
 
     .top-tabs-container {
@@ -133,7 +133,7 @@
   <nav class="mobile-header">
     <div class="brand-logo">
       <img src="https://i.imgur.com/kNgOisY.png" alt="Logo">
-      <div>Guru Berbagi<br><small style="font-size:0.6rem; color:#64748b; font-weight:600;">Korwilcambidik Selogiri</small></div>
+      <div>Guru Berbagi<br><small style="font-size:0.65rem; color:#64748b; font-weight:600; display:block; margin-top:0px;">Korwilcambidik Selogiri</small></div>
     </div>
     <div class="d-flex align-items-center gap-3">
       <i class="fas fa-search text-secondary" style="font-size: 1.1rem;" onclick="toggleSearch()"></i>
@@ -235,7 +235,7 @@
          <div class="tab-pane fade show active" id="adm-karya">
             <div class="d-flex gap-2 mb-2">
                 <input type="text" class="form-control" placeholder="Cari..." id="searchAdmKarya" oninput="adminFilter()">
-                <button class="btn btn-success" onclick="downloadExcel()"><i class="fas fa-file-excel"></i></button>
+                <button class="btn btn-secondary" onclick="fetchData()"><i class="fas fa-sync-alt"></i></button>
             </div>
             <div class="d-flex gap-2 mb-3">
                 <select id="admFilterStatus" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Status</option><option value="BARU">Menunggu</option><option value="DISETUJUI">Tayang</option><option value="REVISI">Revisi</option></select>
@@ -502,8 +502,7 @@
           const id=item[13], title=item[5]||"Tanpa Judul", guru=item[1]||"Anonim", mapel=item[6]||"-", jenis=item[11]||"Media", status=item[9];
           const isMy=APP.user.name===guru, isApproved=status==='DISETUJUI', isFav=APP.favorites.has(id);
           
-          // Logic: Tampilkan jika Disetujui (untuk Guest), atau Milik Sendiri, atau Admin
-          if (!isApproved && !isMy && APP.user.role === 'GUEST') return; 
+          // SEMUA KARYA DITAMPILKAN (Filter status dihapus sesuai permintaan)
 
           let icon="fa-file", color="#94a3b8";
           if(jenis.includes("Video")) { icon="fa-play"; color="#ef4444"; } else if(jenis.includes("Modul")) { icon="fa-book"; color="#0f766e"; } else if(jenis.includes("Game")) { icon="fa-gamepad"; color="#8b5cf6"; }
@@ -512,11 +511,16 @@
           const ytId = getYoutubeId(item[8]); if(ytId) thumbHtml = `<div class="m-thumb"><img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg"></div>`;
 
           let statusBadge = '';
-          if(isMy || APP.user.role !== 'GUEST') {
+          // BADGE LOGIC: Tampilkan Centang Biru untuk semua yang APPROVED
+          if (status === 'DISETUJUI') {
+               statusBadge = `<span class="m-status st-ok"><i class="fas fa-check-circle me-1"></i>TAYANG</span>`;
+          } 
+          // Untuk status lain (PENDING/REVISI), HANYA tampilkan ke Pemilik atau Admin
+          else if (isMy || APP.user.role !== 'GUEST') {
              if(status === 'BARU') statusBadge = `<span class="m-status st-baru">MENUNGGU</span>`;
              else if(status === 'REVISI') statusBadge = `<span class="m-status st-rev">REVISI</span>`;
-             else if(status === 'DISETUJUI') statusBadge = `<span class="m-status st-ok">TAYANG</span>`;
           }
+
           html += `
           <div class="m-card" onclick="showDetail('${id}')">
              <button class="btn-fav ${isFav?'is-fav':''}" onclick="toggleFavorite(event, '${id}')"><i class="${isFav?'fas':'far'} fa-heart"></i></button>
@@ -538,8 +542,8 @@
           let matchTab = true;
           if(APP.activeTab === 'MINE') { if(APP.user.role === 'GUEST') matchTab = false; else matchTab = (i[1] === APP.user.name); } 
           else if(APP.activeTab === 'FAV') { matchTab = APP.favorites.has(i[13]); }
-          const visible = (i[9]==='DISETUJUI') || (APP.user.name === i[1]) || (['ADMIN','MODERATOR'].includes(APP.user.role));
-          return matchSearch && matchMapel && matchFase && matchTab && visible;
+          // VISIBLE Logic: Show All
+          return matchSearch && matchMapel && matchFase && matchTab;
        });
        APP.page = 1; renderList();
     }
