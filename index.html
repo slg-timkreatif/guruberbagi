@@ -335,6 +335,10 @@
             <input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx">
             <div class="row h-100">
               <div class="col-lg-7 modal-left-col border-end pe-4">
+                <div id="feedbackAlert" class="alert alert-warning d-none mb-3 border-warning">
+                   <div class="fw-bold text-warning small mb-1"><i class="fas fa-comment-dots me-2"></i>CATATAN MODERATOR (Perlu Revisi):</div>
+                   <div id="feedbackMsg" class="small text-dark fw-bold"></div>
+                </div>
                 <div class="mb-3"><label class="small fw-bold mb-1 text-muted">Judul Media <span class="text-danger">*</span></label><input type="text" id="inJudul" class="form-control fw-bold bg-light" placeholder="Judul karya..."></div>
                 <div class="row">
                   <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Mata Pelajaran <span class="text-danger">*</span></label><select id="inMapel" class="form-select" onchange="checkDropdown('inMapel','manMapel',this.value)"></select><input type="text" id="manMapel" class="form-control mt-2 d-none" placeholder="Tulis mapel..." required></div>
@@ -435,7 +439,7 @@
            return json;
         } else {
            // Write operations invalidate cache
-           if(['add', 'hapus', 'updateKurasi'].includes(action)) {
+           if(['simpan', 'hapus', 'updateKurasi'].includes(action)) {
                localStorage.removeItem(CACHE_KEY_DATA);
            }
            
@@ -671,22 +675,25 @@
     function tutupPreview() { if (document.fullscreenElement) tutupFullscreen(); var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame'); overlay.style.display = 'none'; frame.src = ""; if(frame.dataset.blob) { URL.revokeObjectURL(frame.dataset.blob); frame.dataset.blob = ""; } }
 
     function showModalInput() { if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false}); modalInputInstance.show(); }
-    function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); }
+    function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); document.getElementById('feedbackAlert').classList.add('d-none'); }
 
     function prosesSimpan() {
         var judul = document.getElementById('inJudul').value; if(!judul) { Swal.fire('Error', 'Judul wajib diisi', 'error'); return; }
         var mapel = document.getElementById('inMapel').value; if(mapel === 'LAINNYA') mapel = document.getElementById('manMapel').value;
         var jenis = document.getElementById('inJenis').value; if(jenis === 'LAINNYA') jenis = document.getElementById('manJenis').value;
+        var mode = document.getElementById('formMode').value;
         var payload = {
-            user: STATE.user.name, school: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
+            nama: STATE.user.name, sekolah: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
             fase: document.getElementById('inFase').value, sem: document.getElementById('inSem').value,
-            kaih: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
-            link: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
-            html: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : ""
+            kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
+            linkLuar: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
+            kodeHtml: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : "",
+            mode: mode
         };
-        var mode = document.getElementById('formMode').value; if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value;
+        if(mode === 'EDIT') payload.idUnik = document.getElementById('editRowIdx').value;
+        
         Swal.fire({title: 'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-        callApi('add', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
+        callApi('simpan', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
     function bukaEdit(index) {
@@ -699,6 +706,16 @@
       else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
       setValOrOther('inMapel', d[6], 'manMapel'); setValOrOther('inJenis', d[11], 'manJenis');
       var isKaih = d[10] && d[10] !== ""; document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih); if(isKaih) document.getElementById('inKaihType').value = d[10];
+      
+      // Feedback display logic
+      var fb = d[12];
+      if(fb && fb.trim().length > 0) {
+          document.getElementById('feedbackAlert').classList.remove('d-none');
+          document.getElementById('feedbackMsg').innerText = fb;
+      } else {
+          document.getElementById('feedbackAlert').classList.add('d-none');
+      }
+      
       updateLivePreview(); showModalInput();
     }
 
@@ -786,7 +803,7 @@
                 <td class="text-center"><span class="badge bg-light text-dark border px-3">${jml} Karya</span></td>
                 <td class="font-monospace fw-bold text-muted">${u[2]}</td>
                 <td><span class="badge ${badgeRole}">${u[3]}</span></td>
-                <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-pencil-alt"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td>
+                <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td>
                 </tr>`; 
             }); 
             document.getElementById('tableUsers').innerHTML=h; 
