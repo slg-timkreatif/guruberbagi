@@ -684,7 +684,8 @@
         var mode = document.getElementById('formMode').value;
         var payload = {
             nama: STATE.user.name, sekolah: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
-            fase: document.getElementById('inFase').value, sem: document.getElementById('inSem').value,
+            fase: document.getElementById('inFase').value, 
+            semester: document.getElementById('inSem').value,
             kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
             linkLuar: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
             kodeHtml: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : "",
