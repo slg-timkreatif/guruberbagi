@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Guru Berbagi - Mobile</title>
   
-  <!-- CSS Framework: Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Icons: FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
@@ -162,7 +160,6 @@
 </head>
 <body>
 
-  <!-- PREVIEW OVERLAY (Fullscreen) -->
   <div id="previewOverlay">
     <div class="preview-head">
       <div class="fw-bold text-truncate pe-2 text-white" id="previewTitle">Preview</div>
@@ -174,7 +171,6 @@
     <iframe id="previewFrame" allowfullscreen></iframe>
   </div>
 
-  <!-- 1. HEADER -->
   <nav class="mobile-header">
     <div class="brand-logo">
       <img src="https://i.imgur.com/kNgOisY.png" alt="Logo">
@@ -188,7 +184,6 @@
     </div>
   </nav>
 
-  <!-- 2. TOP TABS -->
   <div class="top-tabs-container">
     <ul class="nav nav-pills nav-fill nav-pills-custom">
       <li class="nav-item"><a class="nav-link active" id="tab-all" href="#" onclick="switchTab('ALL')">Semua Karya</a></li>
@@ -197,7 +192,6 @@
     </ul>
   </div>
 
-  <!-- Search Bar (Position Fixed Below Tabs) -->
   <div id="searchBar" class="px-3 py-2 d-none">
     <div class="d-flex gap-2">
       <input type="text" id="searchInput" class="form-control rounded-pill bg-light border-0" placeholder="Cari karya, guru..." oninput="handleSearch(this.value)">
@@ -205,7 +199,6 @@
     </div>
   </div>
 
-  <!-- OFFCANVAS MENU -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="menuOffcanvas">
     <div class="offcanvas-header bg-light">
       <h5 class="offcanvas-title fw-bold text-primary">Menu</h5>
@@ -225,7 +218,6 @@
           </div>
         </div>
         
-        <!-- RESTORED: Admin Dashboard Button in Menu -->
         <button id="menuDashboardItem" class="btn btn-warning w-100 rounded-pill fw-bold mb-4 d-none" onclick="switchTab('DASHBOARD'); hideMenu();">
            <i class="fas fa-chart-pie me-2"></i> Dashboard
         </button>
@@ -240,10 +232,8 @@
     </div>
   </div>
 
-  <!-- MAIN CONTAINER -->
   <div class="container px-3 mt-2">
     
-    <!-- VIEW: GALERI & FAV -->
     <div id="view-galeri">
       <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
       <div id="list-container"></div>
@@ -252,7 +242,6 @@
       </div>
     </div>
 
-    <!-- VIEW: DASHBOARD (STANDALONE) -->
     <div id="view-dashboard" class="d-none">
        <div class="bg-white rounded-3 border p-3">
          <div class="d-flex justify-content-between align-items-center mb-3">
@@ -303,7 +292,6 @@
        </div>
     </div>
 
-    <!-- VIEW: PROFILE DASHBOARD -->
     <div id="view-profile" class="d-none">
        <div class="profile-card text-center pb-4">
            <div class="profile-header-bg"></div>
@@ -348,7 +336,6 @@
            </div>
        </div>
 
-       <!-- PROFILE TABS -->
        <ul class="nav nav-pills nav-pills-profile mb-3 border-bottom pb-3" id="pills-tab" role="tablist">
          <li class="nav-item" role="presentation">
            <button class="nav-link active" id="pills-karya-tab" data-bs-toggle="pill" data-bs-target="#pills-karya" type="button">Karya Saya</button>
@@ -356,7 +343,6 @@
        </ul>
 
        <div class="tab-content" id="pills-tabContent">
-          <!-- TAB: KARYA -->
           <div class="tab-pane fade show active" id="pills-karya">
                <div id="prof-works-list"></div>
                <div id="prof-empty-works" class="text-center py-5 d-none">
@@ -370,13 +356,10 @@
 
   </div>
 
-  <!-- FAB -->
   <button id="fabAdd" class="fab d-none btn-press-effect" onclick="openInputModal()"><i class="fas fa-plus"></i></button>
 
-  <!-- MODAL: LOGIN -->
   <div class="modal fade" id="modalLogin" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0"><div class="modal-header border-0 pb-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4 text-center"><div class="mb-3 text-primary"><i class="fas fa-user-lock fa-3x"></i></div><h4 class="fw-bold mb-3">Login Guru</h4><p class="text-muted small mb-4">Masukkan PIN 6 digit Anda.</p><form onsubmit="submitLogin(event)"><div class="form-floating mb-4"><input type="password" inputmode="numeric" id="loginPin" class="form-control rounded-pill text-center fs-4 letter-spacing-2" placeholder="PIN" required autocomplete="off"><label for="loginPin" class="w-100 text-center">PIN ANDA</label></div><button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow-sm btn-press-effect">MASUK SEKARANG</button></form></div></div></div></div>
 
-  <!-- MODAL: INPUT/EDIT -->
   <div class="modal fade modal-fullscreen-mobile" id="modalInput" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -402,7 +385,7 @@
                 <div class="mb-0"><label class="small fw-bold text-muted mb-1">Fase / Kelas <span class="text-danger">*</span></label><select id="inFase" class="form-select"></select></div>
             </div>
             <div class="bg-white p-3 rounded-3 shadow-sm border mb-4">
-                <div class="mb-3"><label class="small fw-bold text-muted mb-2">Tipe Konten Utama</label><select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)"><option value="LINK">🔗 Media Umum (Youtube / Drive / Quizizz)</option><option value="STORY">📖 Link Storybook (Buka di Tab Baru)</option><option value="HTML">💻 Kode Embed HTML</option></select></div>
+                <div class="mb-3"><label class="small fw-bold text-muted mb-2">Tipe Konten Utama</label><select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)"><option value="LINK">🌐 Media Umum (Youtube / Drive / Quizizz)</option><option value="STORY">📖 Link Storybook (Buka di Tab Baru)</option><option value="HTML">💻 Kode Embed HTML</option></select></div>
                 <div id="groupLink"><label class="small fw-bold text-muted mb-1">Link Media</label><input type="url" id="inLink" class="form-control" placeholder="https://..." oninput="updateLivePreview()"></div>
                 <div id="groupStory" class="d-none"><label class="small fw-bold text-primary mb-1">Link Storybook</label><input type="url" id="inLinkStory" class="form-control border-primary" placeholder="Link Story..." oninput="updateLivePreview()"></div>
                 <div id="groupHtml" class="d-none"><label class="small fw-bold text-muted mb-1">Kode Embed HTML</label><textarea id="inHtml" class="form-control font-monospace fs-6" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div>
@@ -419,12 +402,10 @@
     </div>
   </div>
 
-  <!-- MODAL: DETAIL, KURASI, USER -->
   <div class="modal fade" id="modalDetail" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0"><div class="modal-body text-center p-4"><h5 class="fw-bold mb-2" id="detTitle">Judul</h5><p class="text-muted small mb-4" id="detGuru">Oleh: Guru</p><div class="d-grid gap-2"><button type="button" onclick="openFullscreenPreview()" class="btn btn-primary rounded-pill fw-bold py-2 btn-press-effect">BUKA KARYA</button><button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Tutup</button></div><div id="ownerActions" class="mt-3 pt-3 border-top d-none"><div class="d-flex justify-content-center gap-2"><button id="btnEdit" class="btn btn-sm btn-warning rounded-pill px-3"><i class="fas fa-edit"></i> Edit</button><button id="btnDelete" class="btn btn-sm btn-danger rounded-pill px-3"><i class="fas fa-trash"></i> Hapus</button></div></div></div></div></div></div>
   <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Kurasi Karya</h5></div><div class="modal-body"><input type="hidden" id="kurId"><label class="small fw-bold">Status</label><select id="kurStatus" class="form-select mb-3"><option value="BARU">BARU</option><option value="DISETUJUI">DISETUJUI</option><option value="REVISI">REVISI</option></select><label class="small fw-bold">Catatan Moderator</label><textarea id="kurNote" class="form-control" rows="3"></textarea></div><div class="modal-footer border-0"><button onclick="saveKurasi()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Update Status</button></div></div></div></div>
   <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h5 class="fw-bold" id="userModalTitle">Data Guru</h5></div><div class="modal-body"><form id="formUser"><input type="hidden" id="uMode" value="ADD"><input type="hidden" id="uOldPin"><label class="small text-muted fw-bold">Nama</label><input type="text" id="uInputName" class="form-control mb-2"><label class="small text-muted fw-bold">Sekolah</label><input type="text" id="uInputSchool" class="form-control mb-2"><div class="row g-2"><div class="col-6"><label class="small text-muted fw-bold">PIN</label><input type="text" id="uInputPin" class="form-control"></div><div class="col-6"><label class="small text-muted fw-bold">Role</label><select id="uInputRole" class="form-select"><option value="GURU">GURU</option><option value="KEPSEK">KEPALA SEKOLAH</option><option value="OPS">OPERATOR SEKOLAH</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="saveUser()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Simpan Data</button></div></div></div></div>
 
-  <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -652,7 +633,7 @@
             myMedia.forEach(m => {
                 const id = m[13]; // ID Unik
                 const statusBadge = m[9] === 'DISETUJUI' ? '<span class="badge bg-success">Tayang</span>' : (m[9] === 'REVISI' ? '<span class="badge bg-danger">Revisi</span>' : '<span class="badge bg-warning text-dark">Pending</span>');
-                html += `<div class="m-card align-items-center"><div class="flex-grow-1 min-w-0"><div class="fw-bold text-dark text-truncate" style="font-size:0.85rem">${m[5]}</div><div class="small text-muted" style="font-size:0.7rem">${m[6]} • ${m[14]||0} Views</div></div><div class="text-end">${statusBadge}<div class="mt-2"><button onclick="editItem('${id}')" class="btn btn-sm btn-light border text-primary py-0 px-2"><i class="fas fa-pen" style="font-size:0.7rem"></i></button><button onclick="deleteItem('${id}')" class="btn btn-sm btn-light border text-danger py-0 px-2 ms-1"><i class="fas fa-trash" style="font-size:0.7rem"></i></button></div></div></div>`;
+                html += `<div class="m-card align-items-center"><div class="flex-grow-1 min-w-0"><div class="fw-bold text-dark text-truncate" style="font-size:0.85rem">${m[5]}</div><div class="small text-muted" style="font-size:0.7rem">${m[6]} 窶｢ ${m[14]||0} Views</div></div><div class="text-end">${statusBadge}<div class="mt-2"><button onclick="editItem('${id}')" class="btn btn-sm btn-light border text-primary py-0 px-2"><i class="fas fa-pen" style="font-size:0.7rem"></i></button><button onclick="deleteItem('${id}')" class="btn btn-sm btn-light border text-danger py-0 px-2 ms-1"><i class="fas fa-trash" style="font-size:0.7rem"></i></button></div></div></div>`;
             });
             listContainer.innerHTML = html;
         }
@@ -712,7 +693,7 @@
         if(type==='LINK') val = document.getElementById('inLink').value; else if(type==='STORY') val = document.getElementById('inLinkStory').value; else if(type==='HTML') val = document.getElementById('inHtml').value;
         const doc = document.getElementById('miniPreviewFrame').contentDocument; doc.open();
         const style = `<style>body{margin:0;padding:10px;font-family:sans-serif;color:#555;text-align:center;font-size:0.8rem} img{max-width:100%}</style>`;
-        if(type === 'STORY') doc.write(style + "📖 Preview Storybook tersedia setelah disimpan."); else if (type==='HTML' && val.length > 5) doc.write(val); else if (val.length > 5) { const ytId = getYoutubeId(val); if(ytId) doc.write(`<iframe src="https://www.youtube.com/embed/${ytId}" style="width:100%;aspect-ratio:16/9;border:none"></iframe>`); else doc.write(style + `<div style="padding-top:40px">🔗 Preview Website</div>`); } else { doc.write(style + `<div style="padding-top:60px">Preview Konten</div>`); } doc.close();
+        if(type === 'STORY') doc.write(style + "当 Preview Storybook tersedia setelah disimpan."); else if (type==='HTML' && val.length > 5) doc.write(val); else if (val.length > 5) { const ytId = getYoutubeId(val); if(ytId) doc.write(`<iframe src="https://www.youtube.com/embed/${ytId}" style="width:100%;aspect-ratio:16/9;border:none"></iframe>`); else doc.write(style + `<div style="padding-top:40px">迫 Preview Website</div>`); } else { doc.write(style + `<div style="padding-top:60px">Preview Konten</div>`); } doc.close();
     }
     function checkDropdown(selId, manId, val) { const man = document.getElementById(manId); if(val === 'LAINNYA') { man.classList.remove('d-none'); man.focus(); } else { man.classList.add('d-none'); man.value = ""; } }
     function setValOrOther(elId, val, manId) { const el = document.getElementById(elId); if(Array.from(el.options).some(o => o.value === val)) { el.value = val; checkDropdown(elId, manId, val); } else { el.value = 'LAINNYA'; checkDropdown(elId, manId, 'LAINNYA'); document.getElementById(manId).value = val; } }
@@ -771,16 +752,20 @@
             stats[s].k++; 
         });
         let arr = Object.values(stats).sort((a,b) => b.k - a.k);
-        let h = '<table class="table table-sm table-striped"><thead><tr><th>#</th><th>Sekolah</th><th class="text-center">Guru</th><th class="text-center">Karya</th></tr></thead><tbody>';
+        let h = '<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Sekolah</th><th class="text-center">Guru</th><th class="text-center">Karya</th></tr></thead><tbody>';
         arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td>${x.name}</td><td class="text-center">${x.g}</td><td class="text-center fw-bold">${x.k}</td></tr>`; });
-        document.getElementById('school-rank-container').innerHTML = h + '</tbody></table>';
+        document.getElementById('school-rank-container').innerHTML = h + '</tbody></table></div>';
     }
     function loadTeacherStats() {
         let counts = {}; APP.data.forEach(m => { let n=m[1]; if(!counts[n]) counts[n]={n:n,s:m[2],c:0}; counts[n].c++; });
         let arr = Object.values(counts).sort((a,b) => b.c - a.c).slice(0, 50);
-        let h = '<table class="table table-sm table-striped"><thead><tr><th>#</th><th>Guru</th><th class="text-center">Karya</th></tr></thead><tbody>';
-        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td><div class="fw-bold">${x.n}</div><small class="text-muted">${x.s}</small></td><td class="text-center fw-bold text-primary">${x.c}</td></tr>`; });
-        document.getElementById('teacher-rank-container').innerHTML = h + '</tbody></table>';
+        // FIX: Kolom dipisah antara Nama Guru dan Unit Kerja
+        let h = '<div class="table-responsive"><table class="table table-sm table-striped align-middle mb-0"><thead><tr class="bg-light"><th class="text-center">#</th><th>Nama Guru</th><th>Unit Kerja</th><th class="text-center">Karya</th></tr></thead><tbody>';
+        arr.forEach((x,i) => { 
+            let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; 
+            h += `<tr><td class="text-center">${rank}</td><td><div class="fw-bold text-dark" style="font-size:0.8rem">${x.n}</div></td><td style="font-size:0.75rem">${x.s}</td><td class="text-center fw-bold text-primary">${x.c}</td></tr>`; 
+        });
+        document.getElementById('teacher-rank-container').innerHTML = h + '</tbody></table></div>';
     }
 
     function deleteItem(id) { Swal.fire({title:'Hapus?', icon:'warning', showCancelButton:true}).then(r => { if(r.isConfirmed) { bootstrap.Modal.getInstance(document.getElementById('modalDetail'))?.hide(); api('hapus', {id}).then(() => { Swal.fire('Terhapus','','success'); fetchData(); }); }}); }
@@ -835,9 +820,8 @@
        // Filter list if KEPSEK/OPS
        let list = APP.users;
        const role = (APP.user.role || "").toUpperCase();
-       
-       const isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
        const isAdmin = role.includes('ADMIN');
+       const isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
 
        if(isSchoolAdmin) {
            list = list.filter(u => u[1] === APP.user.school);
@@ -846,19 +830,19 @@
            document.getElementById('statUsers').innerText = APP.users.length;
        }
        
-       // Hide Add Button for Monitoring roles
        const btnAdd = document.getElementById('btnAddUser');
        if(btnAdd) btnAdd.style.display = isAdmin ? 'block' : 'none';
 
        list = list.filter(u => (u[0]+' '+u[1]).toLowerCase().includes(q.toLowerCase()));
        let html = ''; 
-       
-       // Only ADMIN can edit/delete users
        const canEdit = isAdmin;
 
        list.forEach((u, idx) => { 
+           // FIX: PIN MASKING LOGIC
+           let displayPin = isAdmin ? `<span class="font-monospace fw-bold">${u[2]}</span>` : `<span class="text-muted opacity-50"><i class="fas fa-lock" style="font-size:0.6rem"></i> ****</span>`;
+
            let btns = canEdit ? `<button class="btn btn-sm btn-light border text-warning" onclick="showUserModal('EDIT', '${u[2]}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light border text-danger" onclick="deleteUser('${u[2]}', '${u[0]}')"><i class="fas fa-trash"></i></button>` : '';
-           html += `<div class="d-flex justify-content-between align-items-center border-bottom py-2"><div><div class="fw-bold">${u[0]}</div><div class="small text-muted">${u[1]} (${u[3]})</div><div class="small text-primary font-monospace">PIN: ${u[2]}</div></div><div class="d-flex gap-2">${btns}</div></div>`; 
+           html += `<div class="d-flex justify-content-between align-items-center border-bottom py-2"><div><div class="fw-bold">${u[0]}</div><div class="small text-muted">${u[1]} (${u[3]})</div><div class="small text-primary">PIN: ${displayPin}</div></div><div class="d-flex gap-2">${btns}</div></div>`; 
        });
        document.getElementById('user-list-container').innerHTML = html; 
     }
