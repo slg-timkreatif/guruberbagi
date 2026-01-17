@@ -19,6 +19,12 @@
       .required::after { content: " *"; color: red; }
       input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
       input:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+      input:disabled { background-color: #eee; cursor: not-allowed; } /* Style untuk input disabled */
+      
+      /* Style untuk Checkbox NIP */
+      .checkbox-wrapper { display: flex; align-items: center; margin-top: 8px; font-size: 13px; color: #555; }
+      .checkbox-wrapper input { width: auto; margin-right: 8px; }
+
       #boxJabatanLainnya { display: none; margin-top: 15px; animation: fadeIn 0.3s; }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
       .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
@@ -40,15 +46,27 @@
       </div>
       <form id="guruForm">
         <div class="form-group"><label class="required">Nama Lengkap (dengan gelar)</label><input type="text" name="nama" placeholder="Contoh: Budi Santoso, S.Pd." required></div>
-        <div class="form-group"><label>NIP (Opsional)</label><input type="number" name="nip" placeholder="Masukkan NIP jika ada"></div>
+        
+        <div class="form-group"><label class="required">Email Aktif</label><input type="email" id="emailInput" name="email" placeholder="nama@email.com" required></div>
+
+        <div class="form-group">
+            <label class="required">NIP</label>
+            <input type="number" id="nipInput" name="nip" placeholder="Masukkan NIP" required>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="checkNoNip">
+                <label for="checkNoNip">Saya belum memiliki NIP (Gunakan Email sebagai ID)</label>
+            </div>
+        </div>
+
         <div class="form-group">
           <label class="required">Jabatan</label>
           <select id="jabatan" name="jabatan" required><option value="" disabled selected>Memuat data...</option></select>
           <div id="boxJabatanLainnya"><label class="required">Sebutkan Jabatan Lainnya</label><input type="text" id="jabatanLainnya" name="jabatanLainnya" placeholder="Tuliskan jabatan..."></div>
         </div>
         <div class="form-group"><label class="required">Satuan Pendidikan</label><select id="satuan" name="satuan" required><option value="" disabled selected>Memuat data...</option></select></div>
+        
         <div class="form-group"><label class="required">NPSN</label><input type="text" name="npsn" pattern="\d{8}" maxlength="8" minlength="8" placeholder="8 Digit Angka" required></div>
-        <div class="form-group"><label class="required">Email Aktif</label><input type="email" name="email" placeholder="nama@email.com" required></div>
+        
         <button type="submit" class="btn-submit" id="btnSubmit">Daftarkan & Generate PIN</button>
         <div class="loading" id="loadingText">Sedang memproses... Mohon tunggu.</div>
       </form>
@@ -66,14 +84,28 @@
     </div>
 
     <script>
-      // ============================================================
-      // PASTE LINK GOOGLE SCRIPT (EXEC) DI BAWAH INI
-      // ============================================================
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec"; 
 
       window.onload = () => loadDropdowns();
 
-      // Logika Dropdown Jabatan & Lainnya
+      // --- LOGIKA BARU: CHECKBOX NIP ---
+      const nipInput = document.getElementById('nipInput');
+      const checkNoNip = document.getElementById('checkNoNip');
+
+      checkNoNip.addEventListener('change', function() {
+        if (this.checked) {
+            nipInput.value = "";       // Kosongkan isi
+            nipInput.disabled = true;  // Matikan input
+            nipInput.required = false; // Matikan validasi required HTML
+            nipInput.placeholder = "ID akan menggunakan Email otomatis";
+        } else {
+            nipInput.disabled = false; // Hidupkan input
+            nipInput.required = true;  // Wajib diisi kembali
+            nipInput.placeholder = "Masukkan NIP";
+        }
+      });
+
+      // Logika Dropdown Jabatan
       document.getElementById('jabatan').addEventListener('change', function() {
         const box = document.getElementById('boxJabatanLainnya');
         const inp = document.getElementById('jabatanLainnya');
@@ -103,12 +135,25 @@
       // Handle Submit
       document.getElementById('guruForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Cek validasi manual terakhir (jaga-jaga)
+        if (!this.checkValidity()) {
+            alert("Mohon lengkapi semua kolom yang bertanda bintang (*)");
+            return;
+        }
+
         const btn = document.getElementById('btnSubmit');
         const load = document.getElementById('loadingText');
         btn.style.display = 'none'; load.style.display = 'block';
 
         const fd = new FormData(this);
         const data = Object.fromEntries(fd.entries());
+
+        // LOGIKA BARU: Jika NIP disabled (dicentang), isi data.nip dengan email
+        if (checkNoNip.checked) {
+            data.nip = data.email; 
+        }
+
         if (data.jabatan === 'Lainnya') data.jabatan = data.jabatanLainnya;
         delete data.jabatanLainnya;
 
@@ -122,16 +167,23 @@
               document.getElementById('resNama').innerText = res.nama;
               document.getElementById('resPIN').innerText = res.pin;
               document.getElementById('resultModal').style.display = 'flex';
+              
+              // Reset Form & Kembalikan State NIP
               document.getElementById('guruForm').reset();
               document.getElementById('boxJabatanLainnya').style.display = 'none';
+              checkNoNip.checked = false; // Reset checkbox
+              nipInput.disabled = false;  // Reset input NIP
+              nipInput.required = true;
+              nipInput.placeholder = "Masukkan NIP";
+
            } else if (res.status === 'duplikat') {
-              alert("⚠️ DATA DUPLIKAT TERDETEKSI ⚠️\n\n" + res.message);
-              document.getElementById('guruForm').reset();
+              alert("⚠️ DATA SUDAH ADA ⚠️\n\n" + res.message);
+              // Tidak reset form agar user bisa cek mana yang salah
            } else {
               alert('Error: ' + res.error);
            }
         })
-        .catch(err => alert('Gagal koneksi server.'))
+        .catch(err => alert('Gagal koneksi server. Pastikan internet lancar.'))
         .finally(() => { btn.style.display = 'block'; load.style.display = 'none'; });
       });
     </script>
