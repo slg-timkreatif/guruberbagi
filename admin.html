@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - Guru Berbagi</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
+
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
+        .login-container { max-width: 400px; margin: 80px auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .dashboard-container { display: none; padding: 20px; } 
+        .card-stat { border: none; border-radius: 10px; color: white; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .bg-primary-gradient { background: linear-gradient(45deg, #4e73df, #224abe); }
+        .bg-success-gradient { background: linear-gradient(45deg, #1cc88a, #13855c); }
+        .bg-info-gradient { background: linear-gradient(45deg, #36b9cc, #258391); }
+        .status-badge-aktif { background-color: #d1e7dd; color: #0f5132; padding: 5px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; }
+        .status-badge-non { background-color: #f8d7da; color: #842029; padding: 5px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; }
+        .badge-new { background-color: #ffc107; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold; margin-left: 5px; animation: blink 2s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; display:none; justify-content:center; align-items:center; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+        <p class="mt-3 fw-bold text-primary">Menghubungkan ke Database...</p>
+    </div>
+
+    <div class="container" id="loginPage">
+        <div class="login-container">
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-user-shield fa-3x text-primary"></i>
+                <h3 class="mt-3">Admin Login</h3>
+                <p class="text-muted">Korwilcambidik Kecamatan Selogiri</p>
+            </div>
+            <form id="formLogin">
+                <div class="mb-3">
+                    <label>Username</label>
+                    <input type="text" id="username" class="form-control" required placeholder="Masukkan username">
+                </div>
+                <div class="mb-3">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-control" required placeholder="Masukkan password">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold">MASUK <i class="fa-solid fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container-fluid dashboard-container" id="dashboardPage">
+        <nav class="navbar navbar-expand-lg bg-white shadow-sm rounded mb-4 px-3">
+            <a class="navbar-brand fw-bold text-primary" href="#"><i class="fa-solid fa-graduation-cap"></i> Admin Guru Berbagi</a>
+            <div class="ms-auto d-flex align-items-center">
+                <span class="me-3 text-secondary d-none d-md-block">Halo, <strong id="adminNameDisplay">Admin</strong></span>
+                <button onclick="logout()" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-power-off"></i> Logout</button>
+            </div>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card-stat bg-primary-gradient">
+                    <h5><i class="fa-solid fa-users"></i> Total Guru</h5>
+                    <h2 class="fw-bold" id="statTotal">0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-stat bg-success-gradient">
+                    <h5><i class="fa-solid fa-school"></i> Sekolah Terdaftar</h5>
+                    <h2 class="fw-bold" id="statSekolah">0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-stat bg-info-gradient">
+                    <h5><i class="fa-solid fa-user-check"></i> Akun Aktif</h5>
+                    <h2 class="fw-bold" id="statAktif">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-white">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h6 class="m-0 fw-bold text-primary"><i class="fa-solid fa-table"></i> Database Guru</h6>
+                    </div>
+                    <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                         <button onclick="loadData()" class="btn btn-sm btn-primary"><i class="fa-solid fa-sync"></i> Refresh Data</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="row mb-3 p-2 bg-light rounded mx-1 border">
+                    <label class="col-sm-2 col-form-label fw-bold"><i class="fa-solid fa-filter"></i> Filter Sekolah:</label>
+                    <div class="col-sm-10">
+                        <select id="filterSekolah" class="form-select">
+                            <option value="">🔄 TAMPILKAN SEMUA SEKOLAH</option>
+                            </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle" id="tableGuru" width="100%" cellspacing="0">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th width="5%">Status</th>
+                                <th>Nama Lengkap</th>
+                                <th>NIP</th>
+                                <th>Sekolah</th>
+                                <th>Email</th>
+                                <th>PIN</th>
+                                <th width="15%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEdit" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-pen-to-square"></i> Edit Data Guru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit">
+                        <input type="hidden" id="editRowIndex">
+                        <div class="mb-2"><label class="fw-bold">Nama Lengkap</label><input type="text" id="editNama" class="form-control" required></div>
+                        <div class="mb-2"><label class="fw-bold">NIP</label><input type="text" id="editNip" class="form-control" required></div>
+                        <div class="mb-2"><label class="fw-bold">Jabatan</label><input type="text" id="editJabatan" class="form-control" required></div>
+                        <div class="mb-2"><label class="fw-bold">Sekolah</label><input type="text" id="editSekolah" class="form-control" required></div>
+                        <div class="mb-3"><label class="fw-bold">Email</label><input type="email" id="editEmail" class="form-control" required></div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">SIMPAN PERUBAHAN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. KONFIGURASI API (GANTI URL DI SINI)
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec"; 
+        
+        // ==========================================
+        // 2. VARIABEL GLOBAL
+        // ==========================================
+        let rawData = []; 
+        let currentUser = null;
+
+        $(document).ready(function() {
+            // Cek sesi login
+            const session = sessionStorage.getItem('adminUser');
+            if(session) {
+                currentUser = JSON.parse(session);
+                showDashboard();
+            }
+        });
+
+        // 3. SYSTEM LOGIN
+        $('#formLogin').on('submit', function(e) {
+            e.preventDefault();
+            const username = $('#username').val();
+            const password = $('#password').val();
+            
+            showLoading(true);
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'login', payload: { username, password } })
+            })
+            .then(res => res.json())
+            .then(data => {
+                showLoading(false);
+                if(data.status === 'success') {
+                    currentUser = data.user;
+                    sessionStorage.setItem('adminUser', JSON.stringify(currentUser));
+                    Swal.fire({ icon: 'success', title: 'Login Berhasil', timer: 1000, showConfirmButton: false });
+                    showDashboard();
+                } else {
+                    Swal.fire('Gagal', data.message, 'error');
+                }
+            })
+            .catch(err => { showLoading(false); Swal.fire('Error', 'Koneksi gagal', 'error'); });
+        });
+
+        function logout() {
+            sessionStorage.removeItem('adminUser');
+            location.reload();
+        }
+
+        function showDashboard() {
+            $('#loginPage').hide();
+            $('#dashboardPage').fadeIn();
+            $('#adminNameDisplay').text(currentUser.nama);
+            loadData();
+        }
+
+        // 4. LOAD & RENDER DATA
+        function loadData() {
+            showLoading(true);
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getAllData', payload: {} })
+            })
+            .then(res => res.json())
+            .then(res => {
+                showLoading(false);
+                if(res.status === 'success') {
+                    rawData = res.data; 
+                    isiDropdownSekolah(rawData); 
+                    renderTable(rawData); 
+                    updateStats(rawData); 
+                }
+            })
+            .catch(err => { showLoading(false); console.error(err); });
+        }
+
+        // 5. FITUR FILTER SEKOLAH
+        function isiDropdownSekolah(data) {
+            const sekolahUnik = [...new Set(data.map(item => item.sekolah))].filter(Boolean).sort();
+            const select = $('#filterSekolah');
+            const currentVal = select.val();
+            
+            select.empty();
+            select.append('<option value="">🔄 TAMPILKAN SEMUA SEKOLAH</option>');
+            
+            sekolahUnik.forEach(sekolah => {
+                select.append(`<option value="${sekolah}">${sekolah}</option>`);
+            });
+
+            if(currentVal) select.val(currentVal);
+        }
+
+        $('#filterSekolah').on('change', function() {
+            const sekolahDipilih = $(this).val();
+            if (sekolahDipilih) {
+                const filtered = rawData.filter(item => item.sekolah === sekolahDipilih);
+                renderTable(filtered);
+            } else {
+                renderTable(rawData);
+            }
+        });
+
+        // 6. RENDER TABLE
+        function renderTable(data) {
+            if ($.fn.DataTable.isDataTable('#tableGuru')) {
+                $('#tableGuru').DataTable().destroy();
+            }
+
+            const tbody = $('#tableGuru tbody');
+            tbody.empty();
+            
+            const today = new Date().toISOString().slice(0,10);
+
+            data.forEach(row => {
+                let statusBadge = row.status === 'Aktif' 
+                    ? `<span class="status-badge-aktif">AKTIF</span>` 
+                    : `<span class="status-badge-non">NON-AKTIF</span>`;
+                
+                let isNew = row.waktu && row.waktu.toString().includes(today) 
+                    ? `<span class="badge-new">BARU</span>` : '';
+
+                let btnAction = `
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-info text-white" onclick="resendPin(${row.rowIndex})" title="Kirim Ulang PIN"><i class="fa-solid fa-paper-plane"></i></button>
+                        <button class="btn btn-sm btn-warning text-white" onclick='openEditModal(${JSON.stringify(row)})' title="Edit Data"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteData(${row.rowIndex}, '${row.nama}')" title="Non-aktifkan"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+
+                tbody.append(`
+                    <tr>
+                        <td class="text-center">${statusBadge}</td>
+                        <td><span class="fw-bold">${row.nama}</span> ${isNew}</td>
+                        <td>${row.nip}</td>
+                        <td>${row.sekolah}</td>
+                        <td><small>${row.email}</small></td>
+                        <td class="text-center fw-bold text-primary">${row.pin}</td>
+                        <td class="text-center">${btnAction}</td>
+                    </tr>
+                `);
+            });
+
+            // Init DataTables dengan tombol Export
+            $('#tableGuru').DataTable({
+                dom: 'Bfrtip',
+                buttons: [ 
+                    { 
+                        extend: 'excelHtml5', 
+                        className: 'btn btn-success btn-sm me-1', 
+                        text: '<i class="fa-solid fa-file-excel"></i> Export Excel',
+                        title: 'Data Guru Berbagi - Selogiri',
+                        exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] }
+                    },
+                    { 
+                        extend: 'pdfHtml5', 
+                        className: 'btn btn-danger btn-sm me-1', 
+                        text: '<i class="fa-solid fa-file-pdf"></i> Export PDF',
+                        title: 'Data Guru Berbagi - Selogiri',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] }
+                    },
+                    { 
+                        extend: 'print', 
+                        className: 'btn btn-secondary btn-sm', 
+                        text: '<i class="fa-solid fa-print"></i> Print',
+                        exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] }
+                    }
+                ],
+                language: { url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json" },
+                order: [[ 1, 'asc' ]],
+                pageLength: 10
+            });
+        }
+
+        // 7. ACTION: RESEND PIN
+        function resendPin(rowIndex) {
+            Swal.fire({
+                title: 'Kirim Ulang PIN?',
+                text: "Sistem akan mengirim email berisi PIN lama ke alamat email guru tersebut.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#36b9cc',
+                confirmButtonText: 'Ya, Kirim Email'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading(true);
+                    fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            action: 'resendPin', 
+                            payload: { rowIndex: rowIndex, adminName: currentUser.username } 
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        showLoading(false);
+                        if(res.status === 'success') Swal.fire('Terkirim!', 'PIN telah dikirim ke email guru.', 'success');
+                        else Swal.fire('Gagal', res.message, 'error');
+                    })
+                    .catch(() => { showLoading(false); Swal.fire('Gagal', 'Kesalahan server', 'error'); });
+                }
+            });
+        }
+
+        // 8. ACTION: EDIT DATA
+        function openEditModal(data) {
+            $('#editRowIndex').val(data.rowIndex);
+            $('#editNama').val(data.nama);
+            $('#editNip').val(data.nip);
+            $('#editJabatan').val(data.jabatan);
+            $('#editSekolah').val(data.sekolah);
+            $('#editEmail').val(data.email);
+            const modal = new bootstrap.Modal(document.getElementById('modalEdit'));
+            modal.show();
+        }
+
+        $('#formEdit').on('submit', function(e) {
+            e.preventDefault();
+            const payload = {
+                adminName: currentUser.username,
+                rowIndex: $('#editRowIndex').val(),
+                nama: $('#editNama').val(),
+                nip: $('#editNip').val(),
+                jabatan: $('#editJabatan').val(),
+                sekolah: $('#editSekolah').val(),
+                email: $('#editEmail').val()
+            };
+
+            bootstrap.Modal.getInstance(document.getElementById('modalEdit')).hide();
+            showLoading(true);
+
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateData', payload: payload })
+            })
+            .then(res => res.json())
+            .then(res => {
+                showLoading(false);
+                if(res.status === 'success') {
+                    Swal.fire('Sukses', 'Data berhasil disimpan', 'success');
+                    loadData();
+                }
+            });
+        });
+
+        // 9. ACTION: DELETE (SOFT)
+        function deleteData(rowIndex, nama) {
+            Swal.fire({
+                title: 'Non-aktifkan Akun?',
+                text: `Akun "${nama}" akan ditandai Non-Aktif.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ya, Non-aktifkan'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading(true);
+                    fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            action: 'deleteData', 
+                            payload: { rowIndex: rowIndex, adminName: currentUser.username } 
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        showLoading(false);
+                        if(res.status === 'success') {
+                            Swal.fire('Berhasil', 'Akun non-aktif.', 'success');
+                            loadData();
+                        }
+                    });
+                }
+            });
+        }
+
+        // 10. UPDATE STATISTICS
+        function updateStats(data) {
+            $('#statTotal').text(data.length);
+            const unikSekolah = [...new Set(data.map(item => item.sekolah))].filter(Boolean).length;
+            $('#statSekolah').text(unikSekolah);
+            const aktif = data.filter(item => item.status === 'Aktif').length;
+            $('#statAktif').text(aktif);
+        }
+
+        function showLoading(show) {
+            if(show) $('#loadingOverlay').css('display', 'flex');
+            else $('#loadingOverlay').hide();
+        }
+    </script>
+</body>
+</html>
