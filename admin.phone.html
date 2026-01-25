@@ -80,10 +80,18 @@
                     <input type="text" class="form-control" id="username" placeholder="Username" required>
                     <label>Username</label>
                 </div>
-                <div class="form-floating mb-4">
+                <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="password" placeholder="Password" required>
                     <label>Password</label>
                 </div>
+                
+                <div class="form-check mb-4 text-start ps-4">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <label class="form-check-label text-muted small" for="rememberMe">
+                        Ingat Saya (Tetap Login)
+                    </label>
+                </div>
+
                 <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
                     MASUK APLIKASI
                 </button>
@@ -194,7 +202,7 @@
         // CONFIG
         // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec";
-        const CACHE_KEY = "gb_admin_data_v1"; // Kunci untuk LocalStorage
+        const DATA_CACHE_KEY = "gb_admin_data_v1";
         
         let rawData = [];
         let currentUser = null;
@@ -203,15 +211,18 @@
         // INIT & SESSION CHECK
         // ==========================================
         $(document).ready(function() {
-            const session = sessionStorage.getItem('adminUser');
-            
-            // UX: Disable double tap zoom on buttons
-            document.addEventListener('dblclick', function(event) {
-                event.preventDefault();
-            }, { passive: false });
+            // UX: Disable double tap zoom
+            document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
 
-            if(session) {
-                currentUser = JSON.parse(session);
+            // LOGIKA BARU: Cek LocalStorage dulu, baru SessionStorage
+            const localUser = localStorage.getItem('adminUser');
+            const sessionUser = sessionStorage.getItem('adminUser');
+
+            if (localUser) {
+                currentUser = JSON.parse(localUser);
+                showDashboard();
+            } else if (sessionUser) {
+                currentUser = JSON.parse(sessionUser);
                 showDashboard();
             } else {
                 $('#loginPage').show();
@@ -226,11 +237,12 @@
             const btn = $('#btnLogin');
             const originalText = btn.html();
             
-            // UX: Loading state pada tombol
+            // UX: Loading state
             btn.prop('disabled', true).html('<i class="fa-solid fa-circle-notch fa-spin"></i> Memverifikasi...');
             
             const username = $('#username').val();
             const password = $('#password').val();
+            const rememberMe = $('#rememberMe').is(':checked'); // Cek status checkbox
             
             fetch(API_URL, {
                 method: 'POST',
@@ -241,10 +253,16 @@
                 btn.prop('disabled', false).html(originalText);
                 if(data.status === 'success') {
                     currentUser = data.user;
-                    sessionStorage.setItem('adminUser', JSON.stringify(currentUser));
+                    
+                    // LOGIKA PENYIMPANAN
+                    if (rememberMe) {
+                        localStorage.setItem('adminUser', JSON.stringify(currentUser)); // Tahan lama
+                    } else {
+                        sessionStorage.setItem('adminUser', JSON.stringify(currentUser)); // Sementara
+                    }
+
                     showDashboard();
                     
-                    // UX: Toast Notification (Non-blocking)
                     const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                     Toast.fire({ icon: 'success', title: 'Berhasil Masuk' });
                 } else {
@@ -267,6 +285,8 @@
                 confirmButtonColor: '#d33'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // BERSIHKAN SEMUA PENYIMPANAN
+                    localStorage.removeItem('adminUser');
                     sessionStorage.removeItem('adminUser');
                     location.reload();
                 }
@@ -277,7 +297,7 @@
             $('#loginPage').hide();
             $('#dashboardPage').fadeIn();
             $('#headerGreeting').text(`Halo, ${currentUser.nama.split(' ')[0]}`);
-            loadDataWithCache(); // Menggunakan strategi cache
+            loadDataWithCache();
         }
 
         // ==========================================
@@ -285,19 +305,15 @@
         // ==========================================
         function loadDataWithCache() {
             // 1. Cek Cache Lokal
-            const cached = localStorage.getItem(CACHE_KEY);
+            const cached = localStorage.getItem(DATA_CACHE_KEY);
             
             if (cached) {
-                // Jika ada cache, render LANGSUNG (Instant Load)
                 console.log("Memuat dari cache...");
                 const parsedData = JSON.parse(cached);
                 rawData = parsedData;
                 renderApp(rawData);
-                
-                // Tampilkan indikator sinkronisasi background
                 $('#sync-indicator').slideDown();
             } else {
-                // Jika tidak ada cache, tampilkan Skeleton Loading
                 renderSkeleton();
             }
 
@@ -308,19 +324,17 @@
             })
             .then(res => res.json())
             .then(res => {
-                $('#sync-indicator').slideUp(); // Sembunyikan indikator loading
+                $('#sync-indicator').slideUp();
                 
                 if(res.status === 'success') {
                     const serverDataStr = JSON.stringify(res.data);
                     
-                    // Jika data server berbeda dengan cache (atau cache kosong), update UI
                     if (serverDataStr !== cached) {
                         console.log("Data baru ditemukan, update UI...");
-                        localStorage.setItem(CACHE_KEY, serverDataStr); // Update Cache
+                        localStorage.setItem(DATA_CACHE_KEY, serverDataStr);
                         rawData = res.data;
                         renderApp(rawData);
                         
-                        // Opsional: Toast notif jika user sedang melihat data lama
                         if(cached) {
                              const Toast = Swal.mixin({ toast: true, position: 'bottom', showConfirmButton: false, timer: 2000 });
                              Toast.fire({ icon: 'info', title: 'Data diperbarui' });
@@ -337,7 +351,6 @@
             });
         }
 
-        // Fungsi Wrapper untuk render semua komponen
         function renderApp(data) {
             updateStats(data);
             populateFilters(data);
@@ -371,8 +384,6 @@
                 let isActive = row.status === 'Aktif';
                 let isNew = row.waktu && row.waktu.toString().includes(today) ? `<span class="badge-new">BARU</span>` : '';
                 let statusClass = isActive ? 'status-aktif' : 'status-non';
-                
-                // UX: Jabatan handling (jika kosong set default strip)
                 let jabatan = row.jabatan || "-";
 
                 let cardHtml = `
@@ -417,8 +428,6 @@
             const sekolahUnik = [...new Set(data.map(item => item.sekolah))].filter(Boolean).sort();
             const select = $('#filterSekolah');
             const selectEdit = $('#editSekolah');
-            
-            // Simpan value saat ini agar tidak reset saat refresh background
             const currentFilter = select.val();
             
             select.empty().append('<option value="">Semua</option>');
@@ -439,7 +448,6 @@
             const filteredData = rawData.filter(item => {
                 const matchName = item.nama.toLowerCase().includes(keyword);
                 const matchNip = item.nip.toString().includes(keyword);
-                // Tambahkan pencarian jabatan juga
                 const matchJabatan = (item.jabatan || "").toLowerCase().includes(keyword); 
                 const matchSekolah = sekolahFilter ? item.sekolah === sekolahFilter : true;
                 
@@ -462,7 +470,6 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // UX: Loading Alert
                     Swal.fire({ title: 'Mengirim...', didOpen: () => Swal.showLoading() });
                     
                     fetch(API_URL, {
@@ -482,7 +489,7 @@
             $('#editRowIndex').val(data.rowIndex);
             $('#editNama').val(data.nama);
             $('#editNip').val(data.nip);
-            $('#editJabatan').val(data.jabatan || ""); // Load data jabatan
+            $('#editJabatan').val(data.jabatan || "");
             $('#editSekolah').val(data.sekolah);
             $('#editEmail').val(data.email);
             
@@ -501,7 +508,7 @@
                 rowIndex: $('#editRowIndex').val(),
                 nama: $('#editNama').val(),
                 nip: $('#editNip').val(),
-                jabatan: $('#editJabatan').val(), // Kirim jabatan baru
+                jabatan: $('#editJabatan').val(),
                 sekolah: $('#editSekolah').val(),
                 email: $('#editEmail').val()
             };
@@ -516,7 +523,7 @@
             .then(res => {
                 if(res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'Data Disimpan', timer: 1500, showConfirmButton: false });
-                    loadDataWithCache(); // Refresh data
+                    loadDataWithCache();
                 } else {
                     Swal.fire('Gagal', res.message, 'error');
                 }
