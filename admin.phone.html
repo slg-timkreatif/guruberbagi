@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <title>Admin Akun GB</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --primary-color: #4e73df; --bg-light: #f0f2f5; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
+        
+        /* === LOGIN STYLE === */
+        .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: white; }
+        .login-box { width: 100%; max-width: 350px; text-align: center; }
+        
+        /* === HEADER STICKY === */
+        .mobile-header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        
+        /* === STATS COMPACT === */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-item { background: white; padding: 10px 5px; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
+        .stat-item h3 { font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--primary-color); }
+        .stat-item small { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+        /* === USER CARD === */
+        .user-card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.03); position: relative; transition: transform 0.2s; }
+        .user-card:active { transform: scale(0.98); }
+        
+        /* Status Indicator Strip */
+        .user-card::before { content: ''; position: absolute; left: 0; top: 15px; bottom: 15px; width: 4px; border-radius: 0 4px 4px 0; }
+        .user-card.status-aktif::before { background-color: #1cc88a; }
+        .user-card.status-non::before { background-color: #e74a3b; }
+
+        .card-name { font-weight: 700; font-size: 1.05rem; color: #2c3e50; margin-bottom: 2px; }
+        .card-sub { font-size: 0.85rem; color: #6c757d; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .card-role { font-size: 0.75rem; color: #4e73df; font-weight: 600; background: #f0f4ff; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+        
+        .card-meta { background: #f8f9fa; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #555; margin-top: 8px; border: 1px solid #eee; }
+        
+        /* Action Buttons */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .btn-action { font-size: 0.8rem; padding: 8px 0; border-radius: 8px; font-weight: 500; border: 1px solid transparent; }
+        .btn-action-pin { background: #e3f2fd; color: #0d47a1; }
+        .btn-action-edit { background: #fff3cd; color: #856404; }
+        .btn-action-del { background: #f8d7da; color: #721c24; }
+
+        /* === UTILS === */
+        .badge-new { background-color: #ffc107; color: #000; font-size: 0.6em; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; animation: blink 2s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* === SKELETON LOADING (UX PERFORMANCE) === */
+        .skeleton { background: #eee; background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%); border-radius: 5px; background-size: 200% 100%; animation: 1.5s shine linear infinite; }
+        @keyframes shine { to { background-position-x: -200%; } }
+        .sk-card { height: 160px; margin-bottom: 12px; border-radius: 12px; }
+
+        /* Search Bar */
+        .form-search { border-radius: 20px; background-color: #f8f9fa; border: 1px solid #e9ecef; padding-left: 40px; }
+        .search-icon { position: absolute; left: 25px; top: 10px; color: #aaa; }
+        
+        #sync-indicator { font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage" class="login-wrapper">
+        <div class="login-box">
+            <div class="mb-4">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 70px; height: 70px;">
+                    <i class="fa-solid fa-shield-halved fa-2x"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Admin Akun GB</h4>
+                <p class="text-muted small">Korwilcambidik Selogiri</p>
+            </div>
+            <form id="formLogin">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" placeholder="Username" required>
+                    <label>Username</label>
+                </div>
+                <div class="form-floating mb-4">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    <label>Password</label>
+                </div>
+                <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
+                    MASUK APLIKASI
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboardPage" style="display:none;">
+        
+        <div class="mobile-header shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="fw-bold m-0 text-primary">Admin Akun GB</h5>
+                    <small class="text-muted" id="headerGreeting">Halo, Admin</small>
+                </div>
+                <button onclick="logout()" class="btn btn-sm btn-light rounded-circle shadow-sm" style="width: 38px; height: 38px;">
+                    <i class="fa-solid fa-power-off text-danger"></i>
+                </button>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <h3 id="statTotal">0</h3>
+                    <small>Total Guru</small>
+                </div>
+                <div class="stat-item">
+                    <h3 id="statSekolah">0</h3>
+                    <small>Sekolah</small>
+                </div>
+                <div class="stat-item">
+                    <h3 id="statAktif">0</h3>
+                    <small>Akun Aktif</small>
+                </div>
+            </div>
+
+            <div class="row g-2 relative">
+                <div class="col-8 position-relative">
+                    <i class="fa-solid fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="form-control form-search" placeholder="Cari nama / NIP...">
+                </div>
+                <div class="col-4">
+                    <select id="filterSekolah" class="form-select" style="border-radius: 20px; font-size: 0.85rem; background-color:#f8f9fa; border:1px solid #e9ecef;">
+                        <option value="">Semua</option>
+                    </select>
+                </div>
+            </div>
+            <div id="sync-indicator"><i class="fa-solid fa-rotate fa-spin me-1"></i> Sinkronisasi data...</div>
+        </div>
+
+        <div class="container mt-3">
+            <div id="cardContainer"></div>
+            
+            <div id="emptyState" class="text-center mt-5" style="display:none;">
+                <i class="fa-solid fa-folder-open fa-3x text-muted mb-3 opacity-25"></i>
+                <p class="text-muted fw-bold small">Data tidak ditemukan</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title fw-bold">Edit Data Guru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <form id="formEdit">
+                        <input type="hidden" id="editRowIndex">
+                        <div class="card p-3 shadow-sm border-0 rounded-3">
+                            <div class="mb-3">
+                                <label class="fw-bold small text-muted">NAMA LENGKAP</label>
+                                <input type="text" id="editNama" class="form-control fw-bold" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold small text-muted">NIP</label>
+                                <input type="number" id="editNip" class="form-control" required inputmode="numeric">
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold small text-muted">JABATAN</label>
+                                <input type="text" id="editJabatan" class="form-control" required placeholder="Contoh: Guru Kelas / Kepala Sekolah">
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold small text-muted">SEKOLAH</label>
+                                <select id="editSekolah" class="form-select" required></select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold small text-muted">EMAIL</label>
+                                <input type="email" id="editEmail" class="form-control" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 bg-white">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" onclick="$('#formEdit').submit()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">SIMPAN DATA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // ==========================================
+        // CONFIG
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbygdl97_Fikp6Al7gsaGI190G3Z-vr8LfAf0I50w_aONmIPS4CSG9eL4mu2g1jJSkyA/exec";
+        const CACHE_KEY = "gb_admin_data_v1"; // Kunci untuk LocalStorage
+        
+        let rawData = [];
+        let currentUser = null;
+
+        // ==========================================
+        // INIT & SESSION CHECK
+        // ==========================================
+        $(document).ready(function() {
+            const session = sessionStorage.getItem('adminUser');
+            
+            // UX: Disable double tap zoom on buttons
+            document.addEventListener('dblclick', function(event) {
+                event.preventDefault();
+            }, { passive: false });
+
+            if(session) {
+                currentUser = JSON.parse(session);
+                showDashboard();
+            } else {
+                $('#loginPage').show();
+            }
+        });
+
+        // ==========================================
+        // LOGIN & LOGOUT
+        // ==========================================
+        $('#formLogin').on('submit', function(e) {
+            e.preventDefault();
+            const btn = $('#btnLogin');
+            const originalText = btn.html();
+            
+            // UX: Loading state pada tombol
+            btn.prop('disabled', true).html('<i class="fa-solid fa-circle-notch fa-spin"></i> Memverifikasi...');
+            
+            const username = $('#username').val();
+            const password = $('#password').val();
+            
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'login', payload: { username, password } })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.prop('disabled', false).html(originalText);
+                if(data.status === 'success') {
+                    currentUser = data.user;
+                    sessionStorage.setItem('adminUser', JSON.stringify(currentUser));
+                    showDashboard();
+                    
+                    // UX: Toast Notification (Non-blocking)
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                    Toast.fire({ icon: 'success', title: 'Berhasil Masuk' });
+                } else {
+                    Swal.fire('Gagal', data.message, 'error');
+                }
+            })
+            .catch(err => {
+                btn.prop('disabled', false).html(originalText);
+                Swal.fire('Error', 'Koneksi bermasalah', 'error');
+            });
+        });
+
+        function logout() {
+            Swal.fire({
+                title: 'Logout?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#d33'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.removeItem('adminUser');
+                    location.reload();
+                }
+            });
+        }
+
+        function showDashboard() {
+            $('#loginPage').hide();
+            $('#dashboardPage').fadeIn();
+            $('#headerGreeting').text(`Halo, ${currentUser.nama.split(' ')[0]}`);
+            loadDataWithCache(); // Menggunakan strategi cache
+        }
+
+        // ==========================================
+        // DATA STRATEGY (STALE-WHILE-REVALIDATE)
+        // ==========================================
+        function loadDataWithCache() {
+            // 1. Cek Cache Lokal
+            const cached = localStorage.getItem(CACHE_KEY);
+            
+            if (cached) {
+                // Jika ada cache, render LANGSUNG (Instant Load)
+                console.log("Memuat dari cache...");
+                const parsedData = JSON.parse(cached);
+                rawData = parsedData;
+                renderApp(rawData);
+                
+                // Tampilkan indikator sinkronisasi background
+                $('#sync-indicator').slideDown();
+            } else {
+                // Jika tidak ada cache, tampilkan Skeleton Loading
+                renderSkeleton();
+            }
+
+            // 2. Fetch Data Baru (Background Sync)
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getAllData', payload: {} })
+            })
+            .then(res => res.json())
+            .then(res => {
+                $('#sync-indicator').slideUp(); // Sembunyikan indikator loading
+                
+                if(res.status === 'success') {
+                    const serverDataStr = JSON.stringify(res.data);
+                    
+                    // Jika data server berbeda dengan cache (atau cache kosong), update UI
+                    if (serverDataStr !== cached) {
+                        console.log("Data baru ditemukan, update UI...");
+                        localStorage.setItem(CACHE_KEY, serverDataStr); // Update Cache
+                        rawData = res.data;
+                        renderApp(rawData);
+                        
+                        // Opsional: Toast notif jika user sedang melihat data lama
+                        if(cached) {
+                             const Toast = Swal.mixin({ toast: true, position: 'bottom', showConfirmButton: false, timer: 2000 });
+                             Toast.fire({ icon: 'info', title: 'Data diperbarui' });
+                        }
+                    }
+                }
+            })
+            .catch(err => {
+                $('#sync-indicator').hide();
+                console.error("Gagal sinkronisasi", err);
+                if(!cached) {
+                    $('#cardContainer').html('<div class="text-center mt-5 text-danger"><i class="fa-solid fa-wifi fa-2x mb-2"></i><br>Gagal memuat data</div>');
+                }
+            });
+        }
+
+        // Fungsi Wrapper untuk render semua komponen
+        function renderApp(data) {
+            updateStats(data);
+            populateFilters(data);
+            renderList(data);
+        }
+
+        // ==========================================
+        // RENDER LOGIC
+        // ==========================================
+        function renderSkeleton() {
+            let html = '';
+            for(let i=0; i<3; i++) {
+                html += `<div class="skeleton sk-card"></div>`;
+            }
+            $('#cardContainer').html(html);
+        }
+
+        function renderList(data) {
+            const container = $('#cardContainer');
+            container.empty();
+            
+            if(data.length === 0) {
+                $('#emptyState').show();
+                return;
+            }
+            $('#emptyState').hide();
+
+            const today = new Date().toISOString().slice(0,10);
+
+            data.forEach(row => {
+                let isActive = row.status === 'Aktif';
+                let isNew = row.waktu && row.waktu.toString().includes(today) ? `<span class="badge-new">BARU</span>` : '';
+                let statusClass = isActive ? 'status-aktif' : 'status-non';
+                
+                // UX: Jabatan handling (jika kosong set default strip)
+                let jabatan = row.jabatan || "-";
+
+                let cardHtml = `
+                    <div class="user-card ${statusClass}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="card-name">${row.nama} ${isNew}</div>
+                                <div class="card-sub"><i class="fa-solid fa-school fa-fw"></i> ${row.sekolah}</div>
+                                <div class="card-role"><i class="fa-solid fa-user-tie fa-fw me-1"></i>${jabatan}</div>
+                            </div>
+                            <div class="ms-2">
+                                ${isActive ? '<i class="fa-solid fa-circle-check text-success fa-lg"></i>' : '<i class="fa-solid fa-ban text-danger fa-lg"></i>'}
+                            </div>
+                        </div>
+                        
+                        <div class="card-meta">
+                            <span><i class="fa-regular fa-id-badge me-1"></i> ${row.nip}</span>
+                            <span class="fw-bold text-primary">PIN: ${row.pin}</span>
+                        </div>
+
+                        <div class="action-grid">
+                            <button class="btn btn-action btn-action-pin" onclick="resendPin(${row.rowIndex})">
+                                <i class="fa-solid fa-envelope"></i> Kirim PIN
+                            </button>
+                            <button class="btn btn-action btn-action-edit" onclick='openEditModal(${JSON.stringify(row)})'>
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </button>
+                            <button class="btn btn-action btn-action-del" onclick="deleteData(${row.rowIndex}, '${row.nama}')">
+                                <i class="fa-solid fa-trash-can"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.append(cardHtml);
+            });
+        }
+
+        // ==========================================
+        // SEARCH & FILTER
+        // ==========================================
+        function populateFilters(data) {
+            const sekolahUnik = [...new Set(data.map(item => item.sekolah))].filter(Boolean).sort();
+            const select = $('#filterSekolah');
+            const selectEdit = $('#editSekolah');
+            
+            // Simpan value saat ini agar tidak reset saat refresh background
+            const currentFilter = select.val();
+            
+            select.empty().append('<option value="">Semua</option>');
+            selectEdit.empty().append('<option value="">Pilih Sekolah...</option>');
+            
+            sekolahUnik.forEach(sekolah => {
+                select.append(`<option value="${sekolah}">${sekolah}</option>`);
+                selectEdit.append(`<option value="${sekolah}">${sekolah}</option>`);
+            });
+            
+            if(currentFilter) select.val(currentFilter);
+        }
+
+        $('#searchInput, #filterSekolah').on('input change', function() {
+            const keyword = $('#searchInput').val().toLowerCase();
+            const sekolahFilter = $('#filterSekolah').val();
+
+            const filteredData = rawData.filter(item => {
+                const matchName = item.nama.toLowerCase().includes(keyword);
+                const matchNip = item.nip.toString().includes(keyword);
+                // Tambahkan pencarian jabatan juga
+                const matchJabatan = (item.jabatan || "").toLowerCase().includes(keyword); 
+                const matchSekolah = sekolahFilter ? item.sekolah === sekolahFilter : true;
+                
+                return (matchName || matchNip || matchJabatan) && matchSekolah;
+            });
+
+            renderList(filteredData);
+        });
+
+        // ==========================================
+        // ACTIONS
+        // ==========================================
+        function resendPin(rowIndex) {
+            Swal.fire({
+                title: 'Kirim PIN?',
+                text: "PIN akan dikirim ke email guru.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Kirim Sekarang',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // UX: Loading Alert
+                    Swal.fire({ title: 'Mengirim...', didOpen: () => Swal.showLoading() });
+                    
+                    fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'resendPin', payload: { rowIndex, adminName: currentUser.username } })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.status === 'success') Swal.fire('Terkirim!', 'Email berhasil dikirim.', 'success');
+                        else Swal.fire('Gagal', res.message, 'error');
+                    });
+                }
+            });
+        }
+
+        function openEditModal(data) {
+            $('#editRowIndex').val(data.rowIndex);
+            $('#editNama').val(data.nama);
+            $('#editNip').val(data.nip);
+            $('#editJabatan').val(data.jabatan || ""); // Load data jabatan
+            $('#editSekolah').val(data.sekolah);
+            $('#editEmail').val(data.email);
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalEdit'));
+            modal.show();
+        }
+
+        $('#formEdit').on('submit', function(e) {
+            e.preventDefault();
+            const modalEl = document.getElementById('modalEdit');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+
+            const payload = {
+                adminName: currentUser.username,
+                rowIndex: $('#editRowIndex').val(),
+                nama: $('#editNama').val(),
+                nip: $('#editNip').val(),
+                jabatan: $('#editJabatan').val(), // Kirim jabatan baru
+                sekolah: $('#editSekolah').val(),
+                email: $('#editEmail').val()
+            };
+
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading() });
+
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateData', payload: payload })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'Data Disimpan', timer: 1500, showConfirmButton: false });
+                    loadDataWithCache(); // Refresh data
+                } else {
+                    Swal.fire('Gagal', res.message, 'error');
+                }
+            });
+        });
+
+        function deleteData(rowIndex, nama) {
+            Swal.fire({
+                title: 'Non-aktifkan?',
+                text: `${nama} tidak akan bisa login lagi.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ya, Non-aktifkan'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Memproses...', didOpen: () => Swal.showLoading() });
+                    fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'deleteData', payload: { rowIndex, adminName: currentUser.username } })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.status === 'success') {
+                            Swal.fire({ icon: 'success', title: 'Berhasil', timer: 1000, showConfirmButton: false });
+                            loadDataWithCache();
+                        }
+                    });
+                }
+            });
+        }
+
+        function updateStats(data) {
+            $('#statTotal').text(data.length);
+            const unikSekolah = [...new Set(data.map(item => item.sekolah))].filter(Boolean).length;
+            $('#statSekolah').text(unikSekolah);
+            const aktif = data.filter(item => item.status === 'Aktif').length;
+            $('#statAktif').text(aktif);
+        }
+    </script>
+</body>
+</html>
