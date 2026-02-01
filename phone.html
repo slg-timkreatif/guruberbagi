@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>Guru Berbagi - Mobile</title>
+  <title>Guru Berbagi - Korwilcambidik Selogiri</title>
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -24,7 +26,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif; 
       color: var(--text-main); 
       padding-top: 115px; 
-      padding-bottom: 90px;
+      padding-bottom: 90px; /* Space for FAB */
     }
 
     /* --- MOBILE HEADER & NAV --- */
@@ -64,8 +66,6 @@
     }
     .m-card:active { background-color: #f8fafc; }
     
-    .m-card-inner { display: flex; width: 100%; gap: 12px; align-items: start; }
-
     .m-thumb {
       width: 70px; height: 70px; border-radius: 8px; background: #e2e8f0;
       flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -114,7 +114,10 @@
     .profile-avatar-wrapper { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 10; }
     .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; background: #f1f5f9; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .profile-stats-box { background: #f8fafc; border-radius: 12px; padding: 10px 5px; text-align: center; border: 1px solid #e2e8f0; }
+    
+    /* Medal Badges Styles (Updated for 7 Levels) */
     .medal-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; color: #64748b; }
+    .bg-purple { background-color: #9333ea !important; color: white !important; }
 
     /* --- BUTTON EFFECT --- */
     .btn-press-effect:active { transform: scale(0.95); transition: transform 0.1s; }
@@ -150,8 +153,6 @@
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
     
     .d-none { display: none !important; }
-    .bg-purple { background-color: #9333ea !important; color: white; }
-    .bg-indigo { background-color: #4f46e5 !important; color: white; }
 
     /* Profile Tabs */
     .nav-pills-profile .nav-link { color: #64748b; background: #f1f5f9; border-radius: 50rem; padding: 6px 14px; font-size: 0.8rem; font-weight: 700; margin-right: 6px; }
@@ -301,10 +302,18 @@
            <div style="margin-top: 50px;">
                <h5 class="fw-800 text-dark mb-0 px-3" id="prof-name">Nama Guru</h5>
                <div class="text-muted small fw-bold px-3 mb-2" id="prof-school">Unit Kerja</div>
+               
                <div class="d-flex justify-content-center gap-2 mb-3">
                    <span class="badge bg-light text-dark border" id="prof-role">GURU</span>
                    <span id="prof-medal"></span>
                </div>
+
+               <div class="mb-3">
+                   <button onclick="openCardModal()" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold">
+                       <i class="fas fa-id-card me-2"></i> Cetak Kartu Creator
+                   </button>
+               </div>
+               
                <div class="bg-light mx-4 p-2 rounded-3 border d-inline-block px-4">
                    <div class="small text-muted fw-bold mb-1" style="font-size:0.6rem">POSISI PERINGKAT</div>
                    <div class="d-flex align-items-center justify-content-center gap-2">
@@ -406,13 +415,98 @@
   <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Kurasi Karya</h5></div><div class="modal-body"><input type="hidden" id="kurId"><label class="small fw-bold">Status</label><select id="kurStatus" class="form-select mb-3"><option value="BARU">BARU</option><option value="DISETUJUI">DISETUJUI</option><option value="REVISI">REVISI</option></select><label class="small fw-bold">Catatan Moderator</label><textarea id="kurNote" class="form-control" rows="3"></textarea></div><div class="modal-footer border-0"><button onclick="saveKurasi()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Update Status</button></div></div></div></div>
   <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h5 class="fw-bold" id="userModalTitle">Data Guru</h5></div><div class="modal-body"><form id="formUser"><input type="hidden" id="uMode" value="ADD"><input type="hidden" id="uOldPin"><label class="small text-muted fw-bold">Nama</label><input type="text" id="uInputName" class="form-control mb-2"><label class="small text-muted fw-bold">Sekolah</label><input type="text" id="uInputSchool" class="form-control mb-2"><div class="row g-2"><div class="col-6"><label class="small text-muted fw-bold">PIN</label><input type="text" id="uInputPin" class="form-control"></div><div class="col-6"><label class="small text-muted fw-bold">Role</label><select id="uInputRole" class="form-select"><option value="GURU">GURU</option><option value="KEPSEK">KEPALA SEKOLAH</option><option value="OPS">OPERATOR SEKOLAH</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="saveUser()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Simpan Data</button></div></div></div></div>
 
+  <div class="modal fade" id="modalCetakKartu" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold">Kartu Tanda Creator</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          
+          <div id="cardArea" class="position-relative overflow-hidden rounded-4 shadow-sm text-start mx-auto" 
+               style="width:300px; height:480px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color:white;">
+              
+              <div style="position:absolute; top:-50px; right:-50px; width:150px; height:150px; background:rgba(255,255,255,0.1); border-radius:50%;"></div>
+              <div style="position:absolute; bottom:-20px; left:-20px; width:100px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%;"></div>
+              <div style="position:absolute; top:0; left:0; right:0; bottom:0; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px);"></div>
+  
+              <div class="p-4 d-flex flex-column h-100 justify-content-between position-relative" style="z-index:2;">
+                  <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center gap-2">
+                          <img src="https://i.imgur.com/kNgOisY.png" style="height:28px;">
+                          <div style="line-height:1.1;">
+                              <div class="fw-bold" style="font-size:0.7rem; letter-spacing:0.5px;">GURU BERBAGI</div>
+                              <div style="font-size:0.5rem; opacity:0.7;">SELOGIRI</div>
+                          </div>
+                      </div>
+                      <div class="border border-light rounded-pill px-2 py-0" style="font-size:0.6rem; opacity:0.8;">
+                          <i class="fas fa-check-circle me-1"></i>VERIFIED
+                      </div>
+                  </div>
+  
+                  <div class="text-center mt-3">
+                      <div class="mx-auto d-flex align-items-center justify-content-center bg-white text-dark fw-bold rounded-circle mb-3 shadow-lg" 
+                           style="width:90px; height:90px; font-size:2.5rem; border:4px solid rgba(255,255,255,0.2);" id="cardAvatar">
+                           U
+                      </div>
+                      <h5 class="fw-bold mb-1 text-truncate px-2" id="cardName">Nama Guru</h5>
+                      <div class="small opacity-75 mb-3 text-truncate px-4" id="cardSchool">Unit Kerja</div>
+                      
+                      <div class="d-inline-block px-4 py-1 rounded-pill fw-bold shadow-sm" 
+                           id="cardBadgeContainer" style="background: white; color:#333; font-size:0.8rem;">
+                          <span id="cardLevel">LEVEL</span>
+                      </div>
+                  </div>
+  
+                  <div class="row g-2 mt-2 px-2 text-center">
+                      <div class="col-6">
+                          <div class="rounded p-2" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);">
+                              <div class="h5 fw-bold mb-0" id="cardKarya">0</div>
+                              <small style="font-size:0.55rem; letter-spacing:1px; opacity:0.8;">KARYA</small>
+                          </div>
+                      </div>
+                      <div class="col-6">
+                          <div class="rounded p-2" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);">
+                              <div class="h5 fw-bold mb-0" id="cardViews">0</div>
+                              <small style="font-size:0.55rem; letter-spacing:1px; opacity:0.8;">VIEWS</small>
+                          </div>
+                      </div>
+                  </div>
+  
+                  <div class="mt-3 px-3">
+                      <div id="cardQuote" class="fst-italic text-center opacity-75" 
+                           style="font-size: 0.6rem; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); padding: 8px 0;">
+                          "Quote akan muncul disini..."
+                      </div>
+                  </div>
+  
+                  <div class="text-center mt-auto pt-2">
+                      <div class="bg-white p-1 d-inline-block rounded mb-2">
+                          <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=KORWILCAMBIDIK_SELOGIRI" width="50" height="50">
+                      </div>
+                      <div class="fw-bold" style="font-size:0.6rem; letter-spacing:1px;">KORWILCAMBIDIK<br>KECAMATAN SELOGIRI</div>
+                  </div>
+              </div>
+          </div>
+          <div class="mt-4 px-3 pb-2">
+              <p class="small text-muted mb-2">Bagikan pencapaian Anda ke grup sekolah!</p>
+              <button onclick="downloadCard()" class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow btn-press-effect">
+                  <i class="fas fa-download me-2"></i> SIMPAN GAMBAR
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
-    const CACHE_KEY = 'gb_cache_data'; // Kunci Cache yang konsisten
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 Menit Cache
+    const CACHE_KEY = 'gb_cache_data'; 
+    const CACHE_DURATION = 5 * 60 * 1000; 
 
     let APP = {
        data: [], filtered: [], users: [], settings: [],
@@ -428,19 +522,16 @@
     };
 
     async function api(action, payload=null) {
-       // Caching Logic: Jika action READ, cek LocalStorage
        if(action==='read'){ 
            try {
                const c=localStorage.getItem(CACHE_KEY); 
                if(c){
                    const j=JSON.parse(c);
-                   // Jika cache masih valid (< 5 menit), pakai data cache
                    if(Date.now()-j.ts < CACHE_DURATION) return j.data;
                } 
            } catch(e) { console.log("Cache read error", e); }
        }
        
-       // Jika ada aksi tulis (Simpan/Hapus), hapus cache agar data terupdate
        if(['simpan','hapus','updateKurasi','simpanUser','hapusUser'].includes(action)) localStorage.removeItem(CACHE_KEY);
        
        try {
@@ -448,7 +539,6 @@
          if(action==='read') url+="?action=read"; else opts={method:"POST",body:JSON.stringify({action,payload})};
          const req=await fetch(url,opts); const res=await req.json();
          
-         // Jika berhasil baca data baru, simpan ke cache
          if(action==='read'&&res.status==='success') {
              try {
                 localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:res}));
@@ -484,7 +574,6 @@
           document.getElementById('uAvatar').innerText = APP.user.name.charAt(0);
           document.getElementById('uRole').innerText = APP.user.role; 
           
-          // Flexible Role Logic
           const role = (APP.user.role || "").toUpperCase();
           const isAdmin = role.includes('ADMIN');
           const isModerator = role.includes('MODERATOR');
@@ -494,20 +583,16 @@
           const hasDashboardAccess = isAdmin || isModerator || isKepala || isOperator;
           const isGlobalAdmin = isAdmin || isModerator;
 
-          // Admin Dashboard Button in Menu
           var menuDash = document.getElementById('menuDashboardItem');
           if(menuDash) menuDash.classList.toggle('d-none', !hasDashboardAccess);
 
-          // Role Badge in Dashboard
           if(hasDashboardAccess) {
               document.getElementById('admRoleBadge').innerText = APP.user.role;
-              // Toggle elements based on role scope
               document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', isAdmin ? 'block' : 'none', 'important'));
               document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isGlobalAdmin ? 'block' : 'none', 'important'));
           } 
        }
        
-       // Handle "Guru" tab visibility in Admin Panel
        const role = (APP.user.role || "").toUpperCase();
        const canManageUsers = role.includes('ADMIN') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
        document.getElementById('tabLinkUsers').classList.toggle('d-none', !canManageUsers);
@@ -541,7 +626,6 @@
         if(tab === 'PROFILE') { if(APP.user.role === 'GUEST') { loginModal(); return; } document.getElementById('tab-mine').classList.add('active'); switchView('PROFILE'); }
         if(tab === 'FAV') { document.getElementById('tab-fav').classList.add('active'); switchView('GALERI'); applyFilters(); }
         
-        // Custom: Dashboard view
         if(tab === 'DASHBOARD') { if(APP.user.role === 'GUEST') return; document.getElementById('tab-mine').classList.add('active'); switchView('DASHBOARD'); }
         
         if(tab === 'ALL') applyFilters();
@@ -623,20 +707,162 @@
         let ranked = Object.entries(teacherCounts).sort((a,b) => b[1] - a[1]); let myRank = ranked.findIndex(r => r[0] === user.name) + 1;
         document.getElementById('prof-rank').innerText = myRank > 0 ? `#${myRank}` : "-"; document.getElementById('prof-total-user').innerText = Object.keys(teacherCounts).length;
         
-        let medalHtml = ''; const t=myMedia.length;
-        if(t>=50) medalHtml='<span class="medal-badge text-warning"><i class="fas fa-crown"></i> SUHU</span>'; else if(t>=20) medalHtml='<span class="medal-badge text-secondary"><i class="fas fa-medal"></i> SENIOR</span>'; else if(t>=5) medalHtml='<span class="medal-badge text-primary"><i class="fas fa-star"></i> AKTIF</span>'; else medalHtml='<span class="medal-badge text-muted"><i class="fas fa-seedling"></i> PEMULA</span>';
+        // [UPDATE] LOGIKA 7 LEVEL BADGE (Profil)
+        let medalHtml = ''; const t = myMedia.length;
+        if(t >= 100) {
+            medalHtml='<span class="medal-badge bg-purple"><i class="fas fa-crown"></i> SUHU</span>'; 
+        } else if(t >= 75) {
+            medalHtml='<span class="medal-badge text-danger"><i class="fas fa-palette"></i> MAESTRO</span>'; 
+        } else if(t >= 50) {
+            medalHtml='<span class="medal-badge text-warning"><i class="fas fa-graduation-cap"></i> MENTOR</span>'; 
+        } else if(t >= 25) {
+            medalHtml='<span class="medal-badge text-info"><i class="fas fa-star"></i> TELADAN</span>'; 
+        } else if(t >= 10) {
+            medalHtml='<span class="medal-badge text-success"><i class="fas fa-fire"></i> PENGGERAK</span>'; 
+        } else if(t >= 5) {
+            medalHtml='<span class="medal-badge text-primary"><i class="fas fa-flag"></i> PERINTIS</span>'; 
+        } else {
+            medalHtml='<span class="medal-badge text-muted"><i class="fas fa-seedling"></i> PEMULA</span>'; 
+        }
+        
         document.getElementById('prof-medal').innerHTML=medalHtml;
 
         const listContainer = document.getElementById('prof-works-list'); const emptyState = document.getElementById('prof-empty-works');
         if(myMedia.length === 0) { listContainer.innerHTML = ''; emptyState.classList.remove('d-none'); } else {
             emptyState.classList.add('d-none'); let html = '';
             myMedia.forEach(m => {
-                const id = m[13]; // ID Unik
+                const id = m[13]; 
                 const statusBadge = m[9] === 'DISETUJUI' ? '<span class="badge bg-success">Tayang</span>' : (m[9] === 'REVISI' ? '<span class="badge bg-danger">Revisi</span>' : '<span class="badge bg-warning text-dark">Pending</span>');
                 html += `<div class="m-card align-items-center"><div class="flex-grow-1 min-w-0"><div class="fw-bold text-dark text-truncate" style="font-size:0.85rem">${m[5]}</div><div class="small text-muted" style="font-size:0.7rem">${m[6]} 窶｢ ${m[14]||0} Views</div></div><div class="text-end">${statusBadge}<div class="mt-2"><button onclick="editItem('${id}')" class="btn btn-sm btn-light border text-primary py-0 px-2"><i class="fas fa-pen" style="font-size:0.7rem"></i></button><button onclick="deleteItem('${id}')" class="btn btn-sm btn-light border text-danger py-0 px-2 ms-1"><i class="fas fa-trash" style="font-size:0.7rem"></i></button></div></div></div>`;
             });
             listContainer.innerHTML = html;
         }
+    }
+
+    // [BARU] Fungsi Cetak Kartu dengan Logika 7 Level
+    function openCardModal() {
+        const user = APP.user;
+        if(user.role === 'GUEST') return Swal.fire('Login Dulu','Silakan login untuk cetak kartu.','warning');
+
+        // 1. Hitung Data
+        const myMedia = APP.data.filter(m => m[1] === user.name);
+        const totalViews = myMedia.reduce((a, c) => a + (parseInt(c[14]) || 0), 0);
+        const count = myMedia.length;
+        
+        // 2. SETUP LOGIKA 7 LEVEL
+        let levelText = "PEMULA";
+        let bgStyle = "linear-gradient(135deg, #64748b 0%, #334155 100%)"; // Abu (Default)
+        let badgeColor = "#334155"; 
+        let quoteText = '"Setiap perjalanan besar dimulai dari satu langkah kecil. Ayo upload karya pertamamu!"';
+
+        if(count >= 100) { 
+            // LEVEL 7: SUHU (100+)
+            levelText = "SUHU 👑"; 
+            bgStyle = "linear-gradient(135deg, #4c1d95 0%, #2e1065 100%)"; // Ungu Deep
+            badgeColor = "#4c1d95";
+            quoteText = '"100 KARYA! Dedikasi tanpa batas. Anda adalah legenda pendidikan di Selogiri."';
+            
+        } else if(count >= 75) {
+            // LEVEL 6: MAESTRO (75-99)
+            levelText = "MAESTRO 🎨"; 
+            bgStyle = "linear-gradient(135deg, #be123c 0%, #881337 100%)"; // Merah Maroon
+            badgeColor = "#be123c";
+            quoteText = '"Karya adalah seni mendidik. Terima kasih telah melukis masa depan anak bangsa dengan konsisten."';
+            
+        } else if(count >= 50) {
+            // LEVEL 5: MENTOR (50-74)
+            levelText = "MENTOR 🎓"; 
+            bgStyle = "linear-gradient(135deg, #b45309 0%, #78350f 100%)"; // Bronze/Coklat
+            badgeColor = "#b45309";
+            quoteText = '"Ilmu yang dibagi akan abadi. Terima kasih telah menjadi rujukan dan pembimbing bagi kami."';
+            
+        } else if(count >= 25) {
+            // LEVEL 4: TELADAN (25-49)
+            levelText = "TELADAN ⭐"; 
+            bgStyle = "linear-gradient(135deg, #0e7490 0%, #155e75 100%)"; // Cyan/Tosca Gelap
+            badgeColor = "#0e7490";
+            quoteText = '"Keteladanan bukan sekadar kata, tapi karya nyata. Anda adalah inspirasi bagi rekan sejawat."';
+            
+        } else if(count >= 10) {
+            // LEVEL 3: PENGGERAK (10-24)
+            levelText = "PENGGERAK 🔥"; 
+            bgStyle = "linear-gradient(135deg, #15803d 0%, #14532d 100%)"; // Hijau Tua
+            badgeColor = "#15803d";
+            quoteText = '"Bergerak, tergerak, dan menggerakkan. Selamat bergabung di barisan guru produktif!"';
+            
+        } else if(count >= 5) {
+            // LEVEL 2: PERINTIS (5-9)
+            levelText = "PERINTIS 🚩"; 
+            bgStyle = "linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%)"; // Biru Royal
+            badgeColor = "#1d4ed8";
+            quoteText = '"Langkah awal telah dibuat. Teruslah merintis jalan kebaikan lewat karya-karya digital."';
+            
+        } else {
+            // LEVEL 1: PEMULA (0-4)
+            quoteText = '"Jangan berhenti! Sedikit lagi menuju level PERINTIS. Lengkapi koleksi karyamu menjadi 5!"';
+        }
+
+        // 3. Masukkan Data ke HTML Template
+        document.getElementById('cardName').innerText = user.name;
+        document.getElementById('cardSchool').innerText = user.school;
+        document.getElementById('cardAvatar').innerText = user.name.charAt(0);
+        
+        document.getElementById('cardLevel').innerText = levelText;
+        document.getElementById('cardKarya').innerText = count;
+        document.getElementById('cardViews').innerText = totalViews;
+        document.getElementById('cardQuote').innerText = quoteText;
+        
+        // Update Tampilan Warna Kartu & Badge
+        const cardEl = document.getElementById('cardArea');
+        cardEl.style.background = bgStyle;
+        
+        const badgeEl = document.getElementById('cardBadgeContainer');
+        badgeEl.style.color = badgeColor;
+
+        // Tampilkan Modal
+        new bootstrap.Modal(document.getElementById('modalCetakKartu')).show();
+    }
+
+    // [BARU] Fungsi Download Kartu
+    function downloadCard() {
+        const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
+        
+        // Ubah tombol jadi loading
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Memproses...';
+        btn.disabled = true;
+
+        const element = document.getElementById("cardArea");
+
+        html2canvas(element, { 
+            scale: 3, 
+            useCORS: true, 
+            backgroundColor: null 
+        }).then(canvas => {
+            const link = document.createElement("a");
+            document.body.appendChild(link);
+            link.download = "Kartu-Creator-Selogiri-" + APP.user.name.replace(/\s+/g, '_') + ".png";
+            link.href = canvas.toDataURL("image/png");
+            link.target = '_blank';
+            link.click();
+            document.body.removeChild(link);
+
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil Disimpan!',
+                text: 'Silakan cek galeri HP Anda.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }).catch(err => {
+            console.error(err);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            Swal.fire('Gagal', 'Terjadi kesalahan saat memproses gambar.', 'error');
+        });
     }
 
     function showDetail(id) {
@@ -717,7 +943,6 @@
         var isModerator = role.includes('MODERATOR');
         var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
 
-        // Filter stats if KEPSEK/OPS
         if(isSchoolAdmin) {
             data = data.filter(m => m[2] === APP.user.school);
             if(APP.users.length === 0) api('users').then(res => { APP.users = res.data; document.getElementById('statUsers').innerText = APP.users.filter(u => u[1] === APP.user.school).length; });
@@ -731,7 +956,6 @@
         document.getElementById('statPending').innerText = data.filter(i => i[9] === 'BARU').length; 
         document.getElementById('statApproved').innerText = data.filter(i => i[9] === 'DISETUJUI').length; 
         
-        // Also render list if needed
         if(document.getElementById('admin-list-container').innerHTML === '') adminFilter();
     }
     function loadSchoolStats() { if(!APP.users.length) api('users').then(res => { APP.users = res.data; calcSchool(); }); else calcSchool(); }
@@ -759,7 +983,6 @@
     function loadTeacherStats() {
         let counts = {}; APP.data.forEach(m => { let n=m[1]; if(!counts[n]) counts[n]={n:n,s:m[2],c:0}; counts[n].c++; });
         let arr = Object.values(counts).sort((a,b) => b.c - a.c).slice(0, 50);
-        // FIX: Kolom dipisah antara Nama Guru dan Unit Kerja
         let h = '<div class="table-responsive"><table class="table table-sm table-striped align-middle mb-0"><thead><tr class="bg-light"><th class="text-center">#</th><th>Nama Guru</th><th>Unit Kerja</th><th class="text-center">Karya</th></tr></thead><tbody>';
         arr.forEach((x,i) => { 
             let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; 
@@ -778,7 +1001,6 @@
        const isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
        const isAdmin = role.includes('ADMIN');
 
-       // Filter list if KEPSEK/OPS
        if(isSchoolAdmin) {
            list = list.filter(m => m[2] === APP.user.school);
        }
@@ -786,9 +1008,7 @@
        list = list.filter(i => (i[5]+' '+i[1]).toLowerCase().includes(q) && (fStat?i[9]===fStat:true) && (fMapel?i[6]===fMapel:true));
        let html = '';
        
-       // Tombol Hapus hanya untuk Admin
        const canDelete = isAdmin;
-       // Tombol Kurasi untuk Admin/Moderator. KS/OPS Read Only.
        const canEditStatus = !isSchoolAdmin;
 
        list.forEach(i => { 
@@ -817,7 +1037,6 @@
     
     function loadUserList(q='') { if(!APP.users.length) api('users').then(res=>{APP.users=res.data; renderUsers(q)}); else renderUsers(q); }
     function renderUsers(q='') {
-       // Filter list if KEPSEK/OPS
        let list = APP.users;
        const role = (APP.user.role || "").toUpperCase();
        const isAdmin = role.includes('ADMIN');
@@ -838,7 +1057,6 @@
        const canEdit = isAdmin;
 
        list.forEach((u, idx) => { 
-           // FIX: PIN MASKING LOGIC
            let displayPin = isAdmin ? `<span class="font-monospace fw-bold">${u[2]}</span>` : `<span class="text-muted opacity-50"><i class="fas fa-lock" style="font-size:0.6rem"></i> ****</span>`;
 
            let btns = canEdit ? `<button class="btn btn-sm btn-light border text-warning" onclick="showUserModal('EDIT', '${u[2]}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light border text-danger" onclick="deleteUser('${u[2]}', '${u[0]}')"><i class="fas fa-trash"></i></button>` : '';
