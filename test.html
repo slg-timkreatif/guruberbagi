@@ -7,6 +7,7 @@
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
@@ -23,48 +24,55 @@
 
     body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); font-size: 0.9rem; padding-bottom: 90px; }
 
-    /* NAVBAR & LAYOUT */
-    .navbar-top { background: #fff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 1020; }
+    /* --- DESKTOP NAVBAR --- */
+    .navbar-top { background: #fff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 1020; transition: all 0.3s; }
     .brand-container { display: flex; align-items: center; gap: 12px; }
     .brand-logo-box { width: 42px; height: 42px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
     
-    /* BOTTOM NAV */
+    /* --- MOBILE BOTTOM NAV --- */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; padding: 10px 0 15px 0; z-index: 1030; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); }
-    .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; width: 20%; text-decoration: none; }
-    .nav-item.active { color: var(--primary); }
-    .nav-fab { width: 48px; height: 48px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -25px; border: 4px solid var(--bg-body); box-shadow: 0 4px 10px rgba(45,139,131,0.4); }
+    .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; width: 20%; text-decoration: none; transition: 0.2s; }
+    .nav-item.active { color: var(--primary); transform: translateY(-2px); }
+    .nav-item i { font-size: 1.2rem; }
+    .nav-fab { width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid var(--bg-body); box-shadow: 0 4px 10px rgba(45,139,131,0.4); transition: transform 0.2s; }
+    .nav-fab:active { transform: scale(0.9); }
 
-    /* CARD KARYA */
-    .card-karya { background: #fff; border: none; border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow); height: 100%; display: flex; flex-direction: column; }
+    /* --- CARD SYSTEM --- */
+    .card-karya { background: #fff; border: none; border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow); height: 100%; display: flex; flex-direction: column; transition: transform 0.2s; }
+    .card-karya:active { transform: scale(0.98); }
     .card-thumb { height: 140px; position: relative; background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+    .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; backdrop-filter: blur(4px); }
     .card-body-mp { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
     .mp-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
     .tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
     .tag-blue { background: #e0f7fa; color: #0277bd; }
+    .mp-title { font-weight: 700; font-size: 0.95rem; line-height: 1.3; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* --- DASHBOARD & PROFILE --- */
+    .profile-header { background: white; padding: 24px; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--card-shadow); text-align: center; position: relative; overflow: hidden; }
+    .prof-av-lg { width: 80px; height: 80px; background: var(--primary); color: white; border-radius: 50%; font-size: 2rem; font-weight: 800; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; border: 4px solid #e0f2f1; }
+    .medal-badge { font-size: 0.75rem; padding: 6px 14px; border-radius: 20px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: all 0.3s; }
     
-    /* PROFILE HEADER */
-    .profile-header { background: white; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: var(--card-shadow); text-align: center; }
-    .prof-av-lg { width: 80px; height: 80px; background: var(--primary); color: white; border-radius: 50%; font-size: 2rem; font-weight: 800; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; }
-    .medal-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; color: #64748b; margin-top: 5px; }
+    /* --- CARD CREATOR (HIDDEN CANVAS) --- */
+    #cardArea { width: 300px; height: 480px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; position: relative; overflow: hidden; border-radius: 16px; text-align: start; margin: 0 auto; }
     
-    /* STYLE UNTUK KARTU CREATOR (CETAK) */
-    #cardArea {
-        width: 300px; height: 480px; 
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
-        color: white; position: relative; overflow: hidden;
-        border-radius: 16px; text-align: start; margin: 0 auto;
-    }
-    
-    /* UTILS */
+    /* --- UTILITIES --- */
     .d-none { display: none !important; }
     .fade-in { animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* PREVIEW OVERLAY */
+    /* --- PREVIEW OVERLAY --- */
     #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
-    .preview-head { background: #111; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .preview-head { background: #111; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; }
+    #detailLoader { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:white; text-align:center; display:none; }
+
+    /* --- RESPONSIVE ADJUSTMENTS --- */
+    @media (min-width: 768px) {
+        .bottom-nav { display: none !important; } /* Hide Bottom Nav on Desktop */
+        body { padding-bottom: 0; }
+        .fab-desktop { display: flex; } /* Show FAB only on Desktop if needed */
+    }
   </style>
 </head>
 <body>
@@ -78,8 +86,11 @@
           <div style="font-size:0.65rem; color:#64748b; font-weight:600;">Kecamatan Selogiri</div>
         </div>
       </div>
-      <div class="d-none d-md-flex gap-2">
-         <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold" onclick="loginModal()" id="desktopLoginBtn">Login Guru</button>
+      
+      <div class="d-none d-md-flex gap-2 align-items-center">
+         <button class="btn btn-sm btn-link text-decoration-none text-dark fw-bold" onclick="switchView('GALERI')">Galeri</button>
+         <button class="btn btn-sm btn-link text-decoration-none text-dark fw-bold" onclick="filterSimpanan()">Favorit</button>
+         <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold" onclick="handleAuthDesktop()" id="desktopAuthBtn">Login Guru</button>
       </div>
     </div>
   </nav>
@@ -87,20 +98,29 @@
   <div class="container mt-3 mb-2" id="searchContainer">
     <div class="bg-white rounded-pill border d-flex align-items-center px-3 py-2 shadow-sm">
       <i class="fas fa-search text-muted me-2"></i>
-      <input type="text" id="searchInput" oninput="handleSearchInput(this.value)" class="form-control border-0 p-0 shadow-none" placeholder="Cari materi...">
+      <input type="text" id="searchInput" oninput="handleSearchInput(this.value)" class="form-control border-0 p-0 shadow-none" placeholder="Cari karya, mapel, atau guru...">
     </div>
   </div>
 
   <div id="view-galeri" class="container fade-in mb-5">
-    <div class="d-flex gap-2 overflow-auto pb-3 no-scrollbar">
+    <div class="d-flex gap-2 overflow-auto pb-3 no-scrollbar" style="scrollbar-width: none; -ms-overflow-style: none;">
        <button onclick="filterSemua()" class="btn btn-sm btn-dark rounded-pill px-3 flex-shrink-0">Semua</button>
-       <select id="filterMapel" class="form-select form-select-sm rounded-pill" style="width:auto;" onchange="applyFilters()"><option value="">Mapel</option></select>
-       <select id="filterFase" class="form-select form-select-sm rounded-pill" style="width:auto;" onchange="applyFilters()"><option value="">Fase</option></select>
+       <select id="filterMapel" class="form-select form-select-sm rounded-pill border bg-white" style="width:auto;" onchange="applyFilters()"><option value="">Semua Mapel</option></select>
+       <select id="filterFase" class="form-select form-select-sm rounded-pill border bg-white" style="width:auto;" onchange="applyFilters()"><option value="">Semua Fase</option></select>
     </div>
-    <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
-    <div id="galeri-container" class="row gx-2 gy-3"></div>
-    <div id="loadMoreContainer" class="text-center mt-4 d-none pb-5">
-       <button onclick="loadMoreItems()" class="btn btn-outline-secondary btn-sm rounded-pill px-4">Muat Lebih Banyak</button>
+
+    <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div><div class="mt-2 small text-muted">Memuat karya...</div></div>
+    
+    <div id="galeri-container" class="row gx-3 gx-md-4 gy-4"></div>
+    
+    <div id="loadMoreContainer" class="text-center mt-5 d-none pb-5">
+       <button onclick="loadMoreItems()" class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold shadow-sm">Muat Lebih Banyak</button>
+       <div class="small text-muted mt-2" id="loadMoreInfo"></div>
+    </div>
+    
+    <div id="emptyState" class="text-center py-5 d-none">
+        <i class="fas fa-search fa-3x text-muted opacity-25 mb-3"></i>
+        <p class="text-muted">Tidak ada karya ditemukan.</p>
     </div>
   </div>
 
@@ -110,21 +130,35 @@
         <h5 class="fw-bold mb-0" id="dashName">Nama Guru</h5>
         <div class="small text-muted mb-2" id="dashSchool">Sekolah</div>
         
-        <div id="lvlBadgeContainer">
-            </div>
+        <div id="lvlBadgeContainer" class="my-3"></div>
 
-        <button onclick="openCardModal()" class="btn btn-primary btn-sm rounded-pill mt-3 fw-bold px-4 shadow-sm">
-            <i class="fas fa-id-card me-2"></i> Cetak Kartu Creator
-        </button>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+             <button onclick="openCardModal()" class="btn btn-primary btn-sm rounded-pill fw-bold px-4 shadow-sm">
+                <i class="fas fa-id-card me-2"></i> Cetak Kartu
+             </button>
+             <button onclick="logout()" class="btn btn-outline-danger btn-sm rounded-pill fw-bold px-3">
+                <i class="fas fa-sign-out-alt"></i>
+             </button>
+        </div>
      </div>
 
-     <div class="row g-2 mb-3">
+     <div class="row g-2 mb-4">
         <div class="col-6"><div class="bg-white p-3 rounded-4 border text-center shadow-sm"><div class="fw-800 fs-2 text-primary" id="dashTotal">0</div><div class="small text-muted fw-bold">Total Karya</div></div></div>
         <div class="col-6"><div class="bg-white p-3 rounded-4 border text-center shadow-sm"><div class="fw-800 fs-2 text-warning" id="dashViews">0</div><div class="small text-muted fw-bold">Total Dilihat</div></div></div>
      </div>
 
-     <h6 class="fw-bold mt-4 mb-3 ps-1">Karya Saya</h6>
+     <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold ps-1 mb-0">Manajemen Karya</h6>
+        <button class="btn btn-sm btn-outline-primary rounded-pill d-md-none" onclick="clickFab()"><i class="fas fa-plus"></i> Tambah</button>
+     </div>
+     
      <div id="dash-list-container" class="row gx-2 gy-3"></div>
+  </div>
+
+  <div class="d-none d-md-block position-fixed bottom-0 end-0 p-4" style="z-index: 1030;">
+      <button onclick="clickFab()" class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+          <i class="fas fa-plus"></i>
+      </button>
   </div>
 
   <div class="bottom-nav d-md-none" id="bottomNav">
@@ -138,89 +172,40 @@
   <div class="modal fade" id="modalCetakKartu" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-4 border-0">
-        <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-bold">Kartu Tanda Creator</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold">Kartu Tanda Creator</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body text-center">
-          
           <div id="cardArea">
               <div style="position:absolute; top:-50px; right:-50px; width:150px; height:150px; background:rgba(255,255,255,0.1); border-radius:50%;"></div>
               <div style="position:absolute; bottom:-20px; left:-20px; width:100px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%;"></div>
-              
               <div class="p-4 d-flex flex-column h-100 justify-content-between position-relative" style="z-index:2;">
                   <div class="d-flex justify-content-between align-items-center">
                       <div class="d-flex align-items-center gap-2">
                           <div style="background:white; color:var(--primary); width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center;"><i data-lucide="screen-share" style="width:16px;"></i></div>
-                          <div style="line-height:1.1;">
-                              <div class="fw-bold" style="font-size:0.7rem; letter-spacing:0.5px;">GURU BERBAGI</div>
-                              <div style="font-size:0.5rem; opacity:0.7;">SELOGIRI</div>
-                          </div>
+                          <div style="line-height:1.1;"><div class="fw-bold" style="font-size:0.7rem; letter-spacing:0.5px;">GURU BERBAGI</div><div style="font-size:0.5rem; opacity:0.7;">SELOGIRI</div></div>
                       </div>
-                      <div class="border border-light rounded-pill px-2 py-0" style="font-size:0.6rem; opacity:0.8;">
-                          <i class="fas fa-check-circle me-1"></i>VERIFIED
-                      </div>
+                      <div class="border border-light rounded-pill px-2 py-0" style="font-size:0.6rem; opacity:0.8;"><i class="fas fa-check-circle me-1"></i>VERIFIED</div>
                   </div>
-  
                   <div class="text-center mt-3">
-                      <div class="mx-auto d-flex align-items-center justify-content-center bg-white text-dark fw-bold rounded-circle mb-3 shadow-lg" 
-                           style="width:90px; height:90px; font-size:2.5rem; border:4px solid rgba(255,255,255,0.2);" id="cardAvatar">U</div>
+                      <div class="mx-auto d-flex align-items-center justify-content-center bg-white text-dark fw-bold rounded-circle mb-3 shadow-lg" style="width:90px; height:90px; font-size:2.5rem; border:4px solid rgba(255,255,255,0.2);" id="cardAvatar">U</div>
                       <h5 class="fw-bold mb-1 text-truncate px-2" id="cardName">Nama Guru</h5>
                       <div class="small opacity-75 mb-3 text-truncate px-4" id="cardSchool">Unit Kerja</div>
-                      
-                      <div class="d-inline-block px-4 py-1 rounded-pill fw-bold shadow-sm" 
-                           id="cardBadgeContainer" style="background: white; color:#333; font-size:0.8rem;">
-                          <span id="cardLevel">LEVEL</span>
-                      </div>
+                      <div class="d-inline-block px-4 py-1 rounded-pill fw-bold shadow-sm" id="cardBadgeContainer" style="background: white; color:#333; font-size:0.8rem;"><span id="cardLevel">LEVEL</span></div>
                   </div>
-  
                   <div class="row g-2 mt-2 px-2 text-center">
-                      <div class="col-6">
-                          <div class="rounded p-2" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);">
-                              <div class="h5 fw-bold mb-0" id="cardKaryaCount">0</div>
-                              <small style="font-size:0.55rem; letter-spacing:1px; opacity:0.8;">KARYA</small>
-                          </div>
-                      </div>
-                      <div class="col-6">
-                          <div class="rounded p-2" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);">
-                              <div class="h5 fw-bold mb-0" id="cardViewCount">0</div>
-                              <small style="font-size:0.55rem; letter-spacing:1px; opacity:0.8;">VIEWS</small>
-                          </div>
-                      </div>
+                      <div class="col-6"><div class="rounded p-2" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);"><div class="h5 fw-bold mb-0" id="cardKaryaCount">0</div><small style="font-size:0.55rem; letter-spacing:1px; opacity:0.8;">KARYA</small></div></div>
+                      <div class="col-6"><div class="rounded p-2" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);"><div class="h5 fw-bold mb-0" id="cardViewCount">0</div><small style="font-size:0.55rem; letter-spacing:1px; opacity:0.8;">VIEWS</small></div></div>
                   </div>
-  
-                  <div class="mt-3 px-3">
-                      <div id="cardQuote" class="fst-italic text-center opacity-75" 
-                           style="font-size: 0.6rem; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); padding: 8px 0;">
-                          "Quote akan muncul disini..."
-                      </div>
-                  </div>
-  
+                  <div class="mt-3 px-3"><div id="cardQuote" class="fst-italic text-center opacity-75" style="font-size: 0.6rem; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); padding: 8px 0;">"Quote..."</div></div>
                   <div class="text-center mt-auto pt-2">
-                      <div class="bg-white p-1 d-inline-block rounded mb-2">
-                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=GURU_BERBAGI_SELOGIRI" width="50" height="50">
-                      </div>
+                      <div class="bg-white p-1 d-inline-block rounded mb-2"><img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=GURU_BERBAGI_SELOGIRI" width="50" height="50"></div>
                       <div class="fw-bold" style="font-size:0.5rem; letter-spacing:1px; opacity:0.5">KORWILCAMBIDIK KECAMATAN SELOGIRI</div>
                   </div>
               </div>
           </div>
-
-          <div class="mt-4 px-3 pb-2">
-              <button onclick="downloadCard()" class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow">
-                  <i class="fas fa-download me-2"></i> SIMPAN GAMBAR
-              </button>
-          </div>
+          <div class="mt-4 px-3 pb-2"><button onclick="downloadCard()" class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow"><i class="fas fa-download me-2"></i> SIMPAN GAMBAR</button></div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div id="previewOverlay">
-    <div class="preview-head">
-       <span class="fw-bold text-truncate pe-3" id="previewTitle">Preview</span>
-       <button class="btn btn-sm btn-danger rounded-pill" onclick="tutupPreview()">Tutup</button>
-    </div>
-    <iframe id="previewFrame"></iframe>
   </div>
 
   <div class="modal fade" id="modalInput" tabindex="-1">
@@ -232,8 +217,8 @@
             <input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx">
             <div class="mb-3"><label class="small fw-bold text-muted">Judul</label><input type="text" id="inJudul" class="form-control fw-bold bg-light"></div>
             <div class="row g-2 mb-3">
-              <div class="col-6"><label class="small fw-bold text-muted">Mapel</label><select id="inMapel" class="form-select" onchange="checkOther('inMapel','manMapel',this.value)"></select><input id="manMapel" class="form-control mt-1 d-none" placeholder="Tulis mapel..."></div>
-              <div class="col-6"><label class="small fw-bold text-muted">Jenis</label><select id="inJenis" class="form-select" onchange="checkOther('inJenis','manJenis',this.value)"></select><input id="manJenis" class="form-control mt-1 d-none" placeholder="Tulis jenis..."></div>
+              <div class="col-6"><label class="small fw-bold text-muted">Mapel</label><select id="inMapel" class="form-select" onchange="checkOther('inMapel','manMapel',this.value)"></select><input id="manMapel" class="form-control mt-1 d-none" placeholder="Lainnya..."></div>
+              <div class="col-6"><label class="small fw-bold text-muted">Jenis</label><select id="inJenis" class="form-select" onchange="checkOther('inJenis','manJenis',this.value)"></select><input id="manJenis" class="form-control mt-1 d-none" placeholder="Lainnya..."></div>
             </div>
             <div class="row g-2 mb-3">
               <div class="col-6"><label class="small fw-bold text-muted">Fase</label><select id="inFase" class="form-select"></select></div>
@@ -245,11 +230,7 @@
             </div>
             <div class="mb-3">
                 <label class="small fw-bold text-muted">Tipe Link</label>
-                <select id="sourceType" class="form-select mb-2" onchange="toggleSource(this.value)">
-                    <option value="LINK">Link Umum / Youtube</option>
-                    <option value="HTML">Embed HTML (Canva/Wordwall)</option>
-                    <option value="STORY">Storybook (Gemini)</option>
-                </select>
+                <select id="sourceType" class="form-select mb-2" onchange="toggleSource(this.value)"><option value="LINK">Link Umum / Youtube</option><option value="HTML">Embed HTML (Canva/Wordwall)</option><option value="STORY">Storybook (Gemini)</option></select>
                 <input type="url" id="inLink" class="form-control" placeholder="Paste link...">
                 <textarea id="inHtml" class="form-control d-none font-monospace small" rows="3" placeholder="Paste kode iframe..."></textarea>
             </div>
@@ -260,16 +241,32 @@
     </div>
   </div>
 
+  <div id="previewOverlay">
+    <div class="preview-head">
+       <span class="fw-bold text-truncate pe-3" id="previewTitle">Preview</span>
+       <button class="btn btn-sm btn-danger rounded-pill fw-bold px-3" onclick="tutupPreview()">TUTUP</button>
+    </div>
+    <div id="detailLoader"><div class="spinner-border mb-2"></div><div>Memuat...</div></div>
+    <iframe id="previewFrame" allowfullscreen allow="autoplay"></iframe>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script>
+    // --- KONFIGURASI API ---
     const API_URL = "https://script.google.com/macros/s/AKfycbxxr1uHQbJ2vf_yA59RP8YeHBwrdD4nRlbr0BP0nR0A84eSMCrLp7RR7RjrGVEXQHhP/exec";
-    const CACHE_KEY = 'gb_data_v3';
+    const CACHE_KEY = 'gb_data_final';
     
-    var STATE = { all:[], filtered:[], user:{name:"Tamu", role:"GUEST"}, settings:[], limit:10 };
+    // --- STATE MANAGEMENT ---
+    var STATE = { 
+        all:[], filtered:[], 
+        user:{name:"Tamu", role:"GUEST", school:"-"}, 
+        settings:[], limit:12 
+    };
     var modalInput = null;
 
+    // --- INIT ---
     window.onload = function() { 
         lucide.createIcons();
         modalInput = new bootstrap.Modal(document.getElementById('modalInput'));
@@ -283,6 +280,7 @@
         document.getElementById('view-galeri').classList.toggle('d-none', view !== 'GALERI');
         document.getElementById('view-dashboard').classList.toggle('d-none', view !== 'DASHBOARD');
         
+        // Active State Nav Mobile
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         if(view === 'GALERI') document.getElementById('navHome').classList.add('active');
         if(view === 'DASHBOARD') document.getElementById('navProfile').classList.add('active');
@@ -291,51 +289,101 @@
         window.scrollTo(0,0);
     }
 
-    function openProfile() {
-        if(STATE.user.role === 'GUEST') loginModal();
-        else switchView('DASHBOARD');
+    function updateUI() {
+        var isGuest = STATE.user.role === 'GUEST';
+        var btnDesk = document.getElementById('desktopAuthBtn');
+        if(btnDesk) {
+            btnDesk.innerText = isGuest ? "Login Guru" : "Profil Saya";
+            btnDesk.classList.toggle('btn-outline-primary', isGuest);
+            btnDesk.classList.toggle('btn-primary', !isGuest);
+            btnDesk.onclick = isGuest ? loginModal : function() { switchView('DASHBOARD') };
+        }
     }
+
+    function handleAuthDesktop() {
+        if(STATE.user.role === 'GUEST') loginModal(); else switchView('DASHBOARD');
+    }
+    
+    function openProfile() {
+        if(STATE.user.role === 'GUEST') loginModal(); else switchView('DASHBOARD');
+    }
+    
     function clickFab() {
         if(STATE.user.role === 'GUEST') loginModal();
-        else { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; modalInput.show(); }
+        else { 
+            document.getElementById('modalForm').reset(); 
+            document.getElementById('formMode').value="ADD"; 
+            toggleSource('LINK');
+            modalInput.show(); 
+        }
     }
+    
     function focusSearch() { document.getElementById('searchInput').focus(); window.scrollTo(0,0); }
 
-    // --- DATA ---
+    // --- DATA HANDLING ---
     async function loadData() {
         var cached = localStorage.getItem(CACHE_KEY);
         if(cached) { var c = JSON.parse(cached); if(new Date().getTime() - c.ts < 300000) { processData(c.data); return; } }
-        var res = await fetch(API_URL + "?action=read");
-        var json = await res.json();
-        if(json.status === 'success') {
-            localStorage.setItem(CACHE_KEY, JSON.stringify({ts:new Date().getTime(), data:json}));
-            processData(json);
-        }
-        document.getElementById('loader').style.display='none';
+        
+        try {
+            var res = await fetch(API_URL + "?action=read");
+            var json = await res.json();
+            if(json.status === 'success') {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ts:new Date().getTime(), data:json}));
+                processData(json);
+            }
+        } catch(e) { console.error(e); }
+        document.getElementById('loader').classList.add('d-none');
     }
 
     function processData(json) {
         STATE.all = json.media; STATE.settings = json.settings;
         populateSelects(); applyFilters();
+        document.getElementById('loader').classList.add('d-none');
     }
 
+    // --- GALERI RENDERER ---
     function renderGaleri() {
         var c = document.getElementById('galeri-container'); c.innerHTML = '';
         var show = STATE.filtered.slice(0, STATE.limit);
+        
+        if(show.length === 0) {
+            document.getElementById('emptyState').classList.remove('d-none');
+            document.getElementById('loadMoreContainer').classList.add('d-none');
+            return;
+        }
+        document.getElementById('emptyState').classList.add('d-none');
+
         show.forEach(item => {
             var idx = STATE.all.indexOf(item);
-            var html = `<div class="col-6 col-md-4 col-lg-3"><div class="card-karya" onclick="bukaPreview(${idx})"><div class="card-thumb">${getThumb(item[11], item[8])}<div class="view-badge"><i class="fas fa-eye me-1"></i> ${item[14]||0}</div></div><div class="card-body-mp"><div class="mp-tags"><span class="tag tag-blue">${item[6]}</span></div><div class="mp-title">${item[5]}</div><div class="small text-muted mt-auto pt-2 border-top">${item[1]}</div></div></div></div>`;
+            var html = `
+            <div class="col-6 col-md-4 col-lg-3">
+               <div class="card-karya" onclick="bukaPreview(${idx})">
+                  <div class="card-thumb">
+                     ${getThumb(item[11], item[8])}
+                     <div class="view-badge"><i class="fas fa-eye me-1"></i> ${item[14]||0}</div>
+                  </div>
+                  <div class="card-body-mp">
+                     <div class="mp-tags"><span class="tag tag-blue">${item[6]}</span></div>
+                     <div class="mp-title">${item[5]}</div>
+                     <div class="small text-muted mt-auto pt-2 border-top d-flex align-items-center gap-2">
+                        <div style="width:20px;height:20px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:bold;">${item[1].charAt(0)}</div>
+                        <div class="text-truncate">${item[1]}</div>
+                     </div>
+                  </div>
+               </div>
+            </div>`;
             c.insertAdjacentHTML('beforeend', html);
         });
+        
         document.getElementById('loadMoreContainer').classList.toggle('d-none', STATE.filtered.length <= STATE.limit);
+        document.getElementById('loadMoreInfo').innerText = `Menampilkan ${show.length} dari ${STATE.filtered.length} karya`;
     }
     
-    function loadMoreItems() { STATE.limit += 10; renderGaleri(); }
+    function loadMoreItems() { STATE.limit += 12; renderGaleri(); }
 
-    // --- LOGIKA LEVEL & CETAK KARTU (DARI KODE BARU) ---
-    
+    // --- LEVEL SYSTEM 7 TIER (QUANTITY BASED) ---
     function getLevelInfo(count) {
-        // LOGIKA 7 TIER (Quantity Based)
         if(count >= 100) return { name: "SUHU 👑", color: "#4c1d95", bg: "linear-gradient(135deg, #4c1d95 0%, #2e1065 100%)", quote: "100 KARYA! Anda adalah legenda pendidikan Selogiri." };
         if(count >= 75)  return { name: "MAESTRO 🎨", color: "#be123c", bg: "linear-gradient(135deg, #be123c 0%, #881337 100%)", quote: "Karya adalah seni mendidik. Terima kasih Maestro!" };
         if(count >= 50)  return { name: "MENTOR 🎓", color: "#b45309", bg: "linear-gradient(135deg, #b45309 0%, #78350f 100%)", quote: "Ilmu yang dibagi akan abadi. Terima kasih Mentor." };
@@ -353,31 +401,44 @@
         var myWorks = STATE.all.filter(i => i[1] === STATE.user.name);
         var totalViews = myWorks.reduce((acc, curr) => acc + (parseInt(curr[14])||0), 0);
         
-        // Render Stats
         document.getElementById('dashTotal').innerText = myWorks.length;
         document.getElementById('dashViews').innerText = totalViews;
 
-        // Render Badge Level di Header
+        // Render Badge
         var lvl = getLevelInfo(myWorks.length);
         document.getElementById('lvlBadgeContainer').innerHTML = `<span class="medal-badge" style="background:${lvl.color}; color:white;">${lvl.name}</span>`;
 
-        // Render List Karya
+        // Render List
         var c = document.getElementById('dash-list-container'); c.innerHTML = '';
+        if(myWorks.length === 0) c.innerHTML = '<div class="col-12 text-center text-muted py-4 small">Belum ada karya.</div>';
+        
         myWorks.forEach(item => {
             var idx = STATE.all.indexOf(item);
-            var html = `<div class="col-12"><div class="card p-3 rounded-4 border-0 shadow-sm d-flex flex-row align-items-center gap-3"><div style="width:60px; height:60px; background:#f1f5f9; border-radius:12px; overflow:hidden; flex-shrink:0;">${getThumb(item[11], item[8])}</div><div class="flex-grow-1"><div class="fw-bold text-truncate mb-1">${item[5]}</div><div class="small text-muted"><i class="fas fa-eye me-1"></i> ${item[14]||0} Views</div></div><div class="d-flex gap-2"><button onclick="bukaEdit(${idx})" class="btn btn-sm btn-light text-primary"><i class="fas fa-pencil"></i></button><button onclick="hapusKarya(${idx})" class="btn btn-sm btn-light text-danger"><i class="fas fa-trash"></i></button></div></div></div>`;
+            var html = `
+            <div class="col-12">
+               <div class="card p-3 rounded-4 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                  <div style="width:60px; height:60px; background:#f1f5f9; border-radius:12px; overflow:hidden; flex-shrink:0;">${getThumb(item[11], item[8])}</div>
+                  <div class="flex-grow-1" style="min-width:0;">
+                     <div class="fw-bold text-truncate mb-1">${item[5]}</div>
+                     <div class="small text-muted"><i class="fas fa-eye me-1"></i> ${item[14]||0} Views</div>
+                  </div>
+                  <div class="d-flex gap-2">
+                     <button onclick="bukaEdit(${idx})" class="btn btn-sm btn-light text-primary border"><i class="fas fa-pencil"></i></button>
+                     <button onclick="hapusKarya(${idx})" class="btn btn-sm btn-light text-danger border"><i class="fas fa-trash"></i></button>
+                  </div>
+               </div>
+            </div>`;
             c.insertAdjacentHTML('beforeend', html);
         });
     }
 
-    // FUNGSI BUKA MODAL & RENDER KARTU
+    // --- CARD CREATOR ---
     function openCardModal() {
         var myWorks = STATE.all.filter(i => i[1] === STATE.user.name);
         var count = myWorks.length;
         var views = myWorks.reduce((acc, curr) => acc + (parseInt(curr[14])||0), 0);
         var lvl = getLevelInfo(count);
 
-        // Isi Data ke DOM Kartu
         document.getElementById('cardName').innerText = STATE.user.name;
         document.getElementById('cardSchool').innerText = STATE.user.school;
         document.getElementById('cardAvatar').innerText = STATE.user.name.charAt(0);
@@ -386,14 +447,12 @@
         document.getElementById('cardViewCount').innerText = views;
         document.getElementById('cardQuote').innerText = `"${lvl.quote}"`;
 
-        // Styling Dinamis
         document.getElementById('cardArea').style.background = lvl.bg;
         document.getElementById('cardBadgeContainer').style.color = lvl.color;
 
         new bootstrap.Modal(document.getElementById('modalCetakKartu')).show();
     }
 
-    // FUNGSI DOWNLOAD GAMBAR
     function downloadCard() {
         const btn = event.currentTarget;
         const originalText = btn.innerHTML;
@@ -405,29 +464,102 @@
             link.download = "Kartu-Creator-" + STATE.user.name.replace(/\s+/g, '_') + ".png";
             link.href = canvas.toDataURL("image/png");
             link.click();
-            
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            btn.innerHTML = originalText; btn.disabled = false;
             Swal.fire('Berhasil','Kartu disimpan ke galeri','success');
         });
     }
 
-    // --- UTILS (Sama seperti sebelumnya) ---
-    function getThumb(type, url) { var yt = url && url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/); if(yt && yt[1].length === 11) return `<img src="https://img.youtube.com/vi/${yt[1]}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;">`; var icon="fa-file"; if((type||"").toUpperCase().includes("VIDEO")) icon="fa-play"; return `<i class="fas ${icon} fa-2x text-secondary"></i>`; }
-    function loginModal() { Swal.fire({title:'Login Guru', input:'password', inputPlaceholder:'Masukkan PIN'}).then(r => { if(r.value) { Swal.showLoading(); callApi('login', {pin:r.value}).then(res => { if(res.status==='success') { STATE.user = res.user; localStorage.setItem('gbUser', JSON.stringify(res.user)); updateUI(); Swal.close(); if(STATE.user.role!=='GUEST') switchView('DASHBOARD'); } else Swal.fire('Gagal', res.message, 'error'); }); } }); }
-    function logout() { localStorage.removeItem('gbUser'); STATE.user={name:"Tamu",role:"GUEST"}; updateUI(); switchView('GALERI'); }
-    function updateUI() { document.getElementById('desktopLoginBtn').classList.toggle('d-none', STATE.user.role!=='GUEST'); }
-    async function callApi(act, pl) { return fetch(API_URL, {method:'POST', body:JSON.stringify({action:act, payload:pl})}).then(r=>r.json()); }
-    function handleSearchInput(v) { STATE.limit=10; var q=v.toLowerCase(); STATE.filtered = STATE.all.filter(i => (i[5]+i[1]+i[6]).toLowerCase().includes(q)); renderGaleri(); }
+    // --- SEARCH & FILTER ---
+    function handleSearchInput(v) { STATE.limit=12; var q=v.toLowerCase(); STATE.filtered = STATE.all.filter(i => (i[5]+i[1]+i[6]).toLowerCase().includes(q)); renderGaleri(); }
     function applyFilters() { handleSearchInput(document.getElementById('searchInput').value); }
     function filterSemua() { document.getElementById('searchInput').value=''; applyFilters(); }
-    function filterSimpanan() { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'), s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered = STATE.all.filter(i=>s.includes(i[13])); STATE.limit=10; renderGaleri(); }
-    function populateSelects() { var f = (id, idx) => { var el = document.getElementById(id); el.innerHTML='<option value="">Semua</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`; }); }; f('filterMapel', 1); f('filterFase', 2); var fm = (id, idx) => { var el = document.getElementById(id); el.innerHTML='<option value="">Pilih</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`; }); el.innerHTML+='<option value="LAINNYA">Lainnya...</option>'; }; fm('inMapel',1); fm('inJenis',0); fm('inFase',2); fm('inSem',4); }
-    async function bukaPreview(idx) { var item = STATE.all[idx]; document.getElementById('previewTitle').innerText = item[5]; document.getElementById('previewOverlay').style.display='flex'; var fr = document.getElementById('previewFrame'); callApi('view', {id:item[13]}); var html = item[7]; if(html === "HAS_HTML") { var res = await callApi('getDetail', {id:item[13]}); html = res.html; item[7] = html; } if(html && html.length > 10) { var blob = new Blob([html], {type:'text/html'}); fr.src = URL.createObjectURL(blob); } else if (item[8]) { var url = item[8]; if(url.includes('drive.google')) url = url.replace('/view','/preview'); if(url.includes('youtu')) { var id=url.match(/v=([^&]+)/); if(id) url=`https://www.youtube.com/embed/${id[1]}`; } fr.src = url; } }
+    function filterSimpanan() { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'), s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered = STATE.all.filter(i=>s.includes(i[13])); STATE.limit=12; renderGaleri(); }
+    
+    // --- UTILS ---
+    function populateSelects() { 
+        var f = (id, idx) => { var el = document.getElementById(id); el.innerHTML='<option value="">Semua</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`; }); }; 
+        f('filterMapel', 1); f('filterFase', 2); 
+        var fm = (id, idx) => { var el = document.getElementById(id); el.innerHTML='<option value="">Pilih</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`; }); el.innerHTML+='<option value="LAINNYA">Lainnya...</option>'; }; 
+        fm('inMapel',1); fm('inJenis',0); fm('inFase',2); fm('inSem',4); 
+    }
+
+    function getThumb(type, url) { 
+        var yt = url && url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/); 
+        if(yt && yt[1].length === 11) return `<img src="https://img.youtube.com/vi/${yt[1]}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;">`; 
+        var icon="fa-file"; var t=(type||"").toUpperCase();
+        if(t.includes("VIDEO")) icon="fa-play"; 
+        else if(t.includes("GAME")||t.includes("KUIS")) icon="fa-gamepad";
+        else if(t.includes("BUKU")||t.includes("STORY")) icon="fa-book-open";
+        return `<i class="fas ${icon} fa-2x text-secondary"></i>`; 
+    }
+
+    // --- API CALLER ---
+    async function callApi(act, pl) { return fetch(API_URL, {method:'POST', body:JSON.stringify({action:act, payload:pl})}).then(r=>r.json()); }
+
+    // --- ACTIONS ---
+    function loginModal() { 
+        Swal.fire({title:'Login Guru', input:'password', inputPlaceholder:'Masukkan PIN', confirmButtonText:'MASUK', confirmButtonColor:'#2D8B83'}).then(r => { 
+            if(r.value) { 
+                Swal.showLoading(); 
+                callApi('login', {pin:r.value}).then(res => { 
+                    if(res.status==='success') { 
+                        STATE.user = res.user; localStorage.setItem('gbUser', JSON.stringify(res.user)); 
+                        updateUI(); Swal.close(); if(STATE.user.role!=='GUEST') switchView('DASHBOARD'); 
+                    } else Swal.fire('Gagal', res.message, 'error'); 
+                }); 
+            } 
+        }); 
+    }
+    
+    function logout() { localStorage.removeItem('gbUser'); STATE.user={name:"Tamu",role:"GUEST"}; updateUI(); switchView('GALERI'); }
+    
+    async function bukaPreview(idx) { 
+        var item = STATE.all[idx]; document.getElementById('previewTitle').innerText = item[5]; 
+        var ov = document.getElementById('previewOverlay'); ov.style.display='flex'; 
+        var fr = document.getElementById('previewFrame'); var ld = document.getElementById('detailLoader');
+        ld.style.display='block'; fr.style.display='none';
+        
+        callApi('view', {id:item[13]}); 
+        
+        var html = item[7]; 
+        if(html === "HAS_HTML") { var res = await callApi('getDetail', {id:item[13]}); html = res.html; item[7] = html; } 
+        
+        ld.style.display='none'; fr.style.display='block';
+        if(html && html.length > 10) { var blob = new Blob([html], {type:'text/html'}); fr.src = URL.createObjectURL(blob); } 
+        else if (item[8]) { 
+            var url = item[8]; 
+            if(url.includes('drive.google')) url = url.replace('/view','/preview'); 
+            if(url.includes('youtu')) { var id=url.match(/v=([^&]+)/); if(id) url=`https://www.youtube.com/embed/${id[1]}?autoplay=1`; } 
+            fr.src = url; 
+        } 
+    }
+    
     function tutupPreview() { document.getElementById('previewOverlay').style.display='none'; document.getElementById('previewFrame').src=''; }
-    function prosesSimpan() { var p = { judul: document.getElementById('inJudul').value, mapel: document.getElementById('inMapel').value, jenis: document.getElementById('inJenis').value, fase: document.getElementById('inFase').value, semester: document.getElementById('inSem').value, linkLuar: document.getElementById('inLink').value, kodeHtml: document.getElementById('inHtml').value, nama: STATE.user.name, sekolah: STATE.user.school, mode: document.getElementById('formMode').value, idUnik: document.getElementById('editRowIdx').value }; Swal.showLoading(); callApi('simpan', p).then(r => { Swal.fire('Sukses', '', 'success'); localStorage.removeItem(CACHE_KEY); modalInput.hide(); loadData(); }); }
-    function bukaEdit(idx) { var d = STATE.all[idx]; document.getElementById('formMode').value="EDIT"; document.getElementById('editRowIdx').value=d[13]; document.getElementById('inJudul').value=d[5]; modalInput.show(); }
-    function hapusKarya(idx) { Swal.fire({title:'Hapus?', icon:'warning', showCancelButton:true}).then(r=>{ if(r.isConfirmed) { callApi('hapus', {id:STATE.all[idx][13]}).then(()=>{ localStorage.removeItem(CACHE_KEY); loadData(); }); } }) }
+    
+    function prosesSimpan() { 
+        var p = { 
+            judul: document.getElementById('inJudul').value, mapel: document.getElementById('inMapel').value, jenis: document.getElementById('inJenis').value, 
+            fase: document.getElementById('inFase').value, semester: document.getElementById('inSem').value, 
+            linkLuar: document.getElementById('inLink').value, kodeHtml: document.getElementById('inHtml').value, 
+            nama: STATE.user.name, sekolah: STATE.user.school, mode: document.getElementById('formMode').value, idUnik: document.getElementById('editRowIdx').value,
+            kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : ""
+        }; 
+        Swal.showLoading(); 
+        callApi('simpan', p).then(r => { Swal.fire('Sukses', '', 'success'); localStorage.removeItem(CACHE_KEY); modalInput.hide(); loadData(); }); 
+    }
+    
+    function bukaEdit(idx) { 
+        var d = STATE.all[idx]; document.getElementById('formMode').value="EDIT"; document.getElementById('editRowIdx').value=d[13]; 
+        document.getElementById('inJudul').value=d[5]; 
+        modalInput.show(); 
+    }
+    
+    function hapusKarya(idx) { 
+        Swal.fire({title:'Hapus Karya?', icon:'warning', showCancelButton:true}).then(r=>{ 
+            if(r.isConfirmed) { callApi('hapus', {id:STATE.all[idx][13]}).then(()=>{ localStorage.removeItem(CACHE_KEY); loadData(); }); } 
+        }) 
+    }
+    
     function toggleSource(v) { document.getElementById('inLink').classList.toggle('d-none', v==='HTML'); document.getElementById('inHtml').classList.toggle('d-none', v!=='HTML'); }
     function checkOther(id, manId, val) { document.getElementById(manId).classList.toggle('d-none', val!=='LAINNYA'); }
     function toggleKaih(checked) { document.getElementById('inKaihType').classList.toggle('d-none', !checked); }
