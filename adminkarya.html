@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin - Guru Berbagi</title>
+    <title>Admin Studio - Guru Berbagi</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,551 +12,354 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        :root {
-            --primary: #2D8B83; --primary-dark: #1F6660; --accent: #F59E0B;
-            --bg-body: #f8fafc; --text-main: #1e293b; --text-muted: #64748b;
+        :root { 
+            --primary: #2D8B83; 
+            --primary-soft: #e0f2f1;
+            --primary-dark: #1F6660; 
+            --bg-body: #F1F5F9; 
+            --text-main: #0F172A; 
+            --text-muted: #64748B;
+            --card-bg: #FFFFFF;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --sidebar-w: 280px;
-            --card-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+            --radius-lg: 1rem;
         }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-body); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- 1. LOGIN SCREEN (SERVER CONNECTED) --- */
-        #login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary), #0f172a); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-card { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 3rem; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
-        }
-        .btn-login {
-            background: var(--primary); color: white; border: none; padding: 14px; border-radius: 50px; 
-            font-weight: 800; width: 100%; letter-spacing: 1px; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(45, 139, 131, 0.3);
-        }
-        .btn-login:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        /* --- 2. LAYOUT & SIDEBAR --- */
-        .sidebar { 
-            width: var(--sidebar-w); height: 100vh; position: fixed; top: 0; left: 0; 
-            background: white; border-right: 1px solid #e2e8f0; z-index: 1040; 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; 
-        }
-        .sidebar-brand { 
-            padding: 35px 30px; font-weight: 800; font-size: 1.3rem; color: var(--primary); 
-            display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px;
-        }
-        .nav-menu { flex-grow: 1; padding: 0 15px; }
-        .nav-item { 
-            padding: 14px 20px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; 
-            border-radius: 14px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; 
-        }
-        .nav-item:hover, .nav-item.active { background: #f0fdfa; color: var(--primary); }
-        .nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+        /* --- LOGIN SCREEN --- */
+        #login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0F172A 0%, #1e293b 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 3rem 2rem; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; }
+        .inp-pin { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; width: 100%; font-weight: 700; color: white; outline: none; margin-bottom: 25px; transition: all 0.3s; }
+        .inp-pin:focus { border-color: var(--primary); background: rgba(0,0,0,0.2); }
+        .btn-login-custom { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; transition: 0.3s; box-shadow: 0 10px 15px -3px rgba(45, 139, 131, 0.3); }
+
+        /* --- LAYOUT --- */
+        .sidebar { width: var(--sidebar-w); height: 100vh; position: fixed; top: 0; left: 0; background: var(--card-bg); border-right: 1px solid #e2e8f0; z-index: 1040; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-brand { padding: 40px 30px 20px; color: var(--primary); font-weight: 800; font-size: 1.5rem; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
+        .nav-menu { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .nav-item { padding: 16px 20px; font-weight: 600; color: var(--text-muted); border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; border: 1px solid transparent; }
+        .nav-item:hover { background: #f8fafc; color: var(--text-main); }
+        .nav-item.active { background: var(--primary-soft); color: var(--primary); border-color: rgba(45, 139, 131, 0.1); }
+        .main-content { margin-left: var(--sidebar-w); padding: 40px; min-height: 100vh; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        .page-title { font-weight: 800; font-size: 1.75rem; color: var(--text-main); letter-spacing: -0.5px; }
+
+        /* --- CARDS & STATS --- */
+        .card-custom { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
+        .stat-card { padding: 25px; display: flex; align-items: flex-start; justify-content: space-between; }
+        .stat-val { font-size: 2.25rem; font-weight: 800; line-height: 1.2; letter-spacing: -1px; margin-top: 10px; color: var(--text-main); }
+        .stat-lbl { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .main-content { margin-left: var(--sidebar-w); padding: 30px; transition: 0.3s; }
-
-        /* --- 3. COMPONENTS --- */
-        .card-custom { 
-            background: white; border: 1px solid #f1f5f9; border-radius: 24px; padding: 25px; 
-            height: 100%; box-shadow: var(--card-shadow); position: relative; overflow: hidden;
-        }
-        .section-title { font-weight: 800; color: var(--text-main); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        /* --- MODERN TABLE & RANKING --- */
+        .modern-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+        .modern-table th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); padding: 0 20px 10px; font-weight: 700; border: none; }
+        .modern-table tr.data-row { background: white; box-shadow: var(--shadow-sm); border-radius: 16px; transition: transform 0.2s; }
+        .modern-table tr.data-row:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .modern-table td { padding: 20px; border: none; vertical-align: middle; }
+        .modern-table td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+        .modern-table td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
         
-        /* Rankings */
-        .rank-item { 
-            display: flex; align-items: center; gap: 15px; padding: 12px 0; 
-            border-bottom: 1px dashed #e2e8f0; transition: 0.2s; 
-        }
-        .rank-item:last-child { border-bottom: none; }
-        .rank-badge { 
-            width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; 
-            justify-content: center; font-weight: 800; font-size: 0.8rem; background: #f1f5f9; color: var(--text-muted); 
-        }
-        .r-1 { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
-        .r-2 { background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; }
-        .r-3 { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
+        .ranking-list { display: flex; flex-direction: column; gap: 12px; padding: 20px; max-height: 500px; overflow-y: auto; }
+        .rank-row { display: flex; align-items: center; padding: 12px 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #f1f5f9; transition: 0.2s; }
+        .rank-num { width: 28px; height: 28px; background: #e2e8f0; color: var(--text-muted); border-radius: 8px; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; }
+        .rank-row.top-1 .rank-num { background: #FEF3C7; color: #D97706; }
+        .rank-row.top-2 .rank-num { background: #E0E7FF; color: #4F46E5; }
+        .rank-row.top-3 .rank-num { background: #FFEDD5; color: #EA580C; }
 
-        /* --- 4. HALL OF FAME (LEVEL CARDS) --- */
-        .level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .lvl-card {
-            background: white; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px; 
-            text-align: center; cursor: pointer; transition: 0.3s; position: relative;
-        }
-        .lvl-card:hover, .lvl-card.active { 
-            border-color: var(--primary); transform: translateY(-5px); 
-            box-shadow: 0 15px 30px -5px rgba(45, 139, 131, 0.15); 
-        }
-        .lvl-badge-icon { 
-            display: inline-block; padding: 5px 12px; border-radius: 50px; 
-            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;
-        }
-        .lvl-count { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1; }
-        .lvl-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
+        /* --- BUTTONS --- */
+        .btn-icon { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: none; transition: 0.2s; margin-left: 6px; }
+        .btn-view { background: #E0F2FE; color: #0284C7; } .btn-view:hover { background: #0284C7; color: white; }
+        .btn-del { background: #FEE2E2; color: #DC2626; } .btn-del:hover { background: #DC2626; color: white; }
+        .btn-disabled { opacity: 0.4; cursor: not-allowed; background: #f1f5f9; color: #cbd5e1; }
 
-        /* Level Colors */
-        .l-pemula { background: #f1f5f9; color: #64748b; }
-        .l-perintis { background: #eff6ff; color: #3b82f6; }
-        .l-praktisi { background: #f0fdf4; color: #22c55e; }
-        .l-teladan { background: #ecfeff; color: #06b6d4; }
-        .l-mentor { background: #fff7ed; color: #f97316; }
-        .l-maestro { background: #fdf2f8; color: #db2777; }
-        .l-suhu { background: #fbfbfe; color: #7c3aed; border: 1px solid #ddd6fe; }
+        /* --- LEVEL CARDS --- */
+        .lvl-card-modern { text-align: center; padding: 25px 20px; border-radius: 20px; transition: 0.3s; cursor: pointer; border: 1px solid transparent; height: 100%; background: white; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+        .lvl-card-modern:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .lvl-icon { width: 50px; height: 50px; border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .lvl-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; letter-spacing: -0.5px; }
+        .lvl-count { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
+        .lvl-sub { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
 
-        /* --- 5. DATA TABLE (ANTI LEAK) --- */
-        .table-wrap { background: white; border-radius: 20px; border: 1px solid #f1f5f9; overflow: hidden; box-shadow: var(--card-shadow); }
-        .clean-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
-        .clean-table th { background: #f8fafc; padding: 20px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid #e2e8f0; }
-        .clean-table td { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; background: white; color: var(--text-main); }
-        .text-limit { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        /* --- STORY OVERLAY (SELOGIRI REWIND) --- */
+        #story-overlay { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; color: white; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .story-progress-container { display: flex; gap: 5px; padding: 15px 10px; position: absolute; top: 0; left: 0; right: 0; z-index: 10; }
+        .story-progress-bar { height: 3px; background: rgba(255,255,255,0.3); flex: 1; border-radius: 2px; overflow: hidden; }
+        .story-progress-fill { height: 100%; background: white; width: 0%; }
+        .story-slide { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; display: none; animation: zoomIn 10s linear; }
+        .story-slide.active { display: flex; }
+        .story-title { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: var(--primary); font-weight: 800; }
+        .story-big-text { font-size: 4rem; font-weight: 900; line-height: 1; margin-bottom: 10px; background: linear-gradient(to right, #2D8B83, #F59E0B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .story-sub { font-size: 1.2rem; color: #94a3b8; }
+        .story-list { width: 100%; max-width: 400px; text-align: left; }
+        .story-item { background: rgba(255,255,255,0.1); padding: 15px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); }
+        .story-rank { font-weight: 800; color: #F59E0B; margin-right: 15px; font-size: 1.2rem; }
+        .story-footer { position: absolute; bottom: 30px; width: 100%; text-align: center; font-size: 0.8rem; opacity: 0.5; letter-spacing: 1px; }
+        .btn-close-story { position: absolute; top: 20px; right: 20px; color: white; font-size: 1.5rem; cursor: pointer; z-index: 20; opacity: 0.7; }
+        @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
+        @keyframes zoomIn { from { transform: scale(1); } to { transform: scale(1.05); } }
         
-        .col-info { width: 35%; } .col-media { width: 25%; } .col-user { width: 25%; } .col-act { width: 15%; }
+        /* --- FLYER DARK PREMIUM --- */
+        #flyer-preview-container { background: #1e293b; border-radius: 24px; padding: 40px; overflow-x: auto; box-shadow: inset 0 0 50px rgba(0,0,0,0.5); border: 4px solid #334155; }
+        #flyer-area { width: 420px; min-height: 750px; flex-shrink: 0; display: flex; flex-direction: column; padding: 40px 30px; position: relative; overflow: hidden; background: #0F172A; color: white; }
+        .text-gold { color: #F59E0B; } .bg-gold { background: #F59E0B; }
 
-        .btn-view { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none; transition: 0.2s; border: 1px solid transparent; }
-        .btn-view:hover { transform: translateY(-2px); }
-        .btn-app { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
-        .btn-link { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-        
-        .btn-act { width: 34px; height: 34px; border-radius: 10px; border: none; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; }
-        .btn-edit { background: #fff7ed; color: #ea580c; } .btn-edit:hover { background: #ea580c; color: white; }
-        .btn-del { background: #fef2f2; color: #dc2626; } .btn-del:hover { background: #dc2626; color: white; }
-
-        /* --- 6. FLYER GENERATOR (PREMIUM DESIGN) --- */
-        #flyer-preview-container { background: #1e293b; padding: 30px; border-radius: 20px; display: flex; justify-content: center; }
-        #flyer-area { 
-            width: 400px; height: 500px; /* 4:5 Ratio */
-            background: radial-gradient(circle at top right, #1e293b, #0f172a); 
-            color: white; position: relative; overflow: hidden; flex-shrink: 0;
-            display: flex; flex-direction: column; padding: 30px; text-align: center;
-            border: 1px solid #334155;
+        /* --- MOBILE --- */
+        .mobile-toggle { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: var(--text-main); color: white; border-radius: 50%; z-index: 2000; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s; }
+        @media (max-width: 991px) { 
+            .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } 
+            .main-content { margin-left: 0; padding: 20px; padding-bottom: 100px; } 
+            .mobile-toggle { display: flex; } 
         }
-        .flyer-accent { position: absolute; width: 150px; height: 150px; background: var(--primary); filter: blur(80px); opacity: 0.2; border-radius: 50%; }
-        .f-top { top: -50px; left: -50px; } .f-btm { bottom: -50px; right: -50px; background: #F59E0B; }
-        
-        .fl-stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .fl-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; backdrop-filter: blur(5px); }
-        
-        .fl-list-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 6px 0; font-size: 0.8rem; text-align: left; }
-        .fl-badge { background: #F59E0B; color: black; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; margin-left: 5px; }
-
-        /* --- 7. MOBILE --- */
-        .mobile-card { background: white; padding: 16px; border-radius: 16px; border: 1px solid #f1f5f9; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .overlay-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1030; display: none; backdrop-filter: blur(2px); }
-        .overlay-backdrop.show { display: block; }
-        .mobile-toggle { position: fixed; bottom: 25px; right: 25px; width: 56px; height: 56px; background: var(--text-main); color: white; border-radius: 50%; z-index: 2000; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-
-        @media (max-width: 991px) {
-            .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 15px; padding-bottom: 100px; }
-            .desktop-view { display: none !important; } .mobile-view { display: block !important; }
-        }
-        @media (min-width: 992px) { .mobile-toggle, .mobile-view { display: none !important; } }
         .d-none { display: none !important; }
-        
-        /* Modal */
-        .modal-content-custom { border-radius: 20px; border: none; overflow: hidden; }
-        .modal-body-custom { background: #000; min-height: 450px; display: flex; align-items: center; justify-content: center; }
+        .text-limit-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+        .badge-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-card">
-            <div style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"><i class="fas fa-fingerprint"></i></div>
-            <h3 class="fw-bold mb-2">Admin Panel</h3>
-            <p class="text-muted small mb-4">Akses Data Guru Berbagi</p>
-            <input type="password" id="pinInput" class="form-control text-center fs-4 fw-bold mb-4" placeholder="••••••" maxlength="6" style="letter-spacing: 5px;">
-            <button onclick="auth()" id="btnLogin" class="btn-login">BUKA DASHBOARD</button>
+            <div style="font-size:3rem; margin-bottom:20px; color:var(--primary);"><i class="fas fa-fingerprint"></i></div>
+            <h4 class="fw-bold mb-2">Admin Portal</h4>
+            <p style="opacity:0.7; font-size:0.9rem; margin-bottom:30px;">Guru Berbagi Selogiri</p>
+            <input type="password" id="pinInput" class="inp-pin" placeholder="••••••" maxlength="6" autocomplete="off">
+            <button onclick="auth()" id="btnLogin" class="btn-login-custom">Masuk Dashboard <i class="fas fa-arrow-right ms-2"></i></button>
         </div>
     </div>
 
     <div id="app" class="d-none">
+        <button class="mobile-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
         
-        <div class="overlay-backdrop" id="backdrop" onclick="toggleNav()"></div>
-        <button class="mobile-toggle d-lg-none" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
-
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand"><i class="fas fa-shapes"></i> ADMIN PANEL</div>
+            <div class="sidebar-brand"><i class="fas fa-shapes text-warning"></i> GURU BERBAGI</div>
             <div class="nav-menu">
-                <div class="nav-item active" onclick="go('HOME', this)"><i class="fas fa-th-large"></i> Statistik</div>
+                <div class="nav-item active" onclick="go('HOME', this)"><i class="fas fa-chart-pie"></i> Ringkasan</div>
+                <div class="nav-item" onclick="go('DATA', this)"><i class="fas fa-database"></i> Database Karya</div>
                 <div class="nav-item" onclick="go('LEVEL', this)"><i class="fas fa-trophy"></i> Hall of Fame</div>
-                <div class="nav-item" onclick="go('DATA', this)"><i class="fas fa-database"></i> Data Karya</div>
-                <div class="nav-item" onclick="go('FLYER', this)"><i class="fas fa-image"></i> Flyer Rekap</div>
+                <div class="nav-item" onclick="go('FLYER', this)"><i class="fas fa-magic"></i> Buat Flyer</div>
+                <div class="nav-item" onclick="playStory()" style="color:#F59E0B"><i class="fas fa-play-circle"></i> Putar Story</div>
             </div>
-            <div class="p-4 border-top mt-auto">
-                <button onclick="location.reload()" class="btn btn-outline-danger w-100 rounded-pill fw-bold btn-sm py-2">Keluar</button>
+            <div class="p-4 mt-auto">
+                <button onclick="location.reload()" class="btn w-100 rounded-pill fw-bold text-danger" style="background:#FEF2F2;"><i class="fas fa-sign-out-alt me-2"></i>Keluar</button>
             </div>
         </aside>
 
         <main class="main-content">
-            
-            <div id="page-home">
-                <h4 class="section-title">Statistik & Peringkat</h4>
+            <div id="page-home" class="fade-in">
+                <div class="page-header"><div><h4 class="page-title">Dashboard Eksekutif</h4><div class="page-subtitle">Statistik Real-time</div></div></div>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4"><div class="card-custom stat-card"><div><div class="stat-lbl">Total Karya</div><div class="stat-val" id="stat-karya">0</div></div><div style="font-size:2rem; opacity:0.1;"><i class="fas fa-file-alt"></i></div></div></div>
+                    <div class="col-md-4"><div class="card-custom stat-card"><div><div class="stat-lbl">Populasi Guru</div><div class="stat-val" id="stat-guru">0</div></div><div style="font-size:2rem; opacity:0.1;"><i class="fas fa-users"></i></div></div></div>
+                    <div class="col-md-4"><div class="card-custom stat-card"><div><div class="stat-lbl">Sekolah</div><div class="stat-val" id="stat-sekolah">0</div></div><div style="font-size:2rem; opacity:0.1;"><i class="fas fa-school"></i></div></div></div>
+                </div>
                 <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="card-custom">
-                            <h6 class="fw-bold text-primary mb-4"><i class="fas fa-crown me-2"></i>Top 10 Guru Produktif</h6>
-                            <div id="rank-guru"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card-custom">
-                            <h6 class="fw-bold text-success mb-2"><i class="fas fa-school me-2"></i>Top 10 Sekolah Teraktif</h6>
-                            <div class="small text-muted mb-4 fst-italic border-bottom pb-2">Berdasarkan % Partisipasi Guru</div>
-                            <div id="rank-sekolah"></div>
-                        </div>
-                    </div>
+                    <div class="col-xl-6"><div class="card-custom h-100"><div class="p-4 border-bottom d-flex justify-content-between align-items-center"><h6 class="fw-bold m-0 text-success"><i class="fas fa-chart-line me-2"></i>Sekolah Teraktif</h6><span class="badge bg-success-soft text-success">Fair Play Score</span></div><div class="ranking-list" id="rank-sekolah"></div></div></div>
+                    <div class="col-xl-6"><div class="card-custom h-100"><div class="p-4 border-bottom"><h6 class="fw-bold m-0 text-primary"><i class="fas fa-medal me-2"></i>Top Guru Produktif</h6></div><div class="ranking-list" id="rank-guru"></div></div></div>
                 </div>
             </div>
 
-            <div id="page-level" class="d-none">
-                <h4 class="section-title">Hall of Fame (Level Guru)</h4>
-                
-                <div class="level-grid" id="level-grid-container">
-                    </div>
-
-                <div class="card-custom mt-4 d-none" id="level-detail-view">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0 text-primary" id="level-detail-title">Detail Level</h6>
-                        <button onclick="document.getElementById('level-detail-view').classList.add('d-none')" class="btn btn-sm btn-light rounded-pill border"><i class="fas fa-times"></i></button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light"><tr><th>Nama Guru</th><th>Sekolah</th><th class="text-center">Karya</th></tr></thead>
-                            <tbody id="level-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
+            <div id="page-data" class="d-none fade-in">
+                <div class="page-header"><h4 class="page-title">Database Karya</h4><button onclick="load()" class="btn btn-dark rounded-pill px-4 fw-bold"><i class="fas fa-sync-alt me-2"></i>Refresh</button></div>
+                <div class="table-responsive"><table class="modern-table"><thead><tr><th>Judul & Mapel</th><th>Pengirim</th><th class="text-end">Aksi</th></tr></thead><tbody id="table-body"></tbody></table></div>
             </div>
 
-            <div id="page-data" class="d-none">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="section-title mb-0">Data Karya</h4>
-                    <button onclick="load()" class="btn btn-light border rounded-pill px-3 fw-bold btn-sm"><i class="fas fa-sync-alt me-2"></i>Refresh</button>
-                </div>
-                
-                <div class="desktop-view table-wrap">
-                    <table class="clean-table">
-                        <thead><tr><th class="col-info">Info Karya</th><th class="col-media">Lampiran</th><th class="col-user">Pengirim</th><th class="col-act text-end">Aksi</th></tr></thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
-                </div>
-                <div class="mobile-view" id="mobile-list"></div>
+            <div id="page-level" class="d-none fade-in">
+                <div class="page-header"><h4 class="page-title">Hall of Fame</h4></div>
+                <div class="row g-3" id="level-grid-container"></div>
+                <div class="card-custom mt-4 d-none" id="level-detail-view"><div class="p-4 border-bottom d-flex justify-content-between"><h6 class="fw-bold text-primary m-0" id="level-detail-title">Detail</h6><button onclick="document.getElementById('level-detail-view').classList.add('d-none')" class="btn btn-sm btn-light rounded-circle"><i class="fas fa-times"></i></button></div><div class="p-3"><div class="table-responsive"><table class="table table-hover"><tbody id="level-table-body"></tbody></table></div></div></div>
             </div>
 
-            <div id="page-flyer" class="d-none">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="section-title mb-0">Flyer Generator</h4>
-                    <button onclick="downloadFlyer()" class="btn btn-primary rounded-pill fw-bold px-4"><i class="fas fa-download me-2"></i> Simpan Gambar</button>
-                </div>
-                
+            <div id="page-flyer" class="d-none fade-in">
+                <div class="page-header"><h4 class="page-title">Flyer Generator</h4><button onclick="downloadFlyer()" class="btn btn-warning text-white fw-bold rounded-pill px-4 shadow"><i class="fas fa-download me-2"></i>Download HD</button></div>
                 <div id="flyer-preview-container">
                     <div id="flyer-area">
-                        <div class="flyer-accent f-top"></div>
-                        <div class="flyer-accent f-btm"></div>
-                        
-                        <div style="position: relative; z-index: 2;">
-                            <div class="mb-4 pt-3">
-                                <h5 class="fw-bold mb-0 text-white opacity-75" style="letter-spacing: 2px;">UPDATE STATISTIK</h5>
-                                <h2 class="fw-bold text-warning mb-0">GURU BERBAGI</h2>
-                                <small class="text-white opacity-50">KECAMATAN SELOGIRI</small>
-                            </div>
-
-                            <div class="fl-stat-grid">
-                                <div class="fl-box"><div class="h2 fw-bold mb-0 text-white" id="fl-total">0</div><small class="opacity-75" style="font-size:0.6rem">TOTAL KARYA</small></div>
-                                <div class="fl-box"><div class="h2 fw-bold mb-0 text-white" id="fl-guru">0</div><small class="opacity-75" style="font-size:0.6rem">GURU AKTIF</small></div>
-                                <div class="fl-box"><div class="h2 fw-bold mb-0 text-white" id="fl-sekolah">0</div><small class="opacity-75" style="font-size:0.6rem">SEKOLAH</small></div>
-                            </div>
-
-                            <div class="text-start mb-3">
-                                <h6 class="text-warning fw-bold mb-2 border-bottom border-secondary pb-1" style="font-size:0.8rem">🏆 SEKOLAH TERAKTIF (% GURU)</h6>
-                                <div id="fl-top-sekolah"></div>
-                            </div>
-
-                            <div class="text-start">
-                                <h6 class="text-warning fw-bold mb-2 border-bottom border-secondary pb-1" style="font-size:0.8rem">👑 GURU PALING PRODUKTIF</h6>
-                                <div id="fl-top-guru"></div>
-                            </div>
-
-                            <div class="mt-auto pt-4 small opacity-50 border-top border-secondary">
-                                Data per: <span id="fl-date"></span><br>
-                                Mari Berkarya & Berbagi!
-                            </div>
+                        <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(45,139,131,0.2) 0%, transparent 70%); border-radius: 50%;"></div>
+                        <div style="position: absolute; bottom: -50px; left: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                        <div style="text-align: center; margin-bottom: 30px; position: relative; z-index: 2;">
+                            <div style="font-size:0.7rem; letter-spacing:4px; font-weight:700; color:var(--primary); margin-bottom:8px; text-transform:uppercase;">Update Resmi</div>
+                            <div style="font-size: 2.5rem; font-weight: 800; color: white; line-height: 1; margin-bottom: 5px; letter-spacing: -1px;">GURU BERBAGI</div>
+                            <div style="font-size: 0.9rem; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase;">Kecamatan Selogiri</div>
+                            <div style="width: 60px; height: 4px; background: #F59E0B; margin: 15px auto 0; border-radius: 2px;"></div>
                         </div>
+                        <div style="display:flex; gap:12px; margin-bottom:35px; position: relative; z-index: 2;">
+                            <div style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:15px 5px; text-align:center;"><div style="font-size:1.8rem; font-weight:800; color:#F59E0B; line-height:1;" id="fl-total">0</div><div style="font-size:0.6rem; font-weight:600; color:#cbd5e1; margin-top:5px; text-transform:uppercase;">Karya</div></div>
+                            <div style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:15px 5px; text-align:center;"><div style="font-size:1.8rem; font-weight:800; color:#38bdf8; line-height:1;" id="fl-guru">0</div><div style="font-size:0.6rem; font-weight:600; color:#cbd5e1; margin-top:5px; text-transform:uppercase;">Guru</div></div>
+                            <div style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:15px 5px; text-align:center;"><div style="font-size:1.8rem; font-weight:800; color:#4ade80; line-height:1;" id="fl-sekolah">0</div><div style="font-size:0.6rem; font-weight:600; color:#cbd5e1; margin-top:5px; text-transform:uppercase;">Sekolah</div></div>
+                        </div>
+                        <div style="font-size:0.85rem; font-weight:800; color:white; text-transform:uppercase; margin-bottom:15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-school text-gold"></i> Sekolah Teraktif</div>
+                        <div id="fl-top-sekolah" style="display:flex; flex-direction:column; gap:8px; margin-bottom:30px;"></div>
+                        <div style="font-size:0.85rem; font-weight:800; color:white; text-transform:uppercase; margin-bottom:15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-medal text-gold"></i> Guru Produktif</div>
+                        <div id="fl-top-guru" style="display:flex; flex-direction:column; gap:8px; margin-bottom:auto;"></div>
+                        <div style="text-align:center; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); margin-top:20px;"><div style="font-size: 0.9rem; font-weight: 700; color: white; letter-spacing: 1px; margin-bottom: 4px;">BERBAGI & MENGINSPIRASI</div><div style="font-size:0.65rem; color:#64748b;">Data per: <span id="fl-date"></span> • #SelogiriBerkarya</div></div>
                     </div>
                 </div>
             </div>
 
             <div id="loader" class="text-center py-5 d-none"><div class="spinner-border text-primary"></div><p class="mt-2 fw-bold text-muted">Sinkronisasi Data...</p></div>
-            <div id="empty" class="text-center py-5 d-none"><i class="fas fa-box-open fa-3x text-muted opacity-25 mb-3"></i><p class="text-muted">Data Kosong.</p></div>
-
         </main>
     </div>
 
-    <div class="modal fade" id="previewModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content modal-content-custom"><div class="modal-header py-2 px-3 border-bottom bg-white"><span class="fw-bold small">Preview Konten</span><button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button></div><div class="modal-body-custom"><div id="modal-content" class="w-100 h-100 d-flex align-items-center justify-content-center text-white"></div></div></div></div></div>
+    <div class="modal fade" id="previewModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius:20px;"><div class="modal-header border-bottom px-4 py-3"><h6 class="fw-bold m-0">Preview Karya</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light p-0 d-flex align-items-center justify-content-center" style="min-height:500px"><div id="modal-content" class="w-100 h-100 bg-white"></div></div></div></div></div>
+
+    <div id="story-overlay" class="d-none">
+        <div class="story-progress-container" id="story-bars"></div>
+        <div onclick="stopStory()" class="btn-close-story"><i class="fas fa-times"></i></div>
+        <div class="story-slide" id="slide-0"><div style="font-size:5rem; margin-bottom:20px;">🔥</div><div class="story-title">Update Terkini</div><h1 style="font-size:3rem; font-weight:800; line-height:1.2;">GURU BERBAGI<br>SELOGIRI</h1><p class="mt-4 text-muted">Mari lihat pencapaian kita hari ini!</p></div>
+        <div class="story-slide" id="slide-1"><div class="story-title">Total Kontribusi</div><div class="story-big-text" id="sty-total">0</div><div class="story-sub">KARYA DIGITAL</div><div style="margin-top:40px; font-size:1.5rem;" id="sty-guru">0 Guru Terdaftar</div></div>
+        <div class="story-slide" id="slide-2"><div class="story-title"><i class="fas fa-school"></i> Sekolah Teraktif</div><div class="story-list" id="sty-list-sekolah"></div></div>
+        <div class="story-slide" id="slide-3"><div class="story-title"><i class="fas fa-crown"></i> Guru Produktif</div><div class="story-list" id="sty-list-guru"></div></div>
+        <div class="story-footer">#SelogiriBerkarya • Data Realtime</div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxxr1uHQbJ2vf_yA59RP8YeHBwrdD4nRlbr0BP0nR0A84eSMCrLp7RR7RjrGVEXQHhP/exec"; 
+        const API = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec"; 
         
-        // --- POPULASI GURU PER SEKOLAH (WAJIB DIISI) ---
-        const SCHOOL_POPULATION = {
-            "SDN 1 SELOGIRI": 12, "SDN 2 SELOGIRI": 9, "SDN 3 SELOGIRI": 8,
-            "SD NEGERI 1 KRISAK": 10, "SD NEGERI 2 KRISAK": 8, "SD NEGERI 3 KRISAK": 8
-            // Tambahkan sekolah lain...
-        };
-
-        const LEVELS = [
-            {id:1, n:'Pemula', m:1, cls:'l-pemula'}, {id:2, n:'Perintis', m:5, cls:'l-perintis'}, 
-            {id:3, n:'Praktisi', m:10, cls:'l-praktisi'}, {id:4, n:'Teladan', m:25, cls:'l-teladan'}, 
-            {id:5, n:'Mentor', m:50, cls:'l-mentor'}, {id:6, n:'Maestro', m:75, cls:'l-maestro'}, 
-            {id:7, n:'Suhu', m:100, cls:'l-suhu'}
-        ];
-
         var DATA = [];
+        var USERS_DATA = [];
+        var SERVER_POPULATION = {}; 
         var MODAL = null;
         var LEVEL_CACHE = [];
+        const LEVELS = [{id:1, n:'Pemula', m:1, c:'#94a3b8', bg:'#f1f5f9'}, {id:2, n:'Perintis', m:5, c:'#3b82f6', bg:'#eff6ff'}, {id:3, n:'Praktisi', m:10, c:'#10b981', bg:'#ecfdf5'}, {id:4, n:'Teladan', m:25, c:'#0ea5e9', bg:'#e0f2fe'}, {id:5, n:'Mentor', m:50, c:'#8b5cf6', bg:'#f5f3ff'}, {id:6, n:'Maestro', m:75, c:'#f59e0b', bg:'#fffbeb'}, {id:7, n:'Suhu', m:100, c:'#ef4444', bg:'#fef2f2'}];
 
-        function auth() {
-            let btn = document.getElementById('btnLogin');
-            let pin = document.getElementById('pinInput').value;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking...';
-            
-            fetch(API, { method: 'POST', body: JSON.stringify({ action: 'login', payload: { pin: pin } }) })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success') {
-                    document.getElementById('login-overlay').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('login-overlay').classList.add('d-none');
-                        document.getElementById('app').classList.remove('d-none');
-                        MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
-                        load();
-                    }, 500);
-                } else {
-                    Swal.fire('Gagal', 'PIN Salah / Bukan Admin', 'error');
-                    btn.innerHTML = 'BUKA DASHBOARD';
-                }
-            })
-            .catch(() => {
-                Swal.fire('Error', 'Gagal koneksi server', 'error');
-                btn.innerHTML = 'BUKA DASHBOARD';
-            });
+        function toggleNav(){ document.getElementById('sidebar').classList.toggle('show'); }
+        function go(page, el){ 
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            if(el) el.classList.add('active');
+            ['home','data','level','flyer'].forEach(p=>document.getElementById('page-'+p).classList.add('d-none'));
+            document.getElementById('page-'+page.toLowerCase()).classList.remove('d-none');
         }
 
-        function toggleNav() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('backdrop').classList.toggle('show'); }
-        function go(page, el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
-            ['home','level','data','flyer'].forEach(id => document.getElementById('page-'+id).classList.add('d-none'));
-            document.getElementById('page-'+page.toLowerCase()).classList.remove('d-none');
-            if(window.innerWidth < 992) toggleNav();
+        function auth() {
+            let pin = document.getElementById('pinInput').value;
+            let btn = document.getElementById('btnLogin');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+            
+            fetch(API, {method:'POST', body:JSON.stringify({action:'login', payload:{pin:pin}})})
+            .then(r=>r.json()).then(res=>{
+                if(res.status==='success' && String(res.user.role).toUpperCase() === 'ADMIN') { 
+                    document.getElementById('login-overlay').style.display = 'none'; 
+                    document.getElementById('app').classList.remove('d-none');
+                    MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
+                    load();
+                } else { Swal.fire({icon:'error', title:'Akses Ditolak', text:'PIN salah atau Anda bukan Admin.'}); btn.innerHTML = 'Masuk Dashboard <i class="fas fa-arrow-right ms-2"></i>'; }
+            }).catch(e => { Swal.fire('Error','Gagal terhubung ke server','error'); btn.innerHTML = 'Masuk Dashboard'; });
         }
 
         async function load() {
             document.getElementById('loader').classList.remove('d-none');
             try {
-                let r = await fetch(API+"?action=read");
-                let j = await r.json();
-                if(j.status==='success') {
-                    DATA = j.media || [];
-                    processStats();
-                    renderData();
-                    initLevels();
-                    setupFlyer();
-                }
-            } catch(e) { Swal.fire('Error','Gagal muat data','error'); }
+                let [r1, r2] = await Promise.all([fetch(API + "?action=read"), fetch(API, {method:'POST', body:JSON.stringify({action:'users', payload:{}})})]);
+                let j1 = await r1.json(); let j2 = await r2.json();
+                DATA = j1.media || []; USERS_DATA = j2.data || [];
+                SERVER_POPULATION = {}; USERS_DATA.forEach(u => { let school = (u[1] || "").toUpperCase().trim(); if(school) SERVER_POPULATION[school] = (SERVER_POPULATION[school] || 0) + 1; });
+                renderStats(); renderData(); initLevels(); renderFlyer();
+            } catch(e){ console.error(e); Swal.fire('Ups...', 'Gagal memuat data.', 'error'); }
             document.getElementById('loader').classList.add('d-none');
         }
 
-        // 1. STATS
-        function processStats() {
-            let gMap={}, sMap={};
-            DATA.forEach(i => {
-                let g=i[1], s=i[2];
-                if(g) gMap[g] = (gMap[g]||0)+1;
-                if(s) { if(!sMap[s]) sMap[s]={active:new Set()}; sMap[s].active.add(g); }
-            });
-            renderRankG('rank-guru', gMap);
-            renderRankS('rank-sekolah', sMap);
+        function getSchoolScore(act, tot, works) {
+            let p = tot > 0 ? Math.round((act/tot)*100) : 0; if(p>100) p=100;
+            return {p, score: (p * 1000) + works};
+        }
+        function getLevelInfo(count) {
+            let lvl = LEVELS[0]; for(let i=LEVELS.length-1; i>=0; i--) { if(count >= LEVELS[i].m) { lvl = LEVELS[i]; break; } }
+            return lvl;
         }
 
-        function renderRankG(id, map) {
-            let s = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,10);
-            document.getElementById(id).innerHTML = s.map((x,i) => {
-                let c = i<3 ? `r-${i+1}` : '';
-                return `<div class="rank-item"><div class="rank-badge ${c}">${i+1}</div><div class="flex-grow-1 text-truncate fw-bold small text-dark">${x[0]}</div><div class="small fw-bold text-primary">${x[1]} Karya</div></div>`;
-            }).join('');
+        function renderStats() {
+            let sMap={}, gMap={};
+            DATA.forEach(i=>{ let s=i[2], g=i[1]; if(g) gMap[g]=(gMap[g]||0)+1; if(s){ if(!sMap[s]) sMap[s]={active:new Set(), works:0}; sMap[s].active.add(g); sMap[s].works++; } });
+            document.getElementById('stat-karya').innerText = DATA.length;
+            document.getElementById('stat-guru').innerText = USERS_DATA.length;
+            let uniqueSchools = new Set(USERS_DATA.map(u => (u[1] || "").trim().toUpperCase()).filter(s => s !== ""));
+            document.getElementById('stat-sekolah').innerText = uniqueSchools.size;
+
+            let topS = Object.entries(sMap).map(([n,d])=>{
+                let act = d.active.size; let tot = SERVER_POPULATION[n.toUpperCase()] || (act>0 ? act : 10); if(act > tot) tot = act;
+                let c = getSchoolScore(act, tot, d.works); return {n, ...c, works:d.works, act, tot};
+            }).sort((a,b)=>b.score - a.score).slice(0,10);
+            document.getElementById('rank-sekolah').innerHTML = topS.map((x,i)=>`<div class="rank-row top-${i+1}"><div class="rank-num">${i+1}</div><div class="flex-grow-1"><div class="fw-bold text-dark" style="font-size:0.9rem">${x.n}</div><div class="text-muted small">${x.act}/${x.tot} Guru • ${x.works} Karya</div></div><span class="badge bg-success-soft text-success badge-pill">${x.p}%</span></div>`).join('');
+
+            let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+            document.getElementById('rank-guru').innerHTML = topG.map((x,i)=>`<div class="rank-row top-${i+1}"><div class="rank-num">${i+1}</div><div class="flex-grow-1 fw-bold text-dark" style="font-size:0.9rem">${x[0]}</div><span class="badge badge-pill text-white bg-primary">${x[1]}</span></div>`).join('');
         }
 
-        function renderRankS(id, map) {
-            let list = Object.entries(map).map(([n, d]) => {
-                let act = d.active.size;
-                let tot = SCHOOL_POPULATION[n.toUpperCase()] || 10; // Default 10 if unknown
-                return {n, act, tot, p: Math.round((act/tot)*100)};
-            }).sort((a,b)=>b.p - a.p).slice(0,10);
-
-            document.getElementById(id).innerHTML = list.map((x,i) => {
-                let c = i<3 ? `r-${i+1}` : '';
-                return `<div class="rank-item"><div class="rank-badge ${c}">${i+1}</div><div class="flex-grow-1 text-truncate"><div class="fw-bold small text-dark">${x.n}</div><div class="small text-muted" style="font-size:0.65rem">Aktif: ${x.act}/${x.tot} Guru</div></div><div class="small fw-bold text-success">${x.p}%</div></div>`;
-            }).join('');
-        }
-
-        // 2. LEVELS (GRID CARD)
-        function initLevels() {
-            let gMap = {};
-            DATA.forEach(i => { if(i[1]){ if(!gMap[i[1]]) gMap[i[1]]={s:i[2], c:0}; gMap[i[1]].c++; } });
-            
-            LEVEL_CACHE = LEVELS.map(l => ({...l, users:[]}));
-            Object.entries(gMap).forEach(([n, d]) => {
-                for(let i=LEVELS.length-1; i>=0; i--) {
-                    if(d.c >= LEVELS[i].m) { LEVEL_CACHE[i].users.push({n:n, s:d.s, c:d.c}); break; }
-                }
-            });
-
-            let html = LEVEL_CACHE.map((l, idx) => `
-                <div class="lvl-card" onclick="showLevel(${idx})">
-                    <span class="lvl-badge-icon ${l.cls}">${l.n}</span>
-                    <span class="lvl-count">${l.users.length}</span>
-                    <span class="lvl-label">Guru</span>
-                </div>
-            `).join('');
-            document.getElementById('level-grid-container').innerHTML = html;
-        }
-
-        window.showLevel = function(idx) {
-            let l = LEVEL_CACHE[idx];
-            document.getElementById('level-detail-view').classList.remove('d-none');
-            document.getElementById('level-detail-title').innerText = `Daftar Guru - Level ${l.n}`;
-            
-            let sorted = l.users.sort((a,b)=>b.c - a.c);
-            let h = sorted.map(u => `<tr><td class="fw-bold small text-dark">${u.n}</td><td class="small text-muted">${u.s}</td><td class="text-center fw-bold text-primary">${u.c}</td></tr>`).join('');
-            document.getElementById('level-table-body').innerHTML = h || '<tr><td colspan="3" class="text-center p-3 small text-muted">Kosong</td></tr>';
-        }
-
-        // 3. DATA & EDIT
-        function renderData() {
-            let tb = document.getElementById('table-body');
-            let mob = document.getElementById('mobile-list');
-            tb.innerHTML = ''; mob.innerHTML = '';
-            
-            if(DATA.length===0) { document.getElementById('empty').classList.remove('d-none'); return; }
-            document.getElementById('empty').classList.add('d-none');
-
-            DATA.forEach(item => {
-                let id = item[13];
-                let judul = cleanText(item[5], 50);
-                let nama = cleanText(item[1], 25);
-                let sek = cleanText(item[2], 25);
-                let mapel = cleanText(item[6], 20);
-                
-                let rawHtml = item[7] || ""; 
-                let rawLink = item[8] || ""; 
-                
-                let btns = `<div class="d-flex flex-wrap gap-2">`;
-                if(rawHtml.length > 15) {
-                    let safe = btoa(unescape(encodeURIComponent(rawHtml)));
-                    btns += `<button onclick="viewApp('${safe}')" class="btn-view btn-app"><i class="fas fa-play-circle"></i> App</button>`;
-                }
-                if(rawLink.startsWith('http')) {
-                    btns += `<a href="${rawLink}" target="_blank" class="btn-view btn-link"><i class="fas fa-external-link-alt"></i> Link</a>`;
-                }
-                btns += `</div>`;
-
-                let acts = `
-                    <button onclick="askEdit('${id}')" class="btn-act btn-edit me-1"><i class="fas fa-pencil-alt"></i></button>
-                    <button onclick="askDel('${id}')" class="btn-act btn-del"><i class="fas fa-trash"></i></button>
-                `;
-
-                // Desktop
-                let tr = `<tr><td class="col-info"><div class="fw-bold text-main text-limit" title="${item[5]}">${judul}</div><div class="small text-muted text-limit">${mapel}</div></td><td class="col-media">${btns}</td><td class="col-user"><div class="fw-bold small text-main text-limit">${nama}</div><div class="small text-muted text-limit">${sek}</div></td><td class="col-act text-end">${acts}</td></tr>`;
-                tb.insertAdjacentHTML('beforeend', tr);
-
-                // Mobile
-                let cd = `<div class="mobile-card"><div class="d-flex justify-content-between mb-2"><div class="small text-muted fw-bold">${mapel}</div><div class="d-flex gap-2">${acts}</div></div><div class="fw-bold text-main mb-2 text-limit">${judul}</div><div class="d-flex align-items-center gap-2 border-top pt-2 mt-2"><div class="bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold text-muted" style="width:28px;height:28px;font-size:0.75rem">${nama.charAt(0)}</div><div class="small text-muted text-limit flex-grow-1">${nama}</div></div><div class="mt-2 pt-2 border-top">${btns}</div></div>`;
-                mob.insertAdjacentHTML('beforeend', cd);
-            });
-        }
-
-        // 4. FLYER & UTILS
-        function getLevelName(c) { for(let i=LEVELS.length-1; i>=0; i--) { if(c>=LEVELS[i].m) return LEVELS[i].n.toUpperCase(); } return LEVELS[0].n.toUpperCase(); }
-
-        function setupFlyer() {
+        function renderFlyer() {
             document.getElementById('fl-total').innerText = DATA.length;
-            document.getElementById('fl-guru').innerText = new Set(DATA.map(i=>i[1])).size;
-            document.getElementById('fl-sekolah').innerText = new Set(DATA.map(i=>i[2])).size;
-            document.getElementById('fl-date').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
-            
-            // Top Sekolah (Percent)
-            let sMap={};
-            DATA.forEach(i => { if(i[2]) { if(!sMap[i[2]]) sMap[i[2]] = new Set(); sMap[i[2]].add(i[1]); } });
-            let topS = Object.entries(sMap).map(([n, s]) => {
-                let act = s.size; let tot = SCHOOL_POPULATION[n.toUpperCase()] || 10;
-                return {n, p: Math.round((act/tot)*100)};
-            }).sort((a,b)=>b.p - a.p).slice(0,3);
-            document.getElementById('fl-top-sekolah').innerHTML = topS.map((x,i)=>`<div class="fl-list-row"><span>${i+1}. ${x.n}</span><span class="fw-bold text-warning">${x.p}%</span></div>`).join('');
+            document.getElementById('fl-guru').innerText = USERS_DATA.length;
+            let uniqueSchools = new Set(USERS_DATA.map(u => (u[1] || "").trim().toUpperCase()).filter(s => s !== ""));
+            document.getElementById('fl-sekolah').innerText = uniqueSchools.size;
+            document.getElementById('fl-date').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}).toUpperCase();
 
-            // Top Guru (With Badge)
-            let gMap={};
-            DATA.forEach(i => { if(i[1]) gMap[i[1]] = (gMap[i[1]]||0)+1; });
+            let sMap={}, gMap={};
+            DATA.forEach(i=>{ let s=i[2], g=i[1]; if(g) gMap[g]=(gMap[g]||0)+1; if(s){ if(!sMap[s])sMap[s]={active:new Set(),works:0}; sMap[s].active.add(g); sMap[s].works++; } });
+            
+            let topS = Object.entries(sMap).map(([n,d])=>{
+                let act=d.active.size; let tot=SERVER_POPULATION[n.toUpperCase()] || act; if(act>tot) tot=act;
+                let c = getSchoolScore(act, tot, d.works); return {n, ...c, works:d.works, act, tot};
+            }).sort((a,b)=>b.score-a.score).slice(0,3);
+
+            document.getElementById('fl-top-sekolah').innerHTML = topS.map((x,i)=>`<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 15px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px;"><div style="display:flex; align-items:center;"><div style="width:24px; height:24px; background:#334155; border-radius:6px; font-size:0.7rem; font-weight:800; color:#94a3b8; display:flex; align-items:center; justify-content:center; margin-right:10px;">${i+1}</div><div><div style="font-weight:700; font-size:0.85rem; color:white; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${x.n}</div><div style="font-size:0.6rem; color:#94a3b8;">${x.act} dari ${x.tot} Guru Aktif</div></div></div><div style="text-align:right;"><div style="font-weight:800; color:#4ade80; font-size:0.9rem;">${x.p}%</div><div style="font-size:0.6rem; color:#94a3b8; text-transform:uppercase;">${x.works} KARYA</div></div></div>`).join('');
+
             let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
-            document.getElementById('fl-top-guru').innerHTML = topG.map((x,i)=> {
-                let lvl = getLevelName(x[1]);
-                return `<div class="fl-list-row"><span>${i+1}. ${x[0]} <span class="fl-badge">${lvl}</span></span><span class="fw-bold text-warning">${x[1]} Karya</span></div>`;
+            document.getElementById('fl-top-guru').innerHTML = topG.map((x,i)=>{
+                let lvl = getLevelInfo(x[1]);
+                return `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 15px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px;"><div style="display:flex; align-items:center;"><div style="width:24px; height:24px; background:#334155; border-radius:6px; font-size:0.7rem; font-weight:800; color:#94a3b8; display:flex; align-items:center; justify-content:center; margin-right:10px;">${i+1}</div><div><div style="font-weight:700; font-size:0.85rem; color:white; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${x[0]}</div><div style="display:inline-block; margin-top:2px; padding:2px 6px; border-radius:4px; background:${lvl.c}; color:white; font-size:0.55rem; font-weight:700; text-transform:uppercase;">${lvl.n}</div></div></div><div style="background:#F59E0B; color:white; padding:4px 10px; border-radius:8px; font-size:0.8rem; font-weight:800;">${x[1]}</div></div>`;
             }).join('');
         }
 
-        function downloadFlyer() {
-            html2canvas(document.getElementById('flyer-area')).then(c => {
-                let a = document.createElement('a'); a.download = 'Rekap-Guru-Berbagi.png'; a.href = c.toDataURL(); a.click();
-            });
+        function renderData() {
+            let h = DATA.map(i=> { let id = i[13]; let hasId = (id && String(id).trim() !== ""); let btnClass = hasId ? '' : 'btn-disabled';
+                return `<tr class="data-row"><td><div class="fw-bold text-dark text-limit-2">${i[5]}</div><div class="d-flex gap-2 mt-1"><span class="badge bg-light text-dark border">${i[6]}</span><span class="badge bg-light text-dark border">${i[11] || 'Media'}</span></div></td><td><div class="fw-bold small text-dark">${i[1]}</div><div class="small text-muted text-limit-2">${i[2]}</div></td><td class="text-end"><button onclick="viewApp('${id}','${i[7]}')" class="btn-icon btn-view ${btnClass}" ${hasId?'':'disabled'}><i class="fas fa-eye"></i></button><button onclick="askDel('${id}')" class="btn-icon btn-del ${btnClass}" ${hasId?'':'disabled'}><i class="fas fa-trash-alt"></i></button></td></tr>`;
+            }).join('');
+            document.getElementById('table-body').innerHTML = h;
         }
 
-        window.viewApp = function(b64) {
-            try {
-                let h = decodeURIComponent(escape(atob(b64))).replace(/width="\d+"/g, 'width="100%"').replace(/height="\d+"/g, 'height="100%"');
-                document.getElementById('modal-content').innerHTML = h;
-                MODAL.show();
-                document.getElementById('previewModal').addEventListener('hidden.bs.modal', ()=>document.getElementById('modal-content').innerHTML='');
-            } catch(e){}
+        function initLevels() {
+            let gMap = {}; DATA.forEach(i => { if(i[1]){ if(!gMap[i[1]]) gMap[i[1]]={s:i[2], c:0}; gMap[i[1]].c++; } });
+            LEVEL_CACHE = LEVELS.map(l => ({...l, users:[]}));
+            Object.entries(gMap).forEach(([n, d]) => { for(let i=LEVELS.length-1; i>=0; i--) { if(d.c >= LEVELS[i].m) { LEVEL_CACHE[i].users.push({n:n, s:d.s, c:d.c}); break; } } });
+            document.getElementById('level-grid-container').innerHTML = LEVEL_CACHE.map((l, idx) => `<div class="col-6 col-md-4 col-lg-3"><div class="lvl-card-modern" onclick="showLevel(${idx})" style="border-top: 4px solid ${l.c}; background: ${l.users.length>0 ? 'white' : '#f8fafc'}"><div class="lvl-icon" style="background:${l.bg}; color:${l.c}"><i class="fas fa-trophy"></i></div><div class="lvl-name" style="color:${l.c}">${l.n}</div><div class="lvl-count">${l.users.length}</div><div class="lvl-sub">GURU</div></div></div>`).join('');
         }
 
-        function cleanText(str, len) {
-            if(!str) return "-";
-            let s = String(str).replace(/<[^>]*>?/gm, ''); 
-            return s.length > len ? s.substring(0, len)+"..." : s;
+        function showLevel(idx) {
+            let l = LEVEL_CACHE[idx];
+            document.getElementById('level-detail-view').classList.remove('d-none'); document.getElementById('level-detail-title').innerText = `Guru Level ${l.n} (${l.m}+ Karya)`; document.getElementById('level-detail-view').scrollIntoView({behavior:'smooth'});
+            let h = l.users.sort((a,b)=>b.c-a.c).map(u => `<tr><td class="fw-bold small">${u.n}</td><td class="small text-muted">${u.s}</td><td class="text-end fw-bold text-primary">${u.c}</td></tr>`).join('');
+            document.getElementById('level-table-body').innerHTML = h || '<tr><td colspan="3" class="text-center p-3 small text-muted">Belum ada data.</td></tr>';
         }
 
-        function askEdit(id) {
-            let item = DATA.find(i => i[13] == id);
-            Swal.fire({
-                title: 'Edit Data',
-                html: `<input id="swal-judul" class="form-control mb-2" placeholder="Judul" value="${item[5]}">
-                       <input id="swal-nama" class="form-control mb-2" placeholder="Nama" value="${item[1]}">
-                       <input id="swal-sekolah" class="form-control mb-2" placeholder="Sekolah" value="${item[2]}">
-                       <input id="swal-link" class="form-control" placeholder="Link" value="${item[8]}">`,
-                showCancelButton: true, confirmButtonText: 'Simpan',
-                preConfirm: () => {
-                    return { id: id, judul: document.getElementById('swal-judul').value, nama: document.getElementById('swal-nama').value, sekolah: document.getElementById('swal-sekolah').value, link: document.getElementById('swal-link').value }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.showLoading();
-                    fetch(API, { method: 'POST', body: JSON.stringify({ action: 'updateData', payload: result.value }) })
-                    .then(r => r.json()).then(res => {
-                        if(res.status === 'success') { Swal.fire('Tersimpan!','','success'); load(); }
-                        else Swal.fire('Gagal','Error Backend','error');
-                    });
-                }
-            });
-        }
+        function downloadFlyer() { Swal.fire({title:'Meracik Flyer...', text:'Mohon tunggu sebentar', allowOutsideClick:false, didOpen:()=>Swal.showLoading()}); html2canvas(document.getElementById('flyer-area'), {scale:3, useCORS:true}).then(c=>{ Swal.close(); let a=document.createElement('a'); a.download='Laporan-GuruBerbagi-HD.png'; a.href=c.toDataURL(); a.click(); }); }
 
-        function askDel(id) {
-            Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',confirmButtonText:'Ya Hapus'}).then(r=>{
-                if(r.isConfirmed){
-                    Swal.showLoading();
-                    fetch(API,{method:'POST',body:JSON.stringify({action:'hapus',payload:{id:id}})}).then(()=>{Swal.fire('Terhapus','','success');load()});
-                }
-            });
+        function viewApp(id, html) { document.getElementById('modal-content').innerHTML = '<div class="d-flex justify-content-center align-items-center h-100"><div class="spinner-border text-primary"></div></div>'; MODAL.show(); if(html==="HAS_HTML") { fetch(API,{method:'POST', body:JSON.stringify({action:'getDetail', payload:{id:id}})}).then(r=>r.json()).then(res=>{ if(res.status==='success') document.getElementById('modal-content').innerHTML = res.html.replace(/width="\d+"/g, 'width="100%"').replace(/height="\d+"/g, 'height="100%"'); }); } else document.getElementById('modal-content').innerHTML = html.replace(/width="\d+"/g, 'width="100%"').replace(/height="\d+"/g, 'height="100%"'); }
+
+        function askDel(id) { Swal.fire({title:'Hapus Karya?', text:"Data tidak bisa dikembalikan!", icon:'warning', showCancelButton:true, confirmButtonColor:'#dc2626', confirmButtonText:'Hapus'}).then(r=>{ if(r.isConfirmed){ Swal.fire({title:'Menghapus...', didOpen:()=>Swal.showLoading()}); fetch(API,{method:'POST',body:JSON.stringify({action:'hapus',payload:{id:id}})}).then(r=>r.json()).then(res=>{ if(res.status==='success') { Swal.fire('Berhasil','Data dihapus','success'); load(); } else Swal.fire('Gagal', res.message, 'error'); }); } }); }
+
+        // --- STORY MODE LOGIC ---
+        let storyTimer = null; const STORY_DURATION = 4000;
+        function playStory() {
+            document.getElementById('sty-total').innerText = DATA.length; document.getElementById('sty-guru').innerText = USERS_DATA.length + " GURU";
+            let sMap={}, gMap={}; DATA.forEach(i=>{ let s=i[2], g=i[1]; if(g) gMap[g]=(gMap[g]||0)+1; if(s){ if(!sMap[s])sMap[s]={active:new Set(),works:0}; sMap[s].active.add(g); sMap[s].works++; } });
+            let topS = Object.entries(sMap).map(([n,d])=>{ let act=d.active.size; let tot=SERVER_POPULATION[n.toUpperCase()] || (act>0 ? act : 10); if(act>tot) tot=act; let c = getSchoolScore(act, tot, d.works); return {n, ...c}; }).sort((a,b)=>b.score-a.score).slice(0, 5);
+            document.getElementById('sty-list-sekolah').innerHTML = topS.map((x,i)=>`<div class="story-item"><div class="d-flex align-items-center"><span class="story-rank">#${i+1}</span><div style="font-weight:700; font-size:1rem; text-align:left;">${x.n}</div></div><div style="font-weight:800; color:#4ade80;">${x.p}%</div></div>`).join('');
+            let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0, 5);
+            document.getElementById('sty-list-guru').innerHTML = topG.map((x,i)=>`<div class="story-item"><div class="d-flex align-items-center"><span class="story-rank">#${i+1}</span><div style="font-weight:700; font-size:1rem; text-align:left;">${x[0]}</div></div><div class="badge bg-warning text-dark">${x[1]}</div></div>`).join('');
+            
+            document.getElementById('story-overlay').classList.remove('d-none');
+            let barsHtml = ''; for(let i=0; i<4; i++) barsHtml += `<div class="story-progress-bar"><div class="story-progress-fill" id="fill-${i}"></div></div>`;
+            document.getElementById('story-bars').innerHTML = barsHtml;
+            runSlide(0);
         }
+        function runSlide(idx) {
+            if(idx > 3) { stopStory(); return; }
+            document.querySelectorAll('.story-slide').forEach(el => el.classList.remove('active')); document.getElementById('slide-'+idx).classList.add('active');
+            let fill = document.getElementById('fill-'+idx); fill.style.transition = 'none'; fill.style.width = '0%';
+            setTimeout(() => { fill.style.transition = `width ${STORY_DURATION}ms linear`; fill.style.width = '100%'; }, 50);
+            clearTimeout(storyTimer); storyTimer = setTimeout(() => { runSlide(idx+1); }, STORY_DURATION);
+        }
+        function stopStory() { clearTimeout(storyTimer); document.getElementById('story-overlay').classList.add('d-none'); }
     </script>
 </body>
 </html>
