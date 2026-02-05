@@ -28,7 +28,7 @@
         body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
         /* --- LOGIN SCREEN --- */
-        #login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0F172A 0%, #1e293b 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        #login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0F172A 0%, #1e293b 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s; }
         .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 3rem 2rem; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; }
         .inp-pin { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; width: 100%; font-weight: 700; color: white; outline: none; margin-bottom: 25px; transition: all 0.3s; }
         .inp-pin:focus { border-color: var(--primary); background: rgba(0,0,0,0.2); }
@@ -141,7 +141,7 @@
                 <div class="nav-item" onclick="playStory()" style="color:#F59E0B"><i class="fas fa-play-circle"></i> Putar Story</div>
             </div>
             <div class="p-4 mt-auto">
-                <button onclick="location.reload()" class="btn w-100 rounded-pill fw-bold text-danger" style="background:#FEF2F2;"><i class="fas fa-sign-out-alt me-2"></i>Keluar</button>
+                <button onclick="logout()" class="btn w-100 rounded-pill fw-bold text-danger" style="background:#FEF2F2;"><i class="fas fa-sign-out-alt me-2"></i>Keluar</button>
             </div>
         </aside>
 
@@ -223,6 +223,25 @@
         var LEVEL_CACHE = [];
         const LEVELS = [{id:1, n:'Pemula', m:1, c:'#94a3b8', bg:'#f1f5f9'}, {id:2, n:'Perintis', m:5, c:'#3b82f6', bg:'#eff6ff'}, {id:3, n:'Praktisi', m:10, c:'#10b981', bg:'#ecfdf5'}, {id:4, n:'Teladan', m:25, c:'#0ea5e9', bg:'#e0f2fe'}, {id:5, n:'Mentor', m:50, c:'#8b5cf6', bg:'#f5f3ff'}, {id:6, n:'Maestro', m:75, c:'#f59e0b', bg:'#fffbeb'}, {id:7, n:'Suhu', m:100, c:'#ef4444', bg:'#fef2f2'}];
 
+        // --- CHECK SESSION ON LOAD ---
+        function checkSession() {
+            let session = localStorage.getItem('GB_ADMIN_SESSION');
+            if(session) {
+                try {
+                    let s = JSON.parse(session);
+                    // Cek expired (24 jam)
+                    if(Date.now() < s.expiry && s.role === 'ADMIN') {
+                        document.getElementById('login-overlay').style.display = 'none';
+                        document.getElementById('app').classList.remove('d-none');
+                        MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
+                        load();
+                        return;
+                    }
+                } catch(e) { localStorage.removeItem('GB_ADMIN_SESSION'); }
+            }
+        }
+        window.onload = checkSession;
+
         function toggleNav(){ document.getElementById('sidebar').classList.toggle('show'); }
         function go(page, el){ 
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -238,13 +257,27 @@
             
             fetch(API, {method:'POST', body:JSON.stringify({action:'login', payload:{pin:pin}})})
             .then(r=>r.json()).then(res=>{
-                if(res.status==='success' && String(res.user.role).toUpperCase() === 'ADMIN') { 
-                    document.getElementById('login-overlay').style.display = 'none'; 
+                if(res.status==='success' && String(res.user.role).toUpperCase() === 'ADMIN') {
+                    // SIMPAN SESI (24 JAM)
+                    localStorage.setItem('GB_ADMIN_SESSION', JSON.stringify({
+                        pin: pin,
+                        role: 'ADMIN',
+                        expiry: Date.now() + (24 * 60 * 60 * 1000)
+                    }));
+
+                    document.getElementById('login-overlay').style.opacity = '0';
+                    setTimeout(()=>{ document.getElementById('login-overlay').style.display = 'none'; }, 500);
+                    
                     document.getElementById('app').classList.remove('d-none');
                     MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
                     load();
                 } else { Swal.fire({icon:'error', title:'Akses Ditolak', text:'PIN salah atau Anda bukan Admin.'}); btn.innerHTML = 'Masuk Dashboard <i class="fas fa-arrow-right ms-2"></i>'; }
             }).catch(e => { Swal.fire('Error','Gagal terhubung ke server','error'); btn.innerHTML = 'Masuk Dashboard'; });
+        }
+
+        function logout() {
+            localStorage.removeItem('GB_ADMIN_SESSION');
+            location.reload();
         }
 
         async function load() {
