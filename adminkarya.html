@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - Guru Berbagi</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2D8B83; --primary-dark: #1F6660; --accent: #F59E0B;
+            --bg-body: #f8fafc; --text-main: #1e293b; --text-muted: #64748b;
+            --sidebar-w: 280px;
+            --card-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-body); color: var(--text-main); overflow-x: hidden; }
+
+        /* --- 1. LOGIN SCREEN (SERVER CONNECTED) --- */
+        #login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary), #0f172a); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-card { 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 3rem; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+        }
+        .btn-login {
+            background: var(--primary); color: white; border: none; padding: 14px; border-radius: 50px; 
+            font-weight: 800; width: 100%; letter-spacing: 1px; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(45, 139, 131, 0.3);
+        }
+        .btn-login:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* --- 2. LAYOUT & SIDEBAR --- */
+        .sidebar { 
+            width: var(--sidebar-w); height: 100vh; position: fixed; top: 0; left: 0; 
+            background: white; border-right: 1px solid #e2e8f0; z-index: 1040; 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; 
+        }
+        .sidebar-brand { 
+            padding: 35px 30px; font-weight: 800; font-size: 1.3rem; color: var(--primary); 
+            display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px;
+        }
+        .nav-menu { flex-grow: 1; padding: 0 15px; }
+        .nav-item { 
+            padding: 14px 20px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; 
+            border-radius: 14px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; 
+        }
+        .nav-item:hover, .nav-item.active { background: #f0fdfa; color: var(--primary); }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+        
+        .main-content { margin-left: var(--sidebar-w); padding: 30px; transition: 0.3s; }
+
+        /* --- 3. COMPONENTS --- */
+        .card-custom { 
+            background: white; border: 1px solid #f1f5f9; border-radius: 24px; padding: 25px; 
+            height: 100%; box-shadow: var(--card-shadow); position: relative; overflow: hidden;
+        }
+        .section-title { font-weight: 800; color: var(--text-main); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        
+        /* Rankings */
+        .rank-item { 
+            display: flex; align-items: center; gap: 15px; padding: 12px 0; 
+            border-bottom: 1px dashed #e2e8f0; transition: 0.2s; 
+        }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-badge { 
+            width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; 
+            justify-content: center; font-weight: 800; font-size: 0.8rem; background: #f1f5f9; color: var(--text-muted); 
+        }
+        .r-1 { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
+        .r-2 { background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; }
+        .r-3 { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
+
+        /* --- 4. HALL OF FAME (LEVEL CARDS) --- */
+        .level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .lvl-card {
+            background: white; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px; 
+            text-align: center; cursor: pointer; transition: 0.3s; position: relative;
+        }
+        .lvl-card:hover, .lvl-card.active { 
+            border-color: var(--primary); transform: translateY(-5px); 
+            box-shadow: 0 15px 30px -5px rgba(45, 139, 131, 0.15); 
+        }
+        .lvl-badge-icon { 
+            display: inline-block; padding: 5px 12px; border-radius: 50px; 
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;
+        }
+        .lvl-count { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .lvl-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
+
+        /* Level Colors */
+        .l-pemula { background: #f1f5f9; color: #64748b; }
+        .l-perintis { background: #eff6ff; color: #3b82f6; }
+        .l-praktisi { background: #f0fdf4; color: #22c55e; }
+        .l-teladan { background: #ecfeff; color: #06b6d4; }
+        .l-mentor { background: #fff7ed; color: #f97316; }
+        .l-maestro { background: #fdf2f8; color: #db2777; }
+        .l-suhu { background: #fbfbfe; color: #7c3aed; border: 1px solid #ddd6fe; }
+
+        /* --- 5. DATA TABLE (ANTI LEAK) --- */
+        .table-wrap { background: white; border-radius: 20px; border: 1px solid #f1f5f9; overflow: hidden; box-shadow: var(--card-shadow); }
+        .clean-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+        .clean-table th { background: #f8fafc; padding: 20px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid #e2e8f0; }
+        .clean-table td { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; background: white; color: var(--text-main); }
+        .text-limit { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        
+        .col-info { width: 35%; } .col-media { width: 25%; } .col-user { width: 25%; } .col-act { width: 15%; }
+
+        .btn-view { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none; transition: 0.2s; border: 1px solid transparent; }
+        .btn-view:hover { transform: translateY(-2px); }
+        .btn-app { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .btn-link { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        
+        .btn-act { width: 34px; height: 34px; border-radius: 10px; border: none; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; }
+        .btn-edit { background: #fff7ed; color: #ea580c; } .btn-edit:hover { background: #ea580c; color: white; }
+        .btn-del { background: #fef2f2; color: #dc2626; } .btn-del:hover { background: #dc2626; color: white; }
+
+        /* --- 6. FLYER GENERATOR (PREMIUM DESIGN) --- */
+        #flyer-preview-container { background: #1e293b; padding: 30px; border-radius: 20px; display: flex; justify-content: center; }
+        #flyer-area { 
+            width: 400px; height: 500px; /* 4:5 Ratio */
+            background: radial-gradient(circle at top right, #1e293b, #0f172a); 
+            color: white; position: relative; overflow: hidden; flex-shrink: 0;
+            display: flex; flex-direction: column; padding: 30px; text-align: center;
+            border: 1px solid #334155;
+        }
+        .flyer-accent { position: absolute; width: 150px; height: 150px; background: var(--primary); filter: blur(80px); opacity: 0.2; border-radius: 50%; }
+        .f-top { top: -50px; left: -50px; } .f-btm { bottom: -50px; right: -50px; background: #F59E0B; }
+        
+        .fl-stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .fl-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; backdrop-filter: blur(5px); }
+        
+        .fl-list-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 6px 0; font-size: 0.8rem; text-align: left; }
+        .fl-badge { background: #F59E0B; color: black; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; margin-left: 5px; }
+
+        /* --- 7. MOBILE --- */
+        .mobile-card { background: white; padding: 16px; border-radius: 16px; border: 1px solid #f1f5f9; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .overlay-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1030; display: none; backdrop-filter: blur(2px); }
+        .overlay-backdrop.show { display: block; }
+        .mobile-toggle { position: fixed; bottom: 25px; right: 25px; width: 56px; height: 56px; background: var(--text-main); color: white; border-radius: 50%; z-index: 2000; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        @media (max-width: 991px) {
+            .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 15px; padding-bottom: 100px; }
+            .desktop-view { display: none !important; } .mobile-view { display: block !important; }
+        }
+        @media (min-width: 992px) { .mobile-toggle, .mobile-view { display: none !important; } }
+        .d-none { display: none !important; }
+        
+        /* Modal */
+        .modal-content-custom { border-radius: 20px; border: none; overflow: hidden; }
+        .modal-body-custom { background: #000; min-height: 450px; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-card">
+            <div style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"><i class="fas fa-fingerprint"></i></div>
+            <h3 class="fw-bold mb-2">Admin Panel</h3>
+            <p class="text-muted small mb-4">Akses Data Guru Berbagi</p>
+            <input type="password" id="pinInput" class="form-control text-center fs-4 fw-bold mb-4" placeholder="••••••" maxlength="6" style="letter-spacing: 5px;">
+            <button onclick="auth()" id="btnLogin" class="btn-login">BUKA DASHBOARD</button>
+        </div>
+    </div>
+
+    <div id="app" class="d-none">
+        
+        <div class="overlay-backdrop" id="backdrop" onclick="toggleNav()"></div>
+        <button class="mobile-toggle d-lg-none" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-shapes"></i> ADMIN PANEL</div>
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="go('HOME', this)"><i class="fas fa-th-large"></i> Statistik</div>
+                <div class="nav-item" onclick="go('LEVEL', this)"><i class="fas fa-trophy"></i> Hall of Fame</div>
+                <div class="nav-item" onclick="go('DATA', this)"><i class="fas fa-database"></i> Data Karya</div>
+                <div class="nav-item" onclick="go('FLYER', this)"><i class="fas fa-image"></i> Flyer Rekap</div>
+            </div>
+            <div class="p-4 border-top mt-auto">
+                <button onclick="location.reload()" class="btn btn-outline-danger w-100 rounded-pill fw-bold btn-sm py-2">Keluar</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div id="page-home">
+                <h4 class="section-title">Statistik & Peringkat</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card-custom">
+                            <h6 class="fw-bold text-primary mb-4"><i class="fas fa-crown me-2"></i>Top 10 Guru Produktif</h6>
+                            <div id="rank-guru"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-custom">
+                            <h6 class="fw-bold text-success mb-2"><i class="fas fa-school me-2"></i>Top 10 Sekolah Teraktif</h6>
+                            <div class="small text-muted mb-4 fst-italic border-bottom pb-2">Berdasarkan % Partisipasi Guru</div>
+                            <div id="rank-sekolah"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-level" class="d-none">
+                <h4 class="section-title">Hall of Fame (Level Guru)</h4>
+                
+                <div class="level-grid" id="level-grid-container">
+                    </div>
+
+                <div class="card-custom mt-4 d-none" id="level-detail-view">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0 text-primary" id="level-detail-title">Detail Level</h6>
+                        <button onclick="document.getElementById('level-detail-view').classList.add('d-none')" class="btn btn-sm btn-light rounded-pill border"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light"><tr><th>Nama Guru</th><th>Sekolah</th><th class="text-center">Karya</th></tr></thead>
+                            <tbody id="level-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-data" class="d-none">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="section-title mb-0">Data Karya</h4>
+                    <button onclick="load()" class="btn btn-light border rounded-pill px-3 fw-bold btn-sm"><i class="fas fa-sync-alt me-2"></i>Refresh</button>
+                </div>
+                
+                <div class="desktop-view table-wrap">
+                    <table class="clean-table">
+                        <thead><tr><th class="col-info">Info Karya</th><th class="col-media">Lampiran</th><th class="col-user">Pengirim</th><th class="col-act text-end">Aksi</th></tr></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <div class="mobile-view" id="mobile-list"></div>
+            </div>
+
+            <div id="page-flyer" class="d-none">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="section-title mb-0">Flyer Generator</h4>
+                    <button onclick="downloadFlyer()" class="btn btn-primary rounded-pill fw-bold px-4"><i class="fas fa-download me-2"></i> Simpan Gambar</button>
+                </div>
+                
+                <div id="flyer-preview-container">
+                    <div id="flyer-area">
+                        <div class="flyer-accent f-top"></div>
+                        <div class="flyer-accent f-btm"></div>
+                        
+                        <div style="position: relative; z-index: 2;">
+                            <div class="mb-4 pt-3">
+                                <h5 class="fw-bold mb-0 text-white opacity-75" style="letter-spacing: 2px;">UPDATE STATISTIK</h5>
+                                <h2 class="fw-bold text-warning mb-0">GURU BERBAGI</h2>
+                                <small class="text-white opacity-50">KECAMATAN SELOGIRI</small>
+                            </div>
+
+                            <div class="fl-stat-grid">
+                                <div class="fl-box"><div class="h2 fw-bold mb-0 text-white" id="fl-total">0</div><small class="opacity-75" style="font-size:0.6rem">TOTAL KARYA</small></div>
+                                <div class="fl-box"><div class="h2 fw-bold mb-0 text-white" id="fl-guru">0</div><small class="opacity-75" style="font-size:0.6rem">GURU AKTIF</small></div>
+                                <div class="fl-box"><div class="h2 fw-bold mb-0 text-white" id="fl-sekolah">0</div><small class="opacity-75" style="font-size:0.6rem">SEKOLAH</small></div>
+                            </div>
+
+                            <div class="text-start mb-3">
+                                <h6 class="text-warning fw-bold mb-2 border-bottom border-secondary pb-1" style="font-size:0.8rem">🏆 SEKOLAH TERAKTIF (% GURU)</h6>
+                                <div id="fl-top-sekolah"></div>
+                            </div>
+
+                            <div class="text-start">
+                                <h6 class="text-warning fw-bold mb-2 border-bottom border-secondary pb-1" style="font-size:0.8rem">👑 GURU PALING PRODUKTIF</h6>
+                                <div id="fl-top-guru"></div>
+                            </div>
+
+                            <div class="mt-auto pt-4 small opacity-50 border-top border-secondary">
+                                Data per: <span id="fl-date"></span><br>
+                                Mari Berkarya & Berbagi!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loader" class="text-center py-5 d-none"><div class="spinner-border text-primary"></div><p class="mt-2 fw-bold text-muted">Sinkronisasi Data...</p></div>
+            <div id="empty" class="text-center py-5 d-none"><i class="fas fa-box-open fa-3x text-muted opacity-25 mb-3"></i><p class="text-muted">Data Kosong.</p></div>
+
+        </main>
+    </div>
+
+    <div class="modal fade" id="previewModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content modal-content-custom"><div class="modal-header py-2 px-3 border-bottom bg-white"><span class="fw-bold small">Preview Konten</span><button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button></div><div class="modal-body-custom"><div id="modal-content" class="w-100 h-100 d-flex align-items-center justify-content-center text-white"></div></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API = "https://script.google.com/macros/s/AKfycbxxr1uHQbJ2vf_yA59RP8YeHBwrdD4nRlbr0BP0nR0A84eSMCrLp7RR7RjrGVEXQHhP/exec"; 
+        
+        // --- POPULASI GURU PER SEKOLAH (WAJIB DIISI) ---
+        const SCHOOL_POPULATION = {
+            "SDN 1 SELOGIRI": 12, "SDN 2 SELOGIRI": 9, "SDN 3 SELOGIRI": 8,
+            "SD NEGERI 1 KRISAK": 10, "SD NEGERI 2 KRISAK": 8, "SD NEGERI 3 KRISAK": 8
+            // Tambahkan sekolah lain...
+        };
+
+        const LEVELS = [
+            {id:1, n:'Pemula', m:1, cls:'l-pemula'}, {id:2, n:'Perintis', m:5, cls:'l-perintis'}, 
+            {id:3, n:'Praktisi', m:10, cls:'l-praktisi'}, {id:4, n:'Teladan', m:25, cls:'l-teladan'}, 
+            {id:5, n:'Mentor', m:50, cls:'l-mentor'}, {id:6, n:'Maestro', m:75, cls:'l-maestro'}, 
+            {id:7, n:'Suhu', m:100, cls:'l-suhu'}
+        ];
+
+        var DATA = [];
+        var MODAL = null;
+        var LEVEL_CACHE = [];
+
+        function auth() {
+            let btn = document.getElementById('btnLogin');
+            let pin = document.getElementById('pinInput').value;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking...';
+            
+            fetch(API, { method: 'POST', body: JSON.stringify({ action: 'login', payload: { pin: pin } }) })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    document.getElementById('login-overlay').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('login-overlay').classList.add('d-none');
+                        document.getElementById('app').classList.remove('d-none');
+                        MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
+                        load();
+                    }, 500);
+                } else {
+                    Swal.fire('Gagal', 'PIN Salah / Bukan Admin', 'error');
+                    btn.innerHTML = 'BUKA DASHBOARD';
+                }
+            })
+            .catch(() => {
+                Swal.fire('Error', 'Gagal koneksi server', 'error');
+                btn.innerHTML = 'BUKA DASHBOARD';
+            });
+        }
+
+        function toggleNav() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('backdrop').classList.toggle('show'); }
+        function go(page, el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(el) el.classList.add('active');
+            ['home','level','data','flyer'].forEach(id => document.getElementById('page-'+id).classList.add('d-none'));
+            document.getElementById('page-'+page.toLowerCase()).classList.remove('d-none');
+            if(window.innerWidth < 992) toggleNav();
+        }
+
+        async function load() {
+            document.getElementById('loader').classList.remove('d-none');
+            try {
+                let r = await fetch(API+"?action=read");
+                let j = await r.json();
+                if(j.status==='success') {
+                    DATA = j.media || [];
+                    processStats();
+                    renderData();
+                    initLevels();
+                    setupFlyer();
+                }
+            } catch(e) { Swal.fire('Error','Gagal muat data','error'); }
+            document.getElementById('loader').classList.add('d-none');
+        }
+
+        // 1. STATS
+        function processStats() {
+            let gMap={}, sMap={};
+            DATA.forEach(i => {
+                let g=i[1], s=i[2];
+                if(g) gMap[g] = (gMap[g]||0)+1;
+                if(s) { if(!sMap[s]) sMap[s]={active:new Set()}; sMap[s].active.add(g); }
+            });
+            renderRankG('rank-guru', gMap);
+            renderRankS('rank-sekolah', sMap);
+        }
+
+        function renderRankG(id, map) {
+            let s = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,10);
+            document.getElementById(id).innerHTML = s.map((x,i) => {
+                let c = i<3 ? `r-${i+1}` : '';
+                return `<div class="rank-item"><div class="rank-badge ${c}">${i+1}</div><div class="flex-grow-1 text-truncate fw-bold small text-dark">${x[0]}</div><div class="small fw-bold text-primary">${x[1]} Karya</div></div>`;
+            }).join('');
+        }
+
+        function renderRankS(id, map) {
+            let list = Object.entries(map).map(([n, d]) => {
+                let act = d.active.size;
+                let tot = SCHOOL_POPULATION[n.toUpperCase()] || 10; // Default 10 if unknown
+                return {n, act, tot, p: Math.round((act/tot)*100)};
+            }).sort((a,b)=>b.p - a.p).slice(0,10);
+
+            document.getElementById(id).innerHTML = list.map((x,i) => {
+                let c = i<3 ? `r-${i+1}` : '';
+                return `<div class="rank-item"><div class="rank-badge ${c}">${i+1}</div><div class="flex-grow-1 text-truncate"><div class="fw-bold small text-dark">${x.n}</div><div class="small text-muted" style="font-size:0.65rem">Aktif: ${x.act}/${x.tot} Guru</div></div><div class="small fw-bold text-success">${x.p}%</div></div>`;
+            }).join('');
+        }
+
+        // 2. LEVELS (GRID CARD)
+        function initLevels() {
+            let gMap = {};
+            DATA.forEach(i => { if(i[1]){ if(!gMap[i[1]]) gMap[i[1]]={s:i[2], c:0}; gMap[i[1]].c++; } });
+            
+            LEVEL_CACHE = LEVELS.map(l => ({...l, users:[]}));
+            Object.entries(gMap).forEach(([n, d]) => {
+                for(let i=LEVELS.length-1; i>=0; i--) {
+                    if(d.c >= LEVELS[i].m) { LEVEL_CACHE[i].users.push({n:n, s:d.s, c:d.c}); break; }
+                }
+            });
+
+            let html = LEVEL_CACHE.map((l, idx) => `
+                <div class="lvl-card" onclick="showLevel(${idx})">
+                    <span class="lvl-badge-icon ${l.cls}">${l.n}</span>
+                    <span class="lvl-count">${l.users.length}</span>
+                    <span class="lvl-label">Guru</span>
+                </div>
+            `).join('');
+            document.getElementById('level-grid-container').innerHTML = html;
+        }
+
+        window.showLevel = function(idx) {
+            let l = LEVEL_CACHE[idx];
+            document.getElementById('level-detail-view').classList.remove('d-none');
+            document.getElementById('level-detail-title').innerText = `Daftar Guru - Level ${l.n}`;
+            
+            let sorted = l.users.sort((a,b)=>b.c - a.c);
+            let h = sorted.map(u => `<tr><td class="fw-bold small text-dark">${u.n}</td><td class="small text-muted">${u.s}</td><td class="text-center fw-bold text-primary">${u.c}</td></tr>`).join('');
+            document.getElementById('level-table-body').innerHTML = h || '<tr><td colspan="3" class="text-center p-3 small text-muted">Kosong</td></tr>';
+        }
+
+        // 3. DATA & EDIT
+        function renderData() {
+            let tb = document.getElementById('table-body');
+            let mob = document.getElementById('mobile-list');
+            tb.innerHTML = ''; mob.innerHTML = '';
+            
+            if(DATA.length===0) { document.getElementById('empty').classList.remove('d-none'); return; }
+            document.getElementById('empty').classList.add('d-none');
+
+            DATA.forEach(item => {
+                let id = item[13];
+                let judul = cleanText(item[5], 50);
+                let nama = cleanText(item[1], 25);
+                let sek = cleanText(item[2], 25);
+                let mapel = cleanText(item[6], 20);
+                
+                let rawHtml = item[7] || ""; 
+                let rawLink = item[8] || ""; 
+                
+                let btns = `<div class="d-flex flex-wrap gap-2">`;
+                if(rawHtml.length > 15) {
+                    let safe = btoa(unescape(encodeURIComponent(rawHtml)));
+                    btns += `<button onclick="viewApp('${safe}')" class="btn-view btn-app"><i class="fas fa-play-circle"></i> App</button>`;
+                }
+                if(rawLink.startsWith('http')) {
+                    btns += `<a href="${rawLink}" target="_blank" class="btn-view btn-link"><i class="fas fa-external-link-alt"></i> Link</a>`;
+                }
+                btns += `</div>`;
+
+                let acts = `
+                    <button onclick="askEdit('${id}')" class="btn-act btn-edit me-1"><i class="fas fa-pencil-alt"></i></button>
+                    <button onclick="askDel('${id}')" class="btn-act btn-del"><i class="fas fa-trash"></i></button>
+                `;
+
+                // Desktop
+                let tr = `<tr><td class="col-info"><div class="fw-bold text-main text-limit" title="${item[5]}">${judul}</div><div class="small text-muted text-limit">${mapel}</div></td><td class="col-media">${btns}</td><td class="col-user"><div class="fw-bold small text-main text-limit">${nama}</div><div class="small text-muted text-limit">${sek}</div></td><td class="col-act text-end">${acts}</td></tr>`;
+                tb.insertAdjacentHTML('beforeend', tr);
+
+                // Mobile
+                let cd = `<div class="mobile-card"><div class="d-flex justify-content-between mb-2"><div class="small text-muted fw-bold">${mapel}</div><div class="d-flex gap-2">${acts}</div></div><div class="fw-bold text-main mb-2 text-limit">${judul}</div><div class="d-flex align-items-center gap-2 border-top pt-2 mt-2"><div class="bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold text-muted" style="width:28px;height:28px;font-size:0.75rem">${nama.charAt(0)}</div><div class="small text-muted text-limit flex-grow-1">${nama}</div></div><div class="mt-2 pt-2 border-top">${btns}</div></div>`;
+                mob.insertAdjacentHTML('beforeend', cd);
+            });
+        }
+
+        // 4. FLYER & UTILS
+        function getLevelName(c) { for(let i=LEVELS.length-1; i>=0; i--) { if(c>=LEVELS[i].m) return LEVELS[i].n.toUpperCase(); } return LEVELS[0].n.toUpperCase(); }
+
+        function setupFlyer() {
+            document.getElementById('fl-total').innerText = DATA.length;
+            document.getElementById('fl-guru').innerText = new Set(DATA.map(i=>i[1])).size;
+            document.getElementById('fl-sekolah').innerText = new Set(DATA.map(i=>i[2])).size;
+            document.getElementById('fl-date').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
+            
+            // Top Sekolah (Percent)
+            let sMap={};
+            DATA.forEach(i => { if(i[2]) { if(!sMap[i[2]]) sMap[i[2]] = new Set(); sMap[i[2]].add(i[1]); } });
+            let topS = Object.entries(sMap).map(([n, s]) => {
+                let act = s.size; let tot = SCHOOL_POPULATION[n.toUpperCase()] || 10;
+                return {n, p: Math.round((act/tot)*100)};
+            }).sort((a,b)=>b.p - a.p).slice(0,3);
+            document.getElementById('fl-top-sekolah').innerHTML = topS.map((x,i)=>`<div class="fl-list-row"><span>${i+1}. ${x.n}</span><span class="fw-bold text-warning">${x.p}%</span></div>`).join('');
+
+            // Top Guru (With Badge)
+            let gMap={};
+            DATA.forEach(i => { if(i[1]) gMap[i[1]] = (gMap[i[1]]||0)+1; });
+            let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
+            document.getElementById('fl-top-guru').innerHTML = topG.map((x,i)=> {
+                let lvl = getLevelName(x[1]);
+                return `<div class="fl-list-row"><span>${i+1}. ${x[0]} <span class="fl-badge">${lvl}</span></span><span class="fw-bold text-warning">${x[1]} Karya</span></div>`;
+            }).join('');
+        }
+
+        function downloadFlyer() {
+            html2canvas(document.getElementById('flyer-area')).then(c => {
+                let a = document.createElement('a'); a.download = 'Rekap-Guru-Berbagi.png'; a.href = c.toDataURL(); a.click();
+            });
+        }
+
+        window.viewApp = function(b64) {
+            try {
+                let h = decodeURIComponent(escape(atob(b64))).replace(/width="\d+"/g, 'width="100%"').replace(/height="\d+"/g, 'height="100%"');
+                document.getElementById('modal-content').innerHTML = h;
+                MODAL.show();
+                document.getElementById('previewModal').addEventListener('hidden.bs.modal', ()=>document.getElementById('modal-content').innerHTML='');
+            } catch(e){}
+        }
+
+        function cleanText(str, len) {
+            if(!str) return "-";
+            let s = String(str).replace(/<[^>]*>?/gm, ''); 
+            return s.length > len ? s.substring(0, len)+"..." : s;
+        }
+
+        function askEdit(id) {
+            let item = DATA.find(i => i[13] == id);
+            Swal.fire({
+                title: 'Edit Data',
+                html: `<input id="swal-judul" class="form-control mb-2" placeholder="Judul" value="${item[5]}">
+                       <input id="swal-nama" class="form-control mb-2" placeholder="Nama" value="${item[1]}">
+                       <input id="swal-sekolah" class="form-control mb-2" placeholder="Sekolah" value="${item[2]}">
+                       <input id="swal-link" class="form-control" placeholder="Link" value="${item[8]}">`,
+                showCancelButton: true, confirmButtonText: 'Simpan',
+                preConfirm: () => {
+                    return { id: id, judul: document.getElementById('swal-judul').value, nama: document.getElementById('swal-nama').value, sekolah: document.getElementById('swal-sekolah').value, link: document.getElementById('swal-link').value }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading();
+                    fetch(API, { method: 'POST', body: JSON.stringify({ action: 'updateData', payload: result.value }) })
+                    .then(r => r.json()).then(res => {
+                        if(res.status === 'success') { Swal.fire('Tersimpan!','','success'); load(); }
+                        else Swal.fire('Gagal','Error Backend','error');
+                    });
+                }
+            });
+        }
+
+        function askDel(id) {
+            Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',confirmButtonText:'Ya Hapus'}).then(r=>{
+                if(r.isConfirmed){
+                    Swal.showLoading();
+                    fetch(API,{method:'POST',body:JSON.stringify({action:'hapus',payload:{id:id}})}).then(()=>{Swal.fire('Terhapus','','success');load()});
+                }
+            });
+        }
+    </script>
+</body>
+</html>
