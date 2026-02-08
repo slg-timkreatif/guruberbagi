@@ -78,15 +78,17 @@
         
         /* Responsive Card Layout */
         @media (max-width: 768px) {
-            .custom-card { flex-direction: row; height: 105px; } /* Tinggi optimal untuk HP */
+            .custom-card { flex-direction: row; height: 105px; } 
             .card-thumb { width: 105px; height: 100%; flex-shrink: 0; }
+            /* Padding diperketat agar muat */
             .card-body { 
                 padding: 10px 12px; 
                 flex: 1; 
                 display: flex; 
                 flex-direction: column; 
                 justify-content: center;
-                gap: 2px;
+                gap: 0px; /* Jarak elemen sangat rapat */
+                min-width: 0; /* Penting untuk truncate flex child */
             }
         }
         @media (min-width: 769px) {
@@ -280,9 +282,9 @@
                     ? `<img src="https://img.youtube.com/vi/${yt}/mqdefault.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"><div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div><div class="absolute inset-0 flex items-center justify-center"><i data-lucide="play-circle" class="w-8 h-8 text-white opacity-80 group-hover:scale-125 transition"></i></div>` 
                     : `<div class="w-full h-full bg-gradient-to-br ${style.grad} flex items-center justify-center group-hover:scale-110 transition duration-500"><i data-lucide="${style.icon}" class="w-8 h-8 md:w-16 md:h-16 text-white/50 -rotate-12 group-hover:rotate-0 transition"></i></div>`;
                 
-                // === BADGE & ICON (OVERLAY PADA THUMBNAIL) ===
+                // === BADGE (TEXT ONLY ON MOBILE - HIDDEN ICON) ===
                 let shortType = type.replace("INTERAKTIF", "").trim(); 
-                const typeBadge = `<div class="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white text-[8px] md:text-[9px] font-bold border border-white/20 shadow-sm z-10 flex items-center gap-1"><i data-lucide="${style.icon}" class="w-3 h-3"></i> ${shortType}</div>`;
+                const typeBadge = `<div class="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white text-[8px] md:text-[9px] font-bold border border-white/20 shadow-sm z-10 flex items-center gap-1"><i data-lucide="${style.icon}" class="w-3 h-3 hidden md:inline-block"></i> ${shortType}</div>`;
                 
                 // === NEW: BUTTON SAVE DI DALAM THUMBNAIL (POJOK KANAN ATAS) ===
                 const saveBtn = `<button onclick="event.stopPropagation(); toggleSimpan('${id}')" class="absolute top-2 right-2 z-20 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white border border-white/10 shadow-sm hover:bg-red-500 transition ${isSaved ? '!bg-red-500 !text-white' : ''}"><i data-lucide="heart" class="w-3 h-3 ${isSaved ? 'fill-current' : ''}"></i></button>`;
@@ -291,19 +293,21 @@
                 if (faseText && !faseText.toLowerCase().startsWith('fase')) { faseText = "Fase " + faseText; }
                 const faseBadge = faseText ? `<span class="px-2 py-0.5 rounded-md bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-[8px] md:text-[9px] font-bold shadow-sm truncate max-w-[80px]">${faseText}</span>` : '';
 
+                // === TRUNCATE TITLE (NO WRAP) ===
                 const html = `
                 <div class="group custom-card shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden" onclick="bukaPreview(${idx})">
                     <div class="card-thumb relative bg-slate-100 dark:bg-slate-900 overflow-hidden">
                         ${thumb}
                         ${typeBadge}
-                        ${saveBtn} </div>
+                        ${saveBtn}
+                    </div>
                     <div class="card-body">
                         <div>
                             <div class="flex flex-wrap gap-1 mb-1 items-center">
                                 <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/50 text-[8px] md:text-[9px] font-bold text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-700">${item[6]||"Umum"}</span>
                                 ${faseBadge}
                             </div>
-                            <h3 class="font-bold text-sm leading-snug mb-3 line-clamp-2 text-slate-900 dark:text-white group-hover:text-primary transition">${item[5]||"Tanpa Judul"}</h3>
+                            <h3 class="font-bold text-sm leading-snug mb-3 truncate text-slate-900 dark:text-white group-hover:text-primary transition">${item[5]||"Tanpa Judul"}</h3>
                         </div>
                         <div class="mt-auto pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
                             <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-500 p-[1px] flex-shrink-0"><div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">${(item[1]||"U").charAt(0)}</div></div>
