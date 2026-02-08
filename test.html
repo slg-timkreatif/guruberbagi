@@ -28,37 +28,26 @@
     </script>
 
     <style>
-        /* === SYSTEM === */
+        /* === SYSTEM CORE === */
         body { background-color: #f8fafc; color: #1e293b; transition: 0.3s; }
         html.dark body { background-color: #0f172a !important; color: white !important; }
 
-        /* === 1. FILTER BAR (DESKTOP FIX) === */
+        /* === COMPONENT: FILTER BAR === */
         .filter-bar {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
+            padding: 8px; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-        html.dark .filter-bar {
-            background-color: #1e293b;
-            border-color: #334155;
-        }
+        html.dark .filter-bar { background-color: #1e293b; border-color: #334155; }
 
-        /* === 2. BUTTONS & INPUTS === */
+        /* === COMPONENT: BUTTONS === */
         .btn-contrast {
             background-color: #0f172a; color: #ffffff; border: none;
             padding: 8px 20px; border-radius: 99px; font-weight: 800; font-size: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;
         }
         .btn-contrast:active { transform: scale(0.95); }
-        html.dark .btn-contrast {
-            background-color: #ffffff !important; color: #0f172a !important;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
+        html.dark .btn-contrast { background-color: #ffffff !important; color: #0f172a !important; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
 
         .btn-source {
             background-color: #ffffff; border: 1px solid #cbd5e1; color: #64748b;
@@ -71,24 +60,27 @@
         html.dark .btn-source.active { background: #0d9488 !important; color: white !important; }
 
         .btn-filter {
-            background: transparent; border: 1px solid transparent; color: #1e293b; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; outline: none; transition: 0.2s;
+            background: transparent; border: 1px solid transparent; color: #1e293b;
+            padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; outline: none; transition: 0.2s;
         }
         .btn-filter:hover { background-color: #f1f5f9; }
         html.dark .btn-filter { color: white !important; }
         html.dark .btn-filter:hover { background-color: #334155; }
 
-        /* === 3. CARD DESIGN === */
+        /* === COMPONENT: CARDS === */
         .custom-card {
-            background-color: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; border-radius: 1rem; overflow: hidden; display: flex; transition: 0.3s;
+            background-color: #ffffff; color: #1e293b; border: 1px solid #e2e8f0;
+            border-radius: 1rem; overflow: hidden; display: flex; transition: 0.3s;
         }
         html.dark .custom-card, html.dark .dashboard-card {
             background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important;
         }
         
+        /* Responsive Card Layout */
         @media (max-width: 768px) {
             .custom-card { flex-direction: row; height: 110px; }
             .card-thumb { width: 110px; height: 100%; flex-shrink: 0; }
-            .card-body { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+            .card-body { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
             .desktop-only { display: none !important; }
         }
         @media (min-width: 769px) {
@@ -98,7 +90,7 @@
             .mobile-only { display: none !important; }
         }
 
-        /* === UTILS === */
+        /* === UTILS & FORMS === */
         .glass-nav { background: rgba(255,255,255,0.95); border-bottom: 1px solid #e2e8f0; }
         html.dark .glass-nav { background: #0f172a; border-bottom: 1px solid #334155; }
         .form-control, .form-select { background-color: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; border-radius: 10px; }
@@ -145,6 +137,7 @@
                 <h1 class="text-5xl font-extrabold mb-3 text-slate-900 dark:text-white tracking-tight">Selamat Datang, <span class="text-teal-600 dark:text-teal-400">Pendidik Hebat!</span> 👋</h1>
                 <p class="text-lg text-slate-600 dark:text-slate-300">Temukan ratusan media pembelajaran kreatif karya guru terbaik Kecamatan Selogiri.</p>
             </div>
+            
             <div class="md:hidden mb-6 relative">
                 <input type="text" id="mobSearchInput" oninput="runFilter()" placeholder="Cari judul..." class="btn-filter w-full pl-12 py-3 !rounded-2xl shadow-sm border !border-slate-200 dark:!border-slate-700 text-left">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-50"></i>
@@ -157,24 +150,16 @@
                     <select id="filterMapel" onchange="runFilter()" class="btn-filter cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700"><option value="">Semua Mapel</option></select>
                     <select id="filterFase" onchange="runFilter()" class="btn-filter cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700"><option value="">Semua Fase</option></select>
                 </div>
-                <button onclick="filterSimpanan()" class="px-6 py-2.5 border border-red-500 text-red-500 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white flex items-center gap-2 transition"><i data-lucide="heart" class="w-3 h-3"></i> Favorit</button>
+                <button id="btnFavDesk" onclick="filterSimpanan()" class="px-6 py-2.5 border border-red-500 text-red-500 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white flex items-center gap-2 transition group">
+                    <i data-lucide="heart" class="w-3 h-3 group-hover:fill-current"></i> Favorit
+                </button>
             </div>
             
             <div id="galeri-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"></div>
             
-            <div id="loader" class="text-center py-20">
-                <div class="spinner-border text-teal-600" role="status"></div>
-                <p class="text-xs mt-3 opacity-60 font-bold">Sedang memuat data...</p>
-            </div>
-            
-            <div id="emptyState" class="hidden text-center py-20 opacity-60 flex flex-col items-center">
-                <div class="p-4 bg-slate-200 dark:bg-slate-800 rounded-full mb-3"><i data-lucide="search-x" class="w-8 h-8"></i></div>
-                <p>Tidak ada karya ditemukan.</p>
-            </div>
-            
-            <div id="loadMoreContainer" class="hidden text-center mt-12">
-                <button onclick="loadMoreItems()" class="px-8 py-3 border border-slate-300 dark:border-slate-600 rounded-full font-bold text-sm hover:opacity-80 transition shadow-sm text-slate-700 dark:text-white">Muat Lebih Banyak</button>
-            </div>
+            <div id="loader" class="text-center py-20"><div class="spinner-border text-teal-600" role="status"></div><p class="text-xs mt-3 opacity-60 font-bold">Sedang memuat data...</p></div>
+            <div id="emptyState" class="hidden text-center py-20 opacity-60 flex flex-col items-center"><div class="p-4 bg-slate-200 dark:bg-slate-800 rounded-full mb-3"><i data-lucide="search-x" class="w-8 h-8"></i></div><p>Tidak ada karya ditemukan.</p></div>
+            <div id="loadMoreContainer" class="hidden text-center mt-12"><button onclick="loadMoreItems()" class="px-8 py-3 border border-slate-300 dark:border-slate-600 rounded-full font-bold text-sm hover:opacity-80 transition shadow-sm text-slate-700 dark:text-white">Muat Lebih Banyak</button></div>
         </div>
 
         <div id="view-dashboard" class="hidden fade-in">
@@ -207,8 +192,7 @@
         <div class="offcanvas-header border-b border-white/10"><h5 class="font-bold">Menu</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
         <div class="offcanvas-body p-6 space-y-4">
             <div id="menuUser" class="hidden p-4 bg-white/10 rounded-2xl flex items-center gap-3">
-                <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center font-bold" id="menuAv">U</div>
-                <div class="font-bold text-sm truncate" id="menuName">User</div>
+                <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center font-bold" id="menuAv">U</div><div class="font-bold text-sm truncate" id="menuName">User</div>
             </div>
             <button onclick="closeMenu(); switchView('GALERI')" class="w-full text-left py-3 border-b border-white/10 flex items-center gap-3 hover:text-teal-400"><i data-lucide="home" class="w-5 h-5"></i> Beranda</button>
             <button onclick="closeMenu(); filterSimpanan()" class="w-full text-left py-3 border-b border-white/10 flex items-center gap-3 hover:text-red-400"><i data-lucide="heart" class="w-5 h-5"></i> Favorit Saya</button>
@@ -217,9 +201,7 @@
                 <button onclick="closeMenu(); clickFab()" class="w-full text-left py-3 border-b border-white/10 flex items-center gap-3 text-yellow-400"><i data-lucide="upload-cloud" class="w-5 h-5"></i> Upload Karya</button>
                 <button onclick="closeMenu(); logout()" class="w-full text-left py-3 text-red-500 font-bold mt-4 flex items-center gap-3"><i data-lucide="log-out" class="w-5 h-5"></i> Keluar</button>
             </div>
-            <div id="menuGuest">
-                <button onclick="closeMenu(); loginModal()" class="w-full py-3 bg-white text-slate-900 rounded-xl font-bold mt-4 shadow-lg">Login Guru</button>
-            </div>
+            <div id="menuGuest"><button onclick="closeMenu(); loginModal()" class="w-full py-3 bg-white text-slate-900 rounded-xl font-bold mt-4 shadow-lg">Login Guru</button></div>
         </div>
     </div>
 
@@ -232,8 +214,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
-        const CACHE_KEY = 'gb_selogiri_v1_final';
-        let STATE = { all:[], filtered:[], user:{name:"Tamu",role:"GUEST",school:"-"}, settings:[], limit:12 };
+        const CACHE_KEY = 'gb_v1_stable';
+        let STATE = { all:[], filtered:[], user:{name:"Tamu",role:"GUEST",school:"-"}, settings:[], limit:12, favMode:false };
         let modalInput = null;
 
         if(localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); }
@@ -244,20 +226,19 @@
             modalInput = new bootstrap.Modal(document.getElementById('modalInput'));
             try { let u = localStorage.getItem('gbUser'); if(u) STATE.user = JSON.parse(u); } catch(e){}
             updateUI();
-            loadData(); // Online Mode
+            loadData();
             setSource('LINK');
             document.addEventListener('fullscreenchange', () => { const icon = document.getElementById('iconFs'); icon.setAttribute('data-lucide', document.fullscreenElement ? 'minimize' : 'maximize'); lucide.createIcons(); });
         };
 
         function switchView(v) { document.getElementById('view-galeri').classList.toggle('hidden', v!=='GALERI'); document.getElementById('view-dashboard').classList.toggle('hidden', v!=='DASHBOARD'); if(v==='DASHBOARD') renderDashboard(); window.scrollTo({top:0, behavior:'smooth'}); }
-        
         function updateUI() {
             const isGuest = STATE.user.role === 'GUEST';
             const authBtn = document.getElementById('authBtn');
             if(authBtn) { authBtn.innerHTML = isGuest ? `LOGIN` : `Hi, ${STATE.user.name.split(' ')[0]}`; authBtn.onclick = isGuest ? loginModal : () => switchView('DASHBOARD'); }
-            document.getElementById('menuGuest')?.classList.toggle('hidden', !isGuest); 
-            document.getElementById('menuUser')?.classList.toggle('hidden', isGuest); 
-            document.getElementById('menuGuruItems')?.classList.toggle('hidden', isGuest); 
+            document.getElementById('menuGuest')?.classList.toggle('hidden', !isGuest);
+            document.getElementById('menuUser')?.classList.toggle('hidden', isGuest);
+            document.getElementById('menuGuruItems')?.classList.toggle('hidden', isGuest);
             document.getElementById('btnAdd')?.classList.toggle('hidden', isGuest);
             if(!isGuest) { 
                 if(document.getElementById('menuName')) document.getElementById('menuName').innerText = STATE.user.name; 
@@ -265,12 +246,8 @@
             }
             lucide.createIcons();
         }
-        
         async function loadData() { try { document.getElementById('loader').classList.remove('hidden'); let res = await fetch(API_URL + "?action=read"); let json = await res.json(); if(json.status === 'success') { STATE.all = json.media || []; STATE.settings = json.settings || []; populateSelects(); runFilter(); } document.getElementById('loader').classList.add('hidden'); } catch(e) { document.getElementById('loader').classList.add('hidden'); document.getElementById('emptyState').classList.remove('hidden'); } }
-        function setSource(t) { document.querySelectorAll('.btn-source').forEach(btn => btn.classList.remove('active')); const activeId = t==='LINK'?'btnSrcLink':t==='STORY'?'btnSrcStory':'btnSrcHtml'; document.getElementById(activeId).classList.add('active'); ['groupLink','groupStory','groupHtml'].forEach(id => document.getElementById(id).classList.add('hidden')); if(t==='LINK') document.getElementById('groupLink').classList.remove('hidden'); else if(t==='STORY') document.getElementById('groupStory').classList.remove('hidden'); else document.getElementById('groupHtml').classList.remove('hidden'); document.getElementById('inputSourceType').value = t; updateLivePreview(); }
-        function checkOther(id, mid, v) { document.getElementById(mid).classList.toggle('hidden', v !== 'LAINNYA'); if(v === 'LAINNYA') document.getElementById(mid).focus(); }
-        
-        // === LOGIKA WARNA & IKON SESUAI JENIS ===
+
         function getTypeStyle(type) {
             type = (type || "").toUpperCase();
             if (type.includes('VIDEO')) return { grad: "from-rose-500 to-red-600", icon: "play-circle" };
@@ -292,33 +269,29 @@
                 const isSaved = saved.includes(id);
                 
                 const type = (item[11] || "UMUM").toUpperCase();
-                const style = getTypeStyle(type); // WARNA & IKON IKUT JENIS
+                const style = getTypeStyle(type); 
                 const yt = getYoutubeId(item[8]||"");
-                
-                // THUMBNAIL DENGAN BADGE TYPE DI POJOK
                 let thumb = yt 
                     ? `<img src="https://img.youtube.com/vi/${yt}/mqdefault.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"><div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div><div class="absolute inset-0 flex items-center justify-center"><i data-lucide="play-circle" class="w-8 h-8 text-white opacity-80 group-hover:scale-125 transition"></i></div>` 
                     : `<div class="w-full h-full bg-gradient-to-br ${style.grad} flex items-center justify-center group-hover:scale-110 transition duration-500"><i data-lucide="${style.icon}" class="w-8 h-8 md:w-16 md:h-16 text-white/50 -rotate-12 group-hover:rotate-0 transition"></i></div>`;
                 
-                // BADGE TYPE (Glass Effect)
-                const typeBadge = `<div class="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white text-[9px] font-bold border border-white/20 shadow-sm z-10 flex items-center gap-1"><i data-lucide="${style.icon}" class="w-3 h-3"></i> ${type}</div>`;
+                const typeBadge = `<div class="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white text-[8px] md:text-[9px] font-bold border border-white/20 shadow-sm z-10 flex items-center gap-1"><i data-lucide="${style.icon}" class="w-3 h-3"></i> ${type}</div>`;
                 
-                const faseBadge = item[3] ? `<span class="px-2 py-0.5 rounded-md bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-[9px] font-bold shadow-sm">Fase ${item[3]}</span>` : '';
+                // === FIX 1: REMOVE REDUNDANT "FASE" TEXT ===
+                let faseText = item[3] || "";
+                if (faseText && !faseText.toLowerCase().startsWith('fase')) { faseText = "Fase " + faseText; }
+                const faseBadge = faseText ? `<span class="px-2 py-0.5 rounded-md bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-[8px] md:text-[9px] font-bold shadow-sm truncate max-w-[80px]">${faseText}</span>` : '';
 
+                // === FIX 2: SOLID HEART ICON ===
                 const html = `
                 <div class="group custom-card shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden" onclick="bukaPreview(${idx})">
-                    <div class="card-thumb relative bg-slate-100 dark:bg-slate-900 overflow-hidden">
-                        ${thumb}
-                        ${typeBadge}
+                    <div class="card-thumb relative bg-slate-100 dark:bg-slate-900 overflow-hidden">${thumb}${typeBadge}
                         <div class="absolute top-2 right-2 hidden md:flex desktop-only"><button onclick="event.stopPropagation(); toggleSimpan('${id}')" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-red-500 hover:text-white transition ${isSaved?'bg-red-500':''}"><i data-lucide="heart" class="w-4 h-4 ${isSaved?'fill-current':''}"></i></button></div>
                     </div>
                     <div class="card-body">
                         <div>
-                            <div class="flex flex-wrap gap-1 mb-1 items-center">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/50 text-[9px] font-bold text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-700">${item[6]||"Umum"}</span>
-                                ${faseBadge}
-                            </div>
-                            <h3 class="font-bold text-sm leading-snug mb-1 line-clamp-2 text-slate-900 dark:text-white group-hover:text-primary transition">${item[5]||"Tanpa Judul"}</h3>
+                            <div class="flex flex-wrap gap-1 mb-1 items-center"><span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/50 text-[8px] md:text-[9px] font-bold text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-700">${item[6]||"Umum"}</span>${faseBadge}</div>
+                            <h3 class="font-bold text-sm leading-snug mb-3 line-clamp-2 text-slate-900 dark:text-white group-hover:text-primary transition">${item[5]||"Tanpa Judul"}</h3>
                         </div>
                         <div class="mt-auto pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
                             <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-500 p-[1px] flex-shrink-0"><div class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">${(item[1]||"U").charAt(0)}</div></div>
@@ -356,18 +329,51 @@
         function toggleKaih(c) { document.getElementById('kaihBox').classList.toggle('hidden', !c); }
         function loadMoreItems() { STATE.limit += 12; renderGaleri(); }
         function toggleSimpan(id){ var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'); var s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(x=>x!==id); else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
-        function filterSimpanan(){ var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'); var s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered=STATE.all.filter(i=>s.includes(i[13])); renderGaleri(); }
-        function runFilter() { STATE.limit = 12; const q = (document.getElementById('deskSearchInput').value || document.getElementById('mobSearchInput').value).toLowerCase(); const fMapel = document.getElementById('filterMapel').value; const fFase = document.getElementById('filterFase').value; STATE.filtered = STATE.all.filter(i => { const text = ((i[5]||"")+" "+(i[1]||"")+" "+(i[6]||"")).toLowerCase(); return text.includes(q) && (fMapel==="" || i[6]===fMapel) && (fFase==="" || i[3]===fFase); }); renderGaleri(); }
+        
+        function filterSimpanan(){ 
+            STATE.favMode = !STATE.favMode; // Toggle mode
+            const btn = document.getElementById('btnFavDesk');
+            
+            // Visual Toggle Button Desktop
+            if(STATE.favMode) {
+                btn.classList.add('bg-red-500', 'text-white');
+                btn.classList.remove('text-red-500', 'border-red-500');
+                btn.querySelector('svg').classList.add('fill-current'); // Solid Heart
+                
+                var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'); 
+                var s=JSON.parse(localStorage.getItem(k)||'[]'); 
+                STATE.filtered=STATE.all.filter(i=>s.includes(i[13])); 
+            } else {
+                btn.classList.remove('bg-red-500', 'text-white');
+                btn.classList.add('text-red-500', 'border-red-500');
+                btn.querySelector('svg').classList.remove('fill-current'); // Outline Heart
+                runFilter(); // Reset to normal filter
+                return;
+            }
+            renderGaleri(); 
+        }
+        
+        function runFilter() { 
+            STATE.favMode = false; // Reset fav mode if filtering
+            // Reset visual btn favorite
+            const btn = document.getElementById('btnFavDesk');
+            if(btn) { btn.classList.remove('bg-red-500', 'text-white'); btn.classList.add('text-red-500'); btn.querySelector('svg').classList.remove('fill-current'); }
+
+            STATE.limit = 12; const q = (document.getElementById('deskSearchInput').value || document.getElementById('mobSearchInput').value).toLowerCase(); const fMapel = document.getElementById('filterMapel').value; const fFase = document.getElementById('filterFase').value; STATE.filtered = STATE.all.filter(i => { const text = ((i[5]||"")+" "+(i[1]||"")+" "+(i[6]||"")).toLowerCase(); return text.includes(q) && (fMapel==="" || i[6]===fMapel) && (fFase==="" || i[3]===fFase); }); renderGaleri(); 
+        }
+        
         function filterSemua() { document.getElementById('filterMapel').value=""; document.getElementById('filterFase').value=""; runFilter(); }
         function closeMenu(){ bootstrap.Offcanvas.getInstance(document.getElementById('sideMenu'))?.hide(); }
         function populateSelects(){ const f = (id, idx) => { const el = document.getElementById(id); el.innerHTML = '<option value="">Semua</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML += `<option value="${r[idx]}">${r[idx]}</option>`; }); }; f('filterMapel', 1); f('filterFase', 2); const fm = (id, idx) => { const el = document.getElementById(id); el.innerHTML = '<option value="">Pilih...</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML += `<option value="${r[idx]}">${r[idx]}</option>`; }); el.innerHTML += '<option value="LAINNYA">Lainnya...</option>'; }; fm('inMapel', 1); fm('inJenis', 0); fm('inFase', 2); fm('inSem', 4); fm('inKaihType', 3); }
-        async function bukaPreview(idx) { const item = STATE.all[idx]; const link = item[8] || ""; const isExt = link.includes('canva') || link.includes('gemini') || (item[11]||"").toUpperCase() === 'STORY'; fetch(API_URL, {method:'POST', body:JSON.stringify({action:'view', payload:{id:item[13]}})}); if(link && isExt) { window.open(link, '_blank'); return; } document.getElementById('previewTitle').innerText = item[5]; document.getElementById('previewOverlay').classList.remove('hidden'); document.getElementById('previewOverlay').classList.add('flex'); document.getElementById('previewFrame').classList.add('hidden'); document.getElementById('detailLoader').classList.remove('hidden'); let finalUrl = link; let htmlContent = item[7]; if(htmlContent === "HAS_HTML") { let r = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'getDetail', payload:{id:item[13]}})}).then(res=>res.json()); htmlContent = r.html; STATE.all[idx][7] = r.html; } document.getElementById('detailLoader').classList.add('hidden'); document.getElementById('previewFrame').classList.remove('hidden'); if(htmlContent && htmlContent.length > 10) { const blob = new Blob([htmlContent], {type: 'text/html'}); document.getElementById('previewFrame').src = URL.createObjectURL(blob); } else if(link) { if(link.includes('drive.google')) finalUrl = link.replace('/view', '/preview'); if(link.includes('youtu')) { const vid = getYoutubeId(link); if(vid) finalUrl = `https://www.youtube.com/embed/${vid}?autoplay=1`; } document.getElementById('previewFrame').src = finalUrl; } }
+        async function bukaPreview(idx) { const item = STATE.all[idx]; const link = item[8] || ""; const isExt = link.includes('canva') || link.includes('gemini') || (item[11]||"").toUpperCase().includes('STORY'); fetch(API_URL, {method:'POST', body:JSON.stringify({action:'view', payload:{id:item[13]}})}); if(link && isExt) { window.open(link, '_blank'); return; } document.getElementById('previewTitle').innerText = item[5]; document.getElementById('previewOverlay').classList.remove('hidden'); document.getElementById('previewOverlay').classList.add('flex'); document.getElementById('previewFrame').classList.add('hidden'); document.getElementById('detailLoader').classList.remove('hidden'); let finalUrl = link; let htmlContent = item[7]; if(htmlContent === "HAS_HTML") { let r = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'getDetail', payload:{id:item[13]}})}).then(res=>res.json()); htmlContent = r.html; STATE.all[idx][7] = r.html; } document.getElementById('detailLoader').classList.add('hidden'); document.getElementById('previewFrame').classList.remove('hidden'); if(htmlContent && htmlContent.length > 10) { const blob = new Blob([htmlContent], {type: 'text/html'}); document.getElementById('previewFrame').src = URL.createObjectURL(blob); } else if(link) { if(link.includes('drive.google')) finalUrl = link.replace('/view', '/preview'); if(link.includes('youtu')) { const vid = getYoutubeId(link); if(vid) finalUrl = `https://www.youtube.com/embed/${vid}?autoplay=1`; } document.getElementById('previewFrame').src = finalUrl; } }
         function tutupPreview() { document.getElementById('previewOverlay').classList.add('hidden'); document.getElementById('previewOverlay').classList.remove('flex'); document.getElementById('previewFrame').src = ''; if (document.fullscreenElement) document.exitFullscreen(); }
         function prosesSimpan(){ const p = { judul: document.getElementById('inJudul').value, mapel: document.getElementById('inMapel').value === 'LAINNYA' ? document.getElementById('manMapel').value : document.getElementById('inMapel').value, jenis: document.getElementById('inJenis').value === 'LAINNYA' ? document.getElementById('manJenis').value : document.getElementById('inJenis').value, fase: document.getElementById('inFase').value, semester: document.getElementById('inSem').value, linkLuar: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value, kodeHtml: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : "", nama: STATE.user.name, sekolah: STATE.user.school, mode: document.getElementById('formMode').value, idUnik: document.getElementById('editRowIdx').value, kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "" }; if(!p.judul) { Swal.fire('Error','Judul wajib diisi','warning'); return; } Swal.fire({title:'Menyimpan...', didOpen:()=>Swal.showLoading()}); fetch(API_URL, { method:'POST', body:JSON.stringify({action:'simpan', payload:p}) }).then(r=>r.json()).then(d=>{ Swal.fire('Berhasil','Karya disimpan!','success'); localStorage.removeItem(CACHE_KEY); modalInput.hide(); loadData(); }); }
         function hapusKarya(idx) { Swal.fire({title:'Hapus?', icon:'warning', showCancelButton:true, confirmButtonColor:'#ef4444'}).then(r=>{ if(r.isConfirmed) { Swal.showLoading(); fetch(API_URL, { method:'POST', body:JSON.stringify({action:'hapus', payload:{id:STATE.all[idx][13]}}) }).then(()=>{ Swal.fire('Terhapus','','success'); localStorage.removeItem(CACHE_KEY); loadData(); }); } }); }
         function bukaEdit(idx) { const d = STATE.all[idx]; document.getElementById('formMode').value = "EDIT"; document.getElementById('editRowIdx').value = d[13]; document.getElementById('inJudul').value = d[5]; const setSel = (id, v, mid) => { const el = document.getElementById(id); if([...el.options].some(o=>o.value===v)) { el.value=v; document.getElementById(mid).classList.add('hidden'); } else { el.value='LAINNYA'; document.getElementById(mid).value=v; document.getElementById(mid).classList.remove('hidden'); } }; setSel('inMapel', d[6], 'manMapel'); setSel('inJenis', d[11], 'manJenis'); document.getElementById('inFase').value = d[3]; document.getElementById('inSem').value = d[4]; const h = d[7]||""; const l = d[8]||""; if(h.length > 10 || h === 'HAS_HTML') { setSource('HTML'); if(h !== 'HAS_HTML') document.getElementById('inHtml').value = h; } else if((d[11]||"").includes('STORY')) { setSource('STORY'); document.getElementById('inLinkStory').value = l; } else { setSource('LINK'); document.getElementById('inLink').value = l; } modalInput.show(); }
         function downloadCard(){ html2canvas(document.getElementById("cardArea"), {scale:3, backgroundColor:null}).then(c=>{ var l=document.createElement("a"); l.download=`Kartu_${STATE.user.name}.png`; l.href=c.toDataURL(); l.click(); Swal.fire('Disimpan','Kartu berhasil diunduh','success'); }); }
         function openCardModal(){ const w=STATE.all.filter(i=>i[1]===STATE.user.name); document.getElementById('cardName').innerText=STATE.user.name; document.getElementById('cardSchool').innerText=STATE.user.school; document.getElementById('cardAvatar').innerText=STATE.user.name.charAt(0); document.getElementById('cardKaryaCount').innerText=w.length; document.getElementById('cardViewCount').innerText=w.reduce((a,b)=>a+(parseInt(b[14])||0),0); new bootstrap.Modal(document.getElementById('modalCetakKartu')).show(); }
+        function setSource(t) { document.querySelectorAll('.btn-source').forEach(btn => btn.classList.remove('active')); const activeId = t==='LINK'?'btnSrcLink':t==='STORY'?'btnSrcStory':'btnSrcHtml'; document.getElementById(activeId).classList.add('active'); ['groupLink','groupStory','groupHtml'].forEach(id => document.getElementById(id).classList.add('hidden')); if(t==='LINK') document.getElementById('groupLink').classList.remove('hidden'); else if(t==='STORY') document.getElementById('groupStory').classList.remove('hidden'); else document.getElementById('groupHtml').classList.remove('hidden'); document.getElementById('inputSourceType').value = t; updateLivePreview(); }
+        function checkOther(id, mid, v) { document.getElementById(mid).classList.toggle('hidden', v !== 'LAINNYA'); if(v === 'LAINNYA') document.getElementById(mid).focus(); }
         function updateLivePreview(){ var t=document.getElementById('inputSourceType').value, v=""; if(t==='LINK')v=document.getElementById('inLink').value; else if(t==='STORY')v=document.getElementById('inLinkStory').value; else v=document.getElementById('inHtml').value; var d=document.getElementById('miniPreviewFrame').contentDocument; d.open(); d.write('<style>body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#f1f5f9;color:#64748b;font-family:sans-serif;font-size:12px;text-align:center;}</style>'); if(t==='STORY') d.write("Preview Storybook<br>(Link luar)"); else if(t==='HTML') d.write(v || "Preview Embed"); else { var y=getYoutubeId(v); if(y) d.write(`<iframe src="https://www.youtube.com/embed/${y}" style="width:100%;height:100%;border:none"></iframe>`); else d.write("Preview Link"); } d.close(); }
     </script>
 </body>
