@@ -191,7 +191,7 @@
 
     <div class="nav-actions">
        <button onclick="filterSimpanan()" class="btn-icon-nav d-none d-lg-flex" title="Favorit"><i class="far fa-heart"></i></button>
-       <button class="btn-login-desk" onclick="handleAuth()" id="deskAuthBtn">Login Guru</button>
+       <button class="btn-login-desk" onclick="loginModal()" id="deskAuthBtn">Login via Portal</button>
        <button class="btn-mobile-avatar mobile-only" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" id="mobAuthIcon"><i class="far fa-user"></i></button>
     </div>
   </nav>
@@ -253,7 +253,7 @@
   <button id="btnAdd" class="fab-add d-none" onclick="clickFab()"><i class="fas fa-plus"></i></button>
 
   <div class="offcanvas offcanvas-end" tabindex="-1" id="sideMenu">
-    <div class="offcanvas-header"><div id="menuGuest" class="w-100"><h5 class="fw-bold text-white mb-3">Menu Aplikasi</h5><button onclick="closeMenu(); loginModal()" class="btn btn-light w-100 rounded-pill fw-bold text-primary shadow-sm py-2">Login Guru</button></div><div id="menuUser" class="d-none w-100 text-white"><div class="d-flex align-items-center gap-3"><div class="lh-1"><div class="fw-bold fs-5" id="menuName">User</div></div></div></div><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="offcanvas"></button></div>
+    <div class="offcanvas-header"><div id="menuGuest" class="w-100"><h5 class="fw-bold text-white mb-3">Menu Aplikasi</h5><button onclick="closeMenu(); loginModal()" class="btn btn-light w-100 rounded-pill fw-bold text-primary shadow-sm py-2">Login via Portal</button></div><div id="menuUser" class="d-none w-100 text-white"><div class="d-flex align-items-center gap-3"><div class="lh-1"><div class="fw-bold fs-5" id="menuName">User</div></div></div></div><button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="offcanvas"></button></div>
     <div class="p-3"><button onclick="closeMenu(); switchView('GALERI')" class="menu-item"><i class="fas fa-home"></i> Beranda Galeri</button><button onclick="closeMenu(); filterSimpanan()" class="menu-item"><i class="fas fa-heart text-danger"></i> Karya Favorit</button><div id="menuGuruItems" class="d-none border-top mt-2 pt-2"><button onclick="closeMenu(); switchView('DASHBOARD')" class="menu-item"><i class="fas fa-user-circle text-primary"></i> Profil Saya</button><button onclick="closeMenu(); clickFab()" class="menu-item"><i class="fas fa-plus-circle text-success"></i> Upload Karya</button><button onclick="closeMenu(); logout()" class="menu-item text-danger fw-bold"><i class="fas fa-sign-out-alt"></i> Keluar</button></div></div>
   </div>
 
@@ -274,7 +274,7 @@
         icons: [{ src: "https://img.icons8.com/color/144/classroom.png", sizes: "144x144", type: "image/png" }]
       };
       var blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-      document.querySelector('#dynamic-manifest').setAttribute('href', URL.createObjectURL(blob));
+      document.querySelector('#dynamic-manifest')?.setAttribute('href', URL.createObjectURL(blob));
     })();
   </script>
 
@@ -284,14 +284,22 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
     const CACHE_KEY = 'gb_v24_perfect';
+    
+    // --- KONFIGURASI PORTAL UTAMA ---
+    const PORTAL_URL = "https://slg-timkreatif.github.io/app/"; 
+
+    // STATE SELALU TAMU
     var STATE = { all:[], filtered:[], user:{name:"Tamu", role:"GUEST", school:"-"}, settings:[], limit:12 };
+    
     var modalInput = null;
     var MEMORY_CACHE = null;
 
     window.onload = function() { 
         lucide.createIcons();
+        // FORCE LOGOUT: Hapus sisa login lama
+        localStorage.removeItem('gbUser'); 
+        
         modalInput = new bootstrap.Modal(document.getElementById('modalInput'));
-        try { var u=localStorage.getItem('gbUser'); if(u) STATE.user=JSON.parse(u); } catch(e){}
         
         // Banner Logic Desktop
         if(window.innerWidth >= 768) {
@@ -302,17 +310,66 @@
         updateUI(); loadData();
     };
 
+    // --- LOGIKA REDIRECT KE PORTAL ---
+    function loginModal() {
+        Swal.fire({
+            title: 'Pindah Layanan',
+            text: 'Untuk Login, Upload Karya, dan Dashboard, silakan masuk melalui Portal Utama Guru Selogiri.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#2D8B83',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Buka Portal Utama',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = PORTAL_URL;
+            }
+        });
+    }
+
+    // Tombol FAB (+) Redirect
+    function clickFab() { loginModal(); }
+
+    // Handle Auth Redirect
+    function handleAuth() { loginModal(); }
+
+    // --- UPDATE UI (FORCE PUBLIC VIEW) ---
+    function updateUI() {
+        // Desktop Button
+        var btnDesk = document.getElementById('deskAuthBtn');
+        if(btnDesk) {
+            btnDesk.innerText = "Login via Portal";
+            btnDesk.onclick = loginModal;
+        }
+        
+        // Mobile Icon
+        var mobIcon = document.getElementById('mobAuthIcon');
+        if(mobIcon) {
+            mobIcon.innerHTML = '<i class="far fa-user"></i>';
+            mobIcon.onclick = loginModal;
+            mobIcon.removeAttribute('data-bs-toggle');
+        }
+
+        // Menu Visibility
+        if(document.getElementById('menuGuest')) document.getElementById('menuGuest').classList.remove('d-none');
+        if(document.getElementById('menuUser')) document.getElementById('menuUser').classList.add('d-none');
+        if(document.getElementById('menuGuruItems')) document.getElementById('menuGuruItems').classList.add('d-none');
+        
+        // FAB tetap muncul tapi redirect
+        if(document.getElementById('btnAdd')) document.getElementById('btnAdd').classList.remove('d-none');
+    }
+
     function switchView(view) {
         document.getElementById('view-galeri').classList.toggle('d-none', view !== 'GALERI');
-        document.getElementById('view-dashboard').classList.toggle('d-none', view !== 'DASHBOARD');
+        // Dashboard tidak bisa diakses, selalu redirect jika dipaksa
+        if(view === 'DASHBOARD') { loginModal(); return; }
         
         var banner = document.getElementById('heroBanner'); 
         if(banner) {
             if(view === 'GALERI') banner.classList.add('show'); 
             else banner.classList.remove('show');
         }
-
-        if(view === 'DASHBOARD') renderDashboard();
         window.scrollTo(0,0);
     }
 
@@ -339,44 +396,7 @@
         renderGaleri();
     }
 
-    function updateUI() {
-        var isGuest = STATE.user.role === 'GUEST';
-        var btnDesk = document.getElementById('deskAuthBtn');
-        if(btnDesk) {
-            btnDesk.innerText = isGuest ? "Login Guru" : "Profil Saya";
-            btnDesk.onclick = isGuest ? loginModal : function() { switchView('DASHBOARD') };
-        }
-        
-        var mobIcon = document.getElementById('mobAuthIcon');
-        if(mobIcon) {
-            if(isGuest) {
-                mobIcon.innerHTML = '<i class="far fa-user"></i>';
-                mobIcon.onclick = loginModal;
-                mobIcon.removeAttribute('data-bs-toggle');
-            } else {
-                mobIcon.innerHTML = (STATE.user.name||"U").charAt(0).toUpperCase();
-                mobIcon.setAttribute('data-bs-toggle', 'offcanvas');
-                mobIcon.setAttribute('data-bs-target', '#sideMenu');
-                mobIcon.onclick = null;
-            }
-        }
-
-        ['menuGuest','menuUser','menuGuruItems','btnAdd'].forEach(id => {
-            var el = document.getElementById(id);
-            if(el) {
-                if(id==='menuGuest') el.classList.toggle('d-none', !isGuest);
-                else el.classList.toggle('d-none', isGuest);
-            }
-        });
-
-        if(!isGuest && document.getElementById('menuName')) {
-            document.getElementById('menuName').innerText = STATE.user.name || "Guru";
-        }
-    }
-
-    function handleAuth() { if(STATE.user.role === 'GUEST') loginModal(); else switchView('DASHBOARD'); }
     function closeMenu() { bootstrap.Offcanvas.getInstance(document.getElementById('sideMenu'))?.hide(); }
-    function clickFab() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('feedbackAlert').classList.add('d-none'); toggleInputSource('LINK'); modalInput.show(); }
     
     async function loadData() {
         if (MEMORY_CACHE) { processData(MEMORY_CACHE); return; }
@@ -425,7 +445,7 @@
         show.forEach(item => {
             var idx = STATE.all.indexOf(item);
             var id = item[13];
-            var saved = JSON.parse(localStorage.getItem('GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'))||'[]');
+            var saved = JSON.parse(localStorage.getItem('GB_FAV_GUEST')||'[]');
             var isSaved = saved.includes(id);
             var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
             var bgClass = getSubjectColor(item[6]);
@@ -465,54 +485,31 @@
     
     function loadMoreItems() { STATE.limit += 12; renderGaleri(); }
 
-    function getLevelInfo(count) { 
-        if(count >= 100) return { name: "SUHU 👑", color: "#4c1d95", quote: "100 Karya! Legenda hidup pendidikan." };
-        if(count >= 75) return { name: "MAESTRO 🎨", color: "#be123c", quote: "Karya adalah seni mendidik." };
-        if(count >= 50) return { name: "MENTOR 🎓", color: "#b45309", quote: "Ilmu yang dibagi akan abadi." };
-        if(count >= 25) return { name: "TELADAN ⭐", color: "#0e7490", quote: "Menjadi inspirasi bagi rekan sejawat." };
-        if(count >= 10) return { name: "PRAKTISI 🔥", color: "#15803d", quote: "Konsisten berbagi praktik baik." };
-        if(count >= 5) return { name: "PERINTIS 🚩", color: "#1d4ed8", quote: "Langkah kecil berdampak besar." };
-        return { name: "PEMULA 🌱", color: "#64748b", quote: "Teruslah berkarya untuk bangsa." };
+    function filterSemua() { 
+        document.getElementById('filterMapel').value=""; 
+        document.getElementById('filterFase').value=""; 
+        document.getElementById('deskSearchInput').value=""; 
+        document.getElementById('mobSearchInput').value=""; 
+        runFilter(); 
     }
 
-    function renderDashboard() {
-        var user = STATE.user || {};
-        var userName = user.name || user.nama || "Guru";
-        
-        var elName = document.getElementById('dashName');
-        var elSchool = document.getElementById('dashSchool');
-        var elAv = document.getElementById('dashAv');
-        
-        if(elName) elName.innerText = userName;
-        if(elSchool) elSchool.innerText = user.school || user.sekolah || "-";
-        if(elAv) elAv.innerText = userName.charAt(0).toUpperCase();
-
-        var myWorks = STATE.all.filter(function(item) {
-            var itemAuthor = (item[1] || "").trim().toLowerCase();
-            var currentAuthor = (userName).trim().toLowerCase();
-            return itemAuthor === currentAuthor;
-        });
-
-        document.getElementById('dashTotal').innerText = myWorks.length;
-        document.getElementById('dashViews').innerText = myWorks.reduce((acc, curr) => acc + (parseInt(curr[14])||0), 0);
-        var lvl = getLevelInfo(myWorks.length);
-        document.getElementById('lvlBadgeContainer').innerHTML = `<span class="medal-badge" style="background:${lvl.color}; color:white;">${lvl.name}</span>`;
-        var c = document.getElementById('dash-list-container'); c.innerHTML = '';
-        if(myWorks.length === 0) c.innerHTML = '<div class="col-12 text-center text-muted py-4 small">Belum ada karya.</div>';
-        myWorks.forEach(item => {
-            var idx = STATE.all.indexOf(item);
-            var bgClass = getSubjectColor(item[6]);
-            var status = item[9];
-            var statusBadge = status==='DISETUJUI' ? '<span class="badge bg-success small">Tayang</span>' : '<span class="badge bg-warning text-dark small">Pending</span>';
-            var html = `<div class="col-12"><div class="card p-3 rounded-4 border-0 shadow-sm d-flex flex-row align-items-center gap-3 position-relative"><div style="width:60px; height:60px; border-radius:12px; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center;" class="${bgClass} text-white fw-bold small">${(item[11]||"DOC").substr(0,4)}</div><div class="flex-grow-1" style="min-width:0;"><div class="fw-bold text-truncate mb-1">${item[5]}</div><div class="small text-muted"><i class="fas fa-eye me-1"></i> ${item[14]||0} Views</div></div><div class="d-flex gap-2"><button onclick="bukaEdit(${idx})" class="btn btn-sm btn-light text-primary border"><i class="fas fa-pencil-alt"></i></button><button onclick="hapusKarya(${idx})" class="btn btn-sm btn-light text-danger border"><i class="fas fa-trash"></i></button></div>${statusBadge}</div></div>`;
-            c.insertAdjacentHTML('beforeend', html);
-        });
+    function filterSimpanan() {
+        var saved = JSON.parse(localStorage.getItem('GB_FAV_GUEST')||'[]');
+        STATE.limit = 12;
+        if(!STATE.all) return;
+        STATE.filtered = STATE.all.filter(i => saved.includes(i[13]));
+        renderGaleri();
     }
 
-    // Modal & Preview functions
-    function openCardModal(){ var w=STATE.all.filter(i=>i[1]===STATE.user.name); var l=getLevelInfo(w.length); document.getElementById('cardName').innerText=STATE.user.name; document.getElementById('cardSchool').innerText=STATE.user.school; document.getElementById('cardAvatar').innerText=STATE.user.name.charAt(0); document.getElementById('cardLevel').innerText=l.name; document.getElementById('cardKaryaCount').innerText=w.length; document.getElementById('cardViewCount').innerText=w.reduce((a,b)=>a+(parseInt(b[14])||0),0); document.getElementById('cardArea').style.background=l.color; document.getElementById('cardQuote').innerText=`"${l.quote}"`; new bootstrap.Modal(document.getElementById('modalCetakKartu')).show(); }
-    function downloadCard(){ html2canvas(document.getElementById("cardArea"),{scale:3}).then(c=>{var l=document.createElement("a");l.download="Kartu.png";l.href=c.toDataURL();l.click();Swal.fire('Disimpan','','success')}); }
-    
+    function toggleSimpan(id) {
+        var k = 'GB_FAV_GUEST';
+        var s = JSON.parse(localStorage.getItem(k)||'[]');
+        if(s.includes(id)) s = s.filter(x=>x!==id); else s.push(id);
+        localStorage.setItem(k, JSON.stringify(s));
+        renderGaleri(); // Refresh icon
+    }
+
+    // Modal & Preview functions (READ ONLY MODE)
     async function bukaPreview(idx) { 
         var item = STATE.all[idx]; var id=item[13]; var link=item[8]||""; var html=item[7]||"";
         var isExt = link.includes('canva') || link.includes('gemini') || (item[11]||"").toUpperCase().includes('STORY');
@@ -539,23 +536,17 @@
 
     function smartFullscreen() { var e=document.getElementById("previewOverlay"); if(document.fullscreenElement) document.exitFullscreen(); else e.requestFullscreen(); }
     function tutupPreview() { if(document.fullscreenElement) document.exitFullscreen(); document.getElementById('previewOverlay').style.display='none'; document.getElementById('previewFrame').src=''; }
-    function shareContent() { if(navigator.share) navigator.share({title:'Guru Berbagi',url:window.location.href}); else Swal.fire('Link Disalin','','success'); }
-    function loginModal() { Swal.fire({title:'Login',input:'password',confirmButtonText:'Masuk'}).then(r=>{if(r.value){callApi('login',{pin:r.value}).then(s=>{if(s.status==='success'){STATE.user=s.user;localStorage.setItem('gbUser',JSON.stringify(s.user));updateUI();Swal.close();switchView('DASHBOARD')}else Swal.fire('Gagal','','error')})}}); }
-    function logout(){ localStorage.removeItem('gbUser'); STATE.user={name:"Tamu",role:"GUEST"}; updateUI(); switchView('GALERI'); }
-    function clickFab(){ document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; toggleInputSource('LINK'); new bootstrap.Modal(document.getElementById('modalInput')).show(); }
     
-    function bukaEdit(idx){ var d=STATE.all[idx]; document.getElementById('formMode').value="EDIT"; document.getElementById('editRowIdx').value=d[13]; document.getElementById('inJudul').value=d[5]; setValOrOther('inMapel',d[6],'manMapel'); setValOrOther('inJenis',d[11],'manJenis'); document.getElementById('inFase').value=d[3]; document.getElementById('inSem').value=d[4]; var l=d[8]||""; var h=d[7]||""; if(h.length>10){toggleInputSource('HTML');document.getElementById('inHtml').value=h} else if(l.includes('story')){toggleInputSource('STORY');document.getElementById('inLinkStory').value=l} else{toggleInputSource('LINK');document.getElementById('inLink').value=l} var k=!!d[10]; document.getElementById('checkKaih').checked=k; toggleKaih(k); if(k)document.getElementById('inKaihType').value=d[10]; updateLivePreview(); new bootstrap.Modal(document.getElementById('modalInput')).show(); }
-    function prosesSimpan(){ var p={ judul:document.getElementById('inJudul').value, mapel:document.getElementById('inMapel').value==='LAINNYA'?document.getElementById('manMapel').value:document.getElementById('inMapel').value, jenis:document.getElementById('inJenis').value==='LAINNYA'?document.getElementById('manJenis').value:document.getElementById('inJenis').value, fase:document.getElementById('inFase').value, semester:document.getElementById('inSem').value, linkLuar:document.getElementById('inputSourceType').value==='STORY'?document.getElementById('inLinkStory').value:document.getElementById('inLink').value, kodeHtml:document.getElementById('inputSourceType').value==='HTML'?document.getElementById('inHtml').value:"", nama:STATE.user.name, sekolah:STATE.user.school, mode:document.getElementById('formMode').value, idUnik:document.getElementById('editRowIdx').value, kaihType:document.getElementById('checkKaih').checked?document.getElementById('inKaihType').value:"" }; Swal.showLoading(); callApi('simpan',p).then(r=>{Swal.fire('Sukses','','success');localStorage.removeItem(CACHE_KEY);bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide();loadData();}); }
-    function hapusKarya(idx){ Swal.fire({title:'Hapus?',showCancelButton:true}).then(r=>{if(r.isConfirmed){callApi('hapus',{id:STATE.all[idx][13]}).then(()=>{localStorage.removeItem(CACHE_KEY);loadData()})}}); }
-    
-    function populateSelects(){ var f=(id,idx)=>{var e=document.getElementById(id);e.innerHTML='<option value="">Semua</option>';STATE.settings.forEach(r=>{if(r[idx])e.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`})}; f('filterMapel',1); f('filterFase',2); var fm=(id,idx)=>{var e=document.getElementById(id);e.innerHTML='<option value="">Pilih</option>';STATE.settings.forEach(r=>{if(r[idx])e.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`});e.innerHTML+='<option value="LAINNYA">Lainnya...</option>'}; fm('inMapel',1); fm('inJenis',0); fm('inFase',2); fm('inSem',4); fm('inKaihType',3); }
+    function populateSelects(){ var f=(id,idx)=>{var e=document.getElementById(id);e.innerHTML='<option value="">Semua</option>';STATE.settings.forEach(r=>{if(r[idx])e.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`})}; f('filterMapel',1); f('filterFase',2); }
     function getYoutubeId(u){ var m=u.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (m&&m[2].length==11)?m[2]:false; }
     async function callApi(a,p){ return fetch(API_URL,{method:'POST',body:JSON.stringify({action:a,payload:p})}).then(r=>r.json()); }
+    
+    // Fungsi Edit/Simpan/Hapus dinonaktifkan di tampilan ini (Code removed or unreachable)
+    function logout(){ localStorage.removeItem('gbUser'); location.reload(); }
+    function checkOther(id,mid,v){ document.getElementById(mid).classList.toggle('d-none',v!=='LAINNYA'); }
+    function toggleKaih(c){ document.getElementById('kaihBox').classList.toggle('d-none',!c); }
     function toggleInputSource(t){ ['groupLink','groupStory','groupHtml'].forEach(id=>document.getElementById(id).classList.add('d-none')); if(t==='LINK')document.getElementById('groupLink').classList.remove('d-none'); else if(t==='STORY')document.getElementById('groupStory').classList.remove('d-none'); else document.getElementById('groupHtml').classList.remove('d-none'); updateLivePreview(); }
     function updateLivePreview(){ var t=document.getElementById('inputSourceType').value, v=""; if(t==='LINK')v=document.getElementById('inLink').value; else if(t==='STORY')v=document.getElementById('inLinkStory').value; else v=document.getElementById('inHtml').value; var d=document.getElementById('miniPreviewFrame').contentDocument; d.open(); if(t==='STORY')d.write("Preview Story"); else if(t==='HTML')d.write(v); else { var y=getYoutubeId(v); if(y)d.write(`<iframe src="https://www.youtube.com/embed/${y}" style="width:100%;height:100%;border:none"></iframe>`); else d.write("Preview Link"); } d.close(); }
-    function checkOther(id,mid,v){ document.getElementById(mid).classList.toggle('d-none',v!=='LAINNYA'); }
-    function setValOrOther(id,v,mid){ var e=document.getElementById(id); if([...e.options].some(o=>o.value===v)){e.value=v;checkOther(id,mid,v)}else{e.value='LAINNYA';checkOther(id,mid,'LAINNYA');document.getElementById(mid).value=v} }
-    function toggleKaih(c){ document.getElementById('kaihBox').classList.toggle('d-none',!c); }
   </script>
 </body>
 </html>
