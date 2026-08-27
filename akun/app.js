@@ -1,23 +1,18 @@
 // ============================================
 // KONFIGURASI SUPABASE (GANTI DENGAN MILIK ANDA!)
 // ============================================
-const SUPABASE_URL = "https://qamqqwfzhyiihqyzliwq.supabase.co"; // contoh: https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbXFxd2Z6aHlpaWhxeXpsaXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3Njc0NDIsImV4cCI6MjEwMzM0MzQ0Mn0.s5arHGG8h9x5jNgs1SpoQmytBXC9kuiaSMXzwOaOgWs"; // dari Settings > API > anon public
+const SUPABASE_URL = "https://qamqqwfzhyiihqyzliwq.supabase.co"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhbXFxd2Z6aHlpaWhxeXpsaXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3Njc0NDIsImV4cCI6MjEwMzM0MzQ0Mn0.s5arHGG8h9x5jNgs1SpoQmytBXC9kuiaSMXzwOaOgWs"; 
 const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/register-guru`;
 
-// Load Supabase SDK dari CDN
-const sdkScript = document.createElement("script");
-sdkScript.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
-sdkScript.onload = initApp;
-document.head.appendChild(sdkScript);
+// Inisialisasi client (gunakan nama 'db' agar tidak bentrok dengan global 'supabase')
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let supabase;
-
-function initApp() {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Tunggu HTML selesai dimuat sebelum menjalankan fungsi
+document.addEventListener("DOMContentLoaded", () => {
   loadDropdowns();
   setupEventListeners();
-}
+});
 
 // ============================================
 // 1. LOAD DROPDOWN JABATAN & SEKOLAH
@@ -25,8 +20,8 @@ function initApp() {
 async function loadDropdowns() {
   try {
     const [{ data: jabatanData }, { data: sekolahData }] = await Promise.all([
-      supabase.from("jabatan").select("nama").order("nama"),
-      supabase.from("sekolah").select("nama, npsn").order("nama"),
+      db.from("jabatan").select("nama").order("nama"),
+      db.from("sekolah").select("nama, npsn").order("nama"),
     ]);
 
     const jabatanSelect = document.getElementById("jabatan");
@@ -42,7 +37,6 @@ async function loadDropdowns() {
       satuanSelect.innerHTML += `<option value="${s.nama}" data-npsn="${s.npsn}">${s.nama}</option>`;
     });
 
-    // Simpan data sekolah untuk lookup NPSN
     window.sekolahMap = {};
     sekolahData.forEach((s) => (window.sekolahMap[s.nama] = s.npsn));
   } catch (err) {
@@ -55,7 +49,6 @@ async function loadDropdowns() {
 // 2. EVENT LISTENERS
 // ============================================
 function setupEventListeners() {
-  // Checkbox "Belum punya NIP"
   document.getElementById("noNip").addEventListener("change", (e) => {
     const nipInput = document.getElementById("nip");
     const emailInput = document.getElementById("email");
@@ -68,14 +61,12 @@ function setupEventListeners() {
     }
   });
 
-  // Sync email -> NIP jika checkbox dicentang
   document.getElementById("email").addEventListener("input", (e) => {
     if (document.getElementById("noNip").checked) {
       document.getElementById("nip").value = e.target.value;
     }
   });
 
-  // Pilih jabatan "Lainnya" -> tampilkan input teks
   document.getElementById("jabatan").addEventListener("change", (e) => {
     const inputLain = document.getElementById("jabatanLainnya");
     if (e.target.value === "__lainnya__") {
@@ -88,18 +79,15 @@ function setupEventListeners() {
     }
   });
 
-  // Pilih satuan pendidikan -> auto-fill NPSN
   document.getElementById("satuan").addEventListener("change", (e) => {
     const nama = e.target.value;
     document.getElementById("npsn").value = window.sekolahMap[nama] || "";
   });
 
-  // Submit form
   document.getElementById("formDaftar").addEventListener("submit", handleSubmit);
 
-  // Tombol tutup modal
   document.getElementById("btnTutupModal").addEventListener("click", () => {
-    document.getElementById("modalPin").style.display = "none";
+    document.getElementById("modalPinContainer").style.display = "none";
   });
   document.getElementById("btnTutupError").addEventListener("click", () => {
     document.getElementById("modalError").style.display = "none";
@@ -116,7 +104,6 @@ async function handleSubmit(e) {
   const btnText = btn.querySelector(".btn-text");
   const btnLoader = btn.querySelector(".btn-loader");
 
-  // Ambil data form
   const nama = document.getElementById("nama").value.trim();
   const email = document.getElementById("email").value.trim();
   const nip = document.getElementById("nip").value.trim();
@@ -125,14 +112,12 @@ async function handleSubmit(e) {
   const satuan = document.getElementById("satuan").value;
   const npsn = document.getElementById("npsn").value.trim();
 
-  // Validasi jabatan
   const jabatan = jabatanRaw === "__lainnya__" ? jabatanLain : jabatanRaw;
   if (!jabatan) {
     tampilkanError("Mohon pilih atau isi jabatan.");
     return;
   }
 
-  // Tampilkan loading
   btn.disabled = true;
   btnText.style.display = "none";
   btnLoader.style.display = "inline";
@@ -186,8 +171,8 @@ function tampilkanModal(nama, pin, tipe) {
   }
 
   document.getElementById("modalNama").textContent = nama;
-  document.getElementById("modalPin").textContent = pin;
-  document.getElementById("modalPin").style.display = "block";
+  document.getElementById("modalPinValue").textContent = pin;
+  document.getElementById("modalPinContainer").style.display = "flex";
 }
 
 function tampilkanError(pesan) {
