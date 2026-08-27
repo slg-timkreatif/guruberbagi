@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendaftaran Akun Guru Berbagi - Selogiri</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img
+        src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png"
+        alt="Logo"
+        class="logo"
+      />
+      <h1>Pendaftaran Akun Guru Berbagi</h1>
+      <p class="subtitle">Korwilcambidik Kecamatan Selogiri</p>
+    </div>
+
+    <form id="formDaftar" autocomplete="off">
+      <div class="form-group">
+        <label for="nama">Nama Lengkap (dengan gelar)</label>
+        <input type="text" id="nama" name="nama" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Aktif</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="nip">NIP</label>
+        <input type="text" id="nip" name="nip" placeholder="18 digit NIP" />
+        <div class="checkbox-group">
+          <input type="checkbox" id="noNip" />
+          <label for="noNip">Saya belum memiliki NIP (Gunakan Email sebagai ID)</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="jabatan">Jabatan</label>
+        <select id="jabatan" name="jabatan" required>
+          <option value="">Memuat data...</option>
+        </select>
+        <input
+          type="text"
+          id="jabatanLainnya"
+          name="jabatanLainnya"
+          placeholder="Sebutkan Jabatan Lainnya"
+          style="display: none; margin-top: 8px;"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="satuan">Satuan Pendidikan</label>
+        <select id="satuan" name="satuan" required>
+          <option value="">Memuat data...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="npsn">NPSN</label>
+        <input type="text" id="npsn" name="npsn" readonly />
+      </div>
+
+      <button type="submit" id="btnSubmit" class="btn-primary">
+        <span class="btn-text">Daftarkan & Generate PIN</span>
+        <span class="btn-loader" style="display: none;">Sedang memproses... Mohon tunggu.</span>
+      </button>
+    </form>
+
+    <div class="footer-link">
+      <a href="admin.html">🔐 Login Admin</a>
+    </div>
+  </div>
+
+  <!-- Modal Sukses / Duplikat -->
+  <div id="modalPin" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header" id="modalHeader">
+        <h2>Pendaftaran Berhasil!</h2>
+      </div>
+      <div class="modal-body">
+        <p>Halo, <strong id="modalNama"></strong>.</p>
+        <p id="modalPesan">PIN Anda adalah:</p>
+        <div class="pin-box">
+          <span id="modalPin" class="pin-number"></span>
+        </div>
+        <p class="pin-note">*Simpan PIN ini. Jangan bagikan kepada siswa.</p>
+      </div>
+      <button id="btnTutupModal" class="btn-primary">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Modal Error -->
+  <div id="modalError" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header error">
+        <h2>Terjadi Kesalahan</h2>
+      </div>
+      <div class="modal-body">
+        <p id="errorPesan"></p>
+      </div>
+      <button id="btnTutupError" class="btn-primary">Tutup</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
