@@ -66,3 +66,8 @@ Setelah membaca konteks ini, tunggu perintah saya berikutnya.
 Jika aplikasi butuh tabel data baru, buat di project pusat dengan
 kolom pemilik data merujuk ke id/email guru.
 =====================================================
+
+- PRINSIP HEMAT KUOTA: project pusat harus tetap ramping karena
+  dipakai banyak aplikasi. Jangan menambahkan fitur berat (blast
+  email, dsb.) ke Supabase; prioritaskan solusi client-side atau
+  layanan eksternal di luar Supabase.
