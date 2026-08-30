@@ -1,398 +1,434 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Studio - Guru Berbagi</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel - Guru Berbagi Selogiri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#fff; --surface2:#f0f1f4;
+  --border:#e4e6ea; --border2:#d5d8de;
+  --t1:#16181d; --t2:#5c6270; --t3:#9aa0ad;
+  --primary:#0d9488; --primary2:#0f766e; --primarysoft:#e6f7f5;
+  --amber:#b45309; --ambersoft:#fef3c7;
+  --green:#15803d; --greensoft:#dcfce7;
+  --red:#b91c1c; --redsoft:#fee2e2;
+  --r:12px; --ease:cubic-bezier(.25,.1,.25,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+.d-none{display:none!important}
 
-    <style>
-        :root { 
-            --primary: #2D8B83; 
-            --primary-soft: #e0f2f1;
-            --primary-dark: #1F6660; 
-            --bg-body: #F1F5F9; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B;
-            --card-bg: #FFFFFF;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --sidebar-w: 280px;
-            --radius-lg: 1rem;
-        }
+/* ===== LOGIN ===== */
+#viewLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;text-align:center}
+.login-logo{width:56px;height:56px;background:var(--t1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#fff}
+.login-logo svg{width:26px;height:26px}
+.login-card h1{font-size:1.15rem;font-weight:800;margin-bottom:4px}
+.login-card p{color:var(--t3);font-size:.8rem;margin-bottom:22px}
+.in{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);font-size:.875rem;outline:none;margin-bottom:10px;transition:border-color .15s}
+.in:focus{border-color:var(--primary)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:999px;font-weight:700;font-size:.82rem;padding:10px 18px;transition:all .15s var(--ease)}
+.btn svg{width:15px;height:15px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#fff;width:100%}
+.btn-primary:hover{background:var(--primary2)}
+.btn-sm{padding:7px 13px;font-size:.75rem}
+.btn-green{background:var(--greensoft);color:var(--green)}
+.btn-green:hover{background:#bbf7d0}
+.btn-red{background:var(--redsoft);color:var(--red)}
+.btn-red:hover{background:#fecaca}
+.btn-ghost{background:var(--surface);color:var(--t2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--surface2)}
+.login-err{color:var(--red);font-size:.78rem;font-weight:600;margin-top:8px;display:none}
 
-        body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+/* ===== APP ===== */
+.topbar{position:sticky;top:0;z-index:50;background:var(--t1);color:#fff;display:flex;align-items:center;gap:12px;padding:0 20px;height:56px}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem}
+.topbar-brand .dot{width:32px;height:32px;background:var(--primary);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.topbar-brand .dot svg{width:17px;height:17px;color:#fff}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-email{font-size:.75rem;color:#9ca3af;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-logout{background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:999px;padding:8px 14px;font-weight:700;font-size:.75rem;display:flex;align-items:center;gap:6px}
+.btn-logout:hover{background:rgba(255,255,255,.2)}
+.btn-logout svg{width:14px;height:14px}
 
-        /* --- LOGIN SCREEN --- */
-        #login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0F172A 0%, #1e293b 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s; }
-        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 3rem 2rem; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; }
-        .inp-pin { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; width: 100%; font-weight: 700; color: white; outline: none; margin-bottom: 25px; transition: all 0.3s; }
-        .inp-pin:focus { border-color: var(--primary); background: rgba(0,0,0,0.2); }
-        .btn-login-custom { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; transition: 0.3s; box-shadow: 0 10px 15px -3px rgba(45, 139, 131, 0.3); }
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
 
-        /* --- LAYOUT --- */
-        .sidebar { width: var(--sidebar-w); height: 100vh; position: fixed; top: 0; left: 0; background: var(--card-bg); border-right: 1px solid #e2e8f0; z-index: 1040; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sidebar-brand { padding: 40px 30px 20px; color: var(--primary); font-weight: 800; font-size: 1.5rem; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
-        .nav-menu { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
-        .nav-item { padding: 16px 20px; font-weight: 600; color: var(--text-muted); border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; border: 1px solid transparent; }
-        .nav-item:hover { background: #f8fafc; color: var(--text-main); }
-        .nav-item.active { background: var(--primary-soft); color: var(--primary); border-color: rgba(45, 139, 131, 0.1); }
-        .main-content { margin-left: var(--sidebar-w); padding: 40px; min-height: 100vh; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
-        .page-title { font-weight: 800; font-size: 1.75rem; color: var(--text-main); letter-spacing: -0.5px; }
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.stat-val{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.stat-lbl{font-size:.68rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.stat.pending .stat-val{color:var(--amber)}
+.stat.ok .stat-val{color:var(--green)}
+.stat.bad .stat-val{color:var(--red)}
+.stat.teal .stat-val{color:var(--primary)}
 
-        /* --- CARDS & STATS --- */
-        .card-custom { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
-        .stat-card { padding: 25px; display: flex; align-items: flex-start; justify-content: space-between; }
-        .stat-val { font-size: 2.25rem; font-weight: 800; line-height: 1.2; letter-spacing: -1px; margin-top: 10px; color: var(--text-main); }
-        .stat-lbl { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* --- MODERN TABLE & RANKING --- */
-        .modern-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .modern-table th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); padding: 0 20px 10px; font-weight: 700; border: none; }
-        .modern-table tr.data-row { background: white; box-shadow: var(--shadow-sm); border-radius: 16px; transition: transform 0.2s; }
-        .modern-table tr.data-row:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .modern-table td { padding: 20px; border: none; vertical-align: middle; }
-        .modern-table td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
-        .modern-table td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
-        
-        .ranking-list { display: flex; flex-direction: column; gap: 12px; padding: 20px; max-height: 500px; overflow-y: auto; }
-        .rank-row { display: flex; align-items: center; padding: 12px 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #f1f5f9; transition: 0.2s; }
-        .rank-num { width: 28px; height: 28px; background: #e2e8f0; color: var(--text-muted); border-radius: 8px; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; }
-        .rank-row.top-1 .rank-num { background: #FEF3C7; color: #D97706; }
-        .rank-row.top-2 .rank-num { background: #E0E7FF; color: #4F46E5; }
-        .rank-row.top-3 .rank-num { background: #FFEDD5; color: #EA580C; }
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:9px 16px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);font-weight:700;font-size:.8rem;color:var(--t2);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tab svg{width:14px;height:14px}
+.tab.active{background:var(--t1);color:#fff;border-color:var(--t1)}
+.tab .count{background:var(--ambersoft);color:var(--amber);border-radius:999px;padding:1px 7px;font-size:.68rem}
+.tab.active .count{background:rgba(255,255,255,.2);color:#fff}
 
-        /* --- BUTTONS --- */
-        .btn-icon { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: none; transition: 0.2s; margin-left: 6px; }
-        .btn-view { background: #E0F2FE; color: #0284C7; } .btn-view:hover { background: #0284C7; color: white; }
-        .btn-del { background: #FEE2E2; color: #DC2626; } .btn-del:hover { background: #DC2626; color: white; }
-        .btn-disabled { opacity: 0.4; cursor: not-allowed; background: #f1f5f9; color: #cbd5e1; }
+/* Toolbar */
+.toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.toolbar .in{margin:0;flex:1;min-width:180px}
+.toolbar select{width:auto;margin:0}
 
-        /* --- LEVEL CARDS --- */
-        .lvl-card-modern { text-align: center; padding: 25px 20px; border-radius: 20px; transition: 0.3s; cursor: pointer; border: 1px solid transparent; height: 100%; background: white; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
-        .lvl-card-modern:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-        .lvl-icon { width: 50px; height: 50px; border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
-        .lvl-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; letter-spacing: -0.5px; }
-        .lvl-count { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
-        .lvl-sub { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+/* Item list */
+.item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.item-main{flex:1;min-width:200px}
+.item-title{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.item-meta{font-size:.75rem;color:var(--t3);margin-top:3px}
+.pill{padding:2px 9px;border-radius:999px;font-size:.65rem;font-weight:800}
+.pill-pending{background:var(--ambersoft);color:var(--amber)}
+.pill-ok{background:var(--greensoft);color:var(--green)}
+.pill-bad{background:var(--redsoft);color:var(--red)}
+.item-actions{display:flex;gap:6px;flex-shrink:0}
+.iconbtn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--t2);transition:all .15s}
+.iconbtn:hover{background:var(--surface2)}
+.iconbtn svg{width:15px;height:15px}
+.iconbtn.green{color:var(--green);border-color:#bbf7d0;background:var(--greensoft)}
+.iconbtn.red{color:var(--red);border-color:#fecaca;background:var(--redsoft)}
 
-        /* --- STORY OVERLAY (SELOGIRI REWIND) --- */
-        #story-overlay { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; color: white; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .story-progress-container { display: flex; gap: 5px; padding: 15px 10px; position: absolute; top: 0; left: 0; right: 0; z-index: 10; }
-        .story-progress-bar { height: 3px; background: rgba(255,255,255,0.3); flex: 1; border-radius: 2px; overflow: hidden; }
-        .story-progress-fill { height: 100%; background: white; width: 0%; }
-        .story-slide { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; display: none; animation: zoomIn 10s linear; }
-        .story-slide.active { display: flex; }
-        .story-title { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: var(--primary); font-weight: 800; }
-        .story-big-text { font-size: 4rem; font-weight: 900; line-height: 1; margin-bottom: 10px; background: linear-gradient(to right, #2D8B83, #F59E0B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .story-sub { font-size: 1.2rem; color: #94a3b8; }
-        .story-list { width: 100%; max-width: 400px; text-align: left; }
-        .story-item { background: rgba(255,255,255,0.1); padding: 15px; margin-bottom: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); }
-        .story-rank { font-weight: 800; color: #F59E0B; margin-right: 15px; font-size: 1.2rem; }
-        .story-footer { position: absolute; bottom: 30px; width: 100%; text-align: center; font-size: 0.8rem; opacity: 0.5; letter-spacing: 1px; }
-        .btn-close-story { position: absolute; top: 20px; right: 20px; color: white; font-size: 1.5rem; cursor: pointer; z-index: 20; opacity: 0.7; }
-        @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
-        @keyframes zoomIn { from { transform: scale(1); } to { transform: scale(1.05); } }
-        
-        /* --- FLYER DARK PREMIUM --- */
-        #flyer-preview-container { background: #1e293b; border-radius: 24px; padding: 40px; overflow-x: auto; box-shadow: inset 0 0 50px rgba(0,0,0,0.5); border: 4px solid #334155; }
-        #flyer-area { width: 420px; min-height: 750px; flex-shrink: 0; display: flex; flex-direction: column; padding: 40px 30px; position: relative; overflow: hidden; background: #0F172A; color: white; }
-        .text-gold { color: #F59E0B; } .bg-gold { background: #F59E0B; }
+.empty{ text-align:center;color:var(--t3);padding:40px 20px;font-size:.85rem}
+.empty svg{width:36px;height:36px;margin:0 auto 10px;opacity:.4;display:block}
 
-        /* --- MOBILE --- */
-        .mobile-toggle { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: var(--text-main); color: white; border-radius: 50%; z-index: 2000; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s; }
-        @media (max-width: 991px) { 
-            .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } 
-            .main-content { margin-left: 0; padding: 20px; padding-bottom: 100px; } 
-            .mobile-toggle { display: flex; } 
-        }
-        .d-none { display: none !important; }
-        .text-limit-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
-        .badge-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
-    </style>
+/* Kontributor */
+.contrib{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:8px}
+.contrib-av{width:36px;height:36px;border-radius:50%;background:var(--primarysoft);color:var(--primary2);font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contrib-info{flex:1;min-width:0}
+.contrib-name{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contrib-school{font-size:.72rem;color:var(--t3)}
+.contrib-num{text-align:right;flex-shrink:0}
+.contrib-num b{font-size:.95rem}
+.contrib-num span{display:block;font-size:.65rem;color:var(--t3)}
+
+/* Modal preview */
+.overlay{position:fixed;inset:0;background:rgba(15,18,25,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:14px;max-width:900px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modal-head h3{font-size:.95rem;font-weight:800}
+.modal-body{flex:1;background:var(--surface2)}
+.modal-body iframe{width:100%;height:100%;min-height:420px;border:none}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--t1);color:#fff;padding:11px 20px;border-radius:999px;font-weight:700;font-size:.8rem;z-index:500;opacity:0;transition:all .3s var(--ease);display:flex;gap:8px;align-items:center;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast svg{width:15px;height:15px}
+.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:30px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="login-card">
-            <div style="font-size:3rem; margin-bottom:20px; color:var(--primary);"><i class="fas fa-fingerprint"></i></div>
-            <h4 class="fw-bold mb-2">Admin Portal</h4>
-            <p style="opacity:0.7; font-size:0.9rem; margin-bottom:30px;">Guru Berbagi Selogiri</p>
-            <input type="password" id="pinInput" class="inp-pin" placeholder="••••••" maxlength="6" autocomplete="off">
-            <button onclick="auth()" id="btnLogin" class="btn-login-custom">Masuk Dashboard <i class="fas fa-arrow-right ms-2"></i></button>
+<!-- ===== LOGIN ADMIN (Supabase Auth project PUSAT) ===== -->
+<div id="viewLogin">
+  <div class="login-card">
+    <div class="login-logo"><i data-lucide="shield-check"></i></div>
+    <h1>Admin Panel</h1>
+    <p>Guru Berbagi — Korwilcambidik Selogiri<br>Masuk dengan akun admin terpusat</p>
+    <form onsubmit="doLogin(event)">
+      <input type="email" class="in" id="admEmail" placeholder="email admin" autocomplete="username" required>
+      <input type="password" class="in" id="admPass" placeholder="password" autocomplete="current-password" required>
+      <button class="btn btn-primary" id="btnLogin"><i data-lucide="log-in"></i> Masuk sebagai Admin</button>
+    </form>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ===== APLIKASI ADMIN ===== -->
+<div id="viewApp" class="d-none">
+  <div class="topbar">
+    <div class="topbar-brand"><span class="dot"><i data-lucide="shield-check"></i></span> ADMIN • GURU BERBAGI</div>
+    <div class="topbar-right">
+      <span class="topbar-email" id="admEmailLabel"></span>
+      <button class="btn-logout" onclick="doLogout()"><i data-lucide="log-out"></i> Keluar</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stats" id="statsBox"></div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="moderasi" onclick="pindahTab('moderasi')"><i data-lucide="clock"></i> Moderasi <span class="count" id="cntPending">0</span></button>
+      <button class="tab" data-tab="semua" onclick="pindahTab('semua')"><i data-lucide="layers"></i> Semua Karya</button>
+      <button class="tab" data-tab="kontributor" onclick="pindahTab('kontributor')"><i data-lucide="users"></i> Kontributor</button>
+    </div>
+
+    <!-- Tab Moderasi -->
+    <div id="tab-moderasi"><div id="listPending"></div></div>
+
+    <!-- Tab Semua Karya -->
+    <div id="tab-semua" class="d-none">
+      <div class="toolbar">
+        <input class="in" id="cariKarya" placeholder="Cari judul / nama guru..." oninput="renderSemua()">
+        <select class="in" id="filterStatus" onchange="renderSemua()">
+          <option value="">Semua Status</option>
+          <option value="DISETUJUI">DISETUJUI</option>
+          <option value="PENDING">PENDING</option>
+          <option value="DITOLAK">DITOLAK</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="muatData()"><i data-lucide="refresh-cw"></i> Muat Ulang</button>
+      </div>
+      <div id="listSemua"></div>
+    </div>
+
+    <!-- Tab Kontributor -->
+    <div id="tab-kontributor" class="d-none"><div id="listKontributor"></div></div>
+  </div>
+</div>
+
+<!-- Modal Preview -->
+<div class="overlay" id="previewOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="previewTitle">Preview</h3>
+      <button class="iconbtn" onclick="tutupPreview()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" id="previewBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="check-circle"></i><span id="toastMsg"></span></div>
+
+<script>
+// ============================================================
+// KONFIGURASI DUAL-PROJECT
+// - authClient : Supabase Auth project PUSAT (login admin) — sesuai KONTEKS-SSO
+// - db         : data karya_guru di project lama
+// ============================================================
+const authClient = window.supabase.createClient(
+  'https://qamqqwfzhyiihqyzliwq.supabase.co',
+  'sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x'
+);
+const db = window.supabase.createClient(
+  'https://qdgtfhknuvncbzsbcbwo.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkZ3RmaGtudXZuY2J6c2JjYndvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyNzUyMzUsImV4cCI6MjEwMTg1MTIzNX0.GcEczGIaSO2twdTEK10_KedDPTzutr-EEl4vyNHG3bc'
+);
+
+// OPSIONAL: batasi hanya email tertentu yang boleh jadi admin.
+// Isi contoh: ['admin@selogiri.sch.id']; biarkan [] = semua user Auth pusat = admin.
+const ADMIN_EMAILS = [];
+
+let ALL = [];
+let tabAktif = 'moderasi';
+
+// ================= AUTH =================
+window.addEventListener('DOMContentLoaded', async () => {
+  lucide.createIcons();
+  const { data } = await authClient.auth.getSession();
+  if (data.session && bolehAdmin(data.session.user.email)) masukApp(data.session.user.email);
+});
+
+function bolehAdmin(email){
+  if (ADMIN_EMAILS.length && !ADMIN_EMAILS.includes(email)) return false;
+  return true;
+}
+
+async function doLogin(e){
+  e.preventDefault();
+  const email = document.getElementById('admEmail').value.trim();
+  const pass  = document.getElementById('admPass').value;
+  const err   = document.getElementById('loginErr');
+  err.style.display = 'none';
+  try {
+    const { data, error } = await authClient.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
+    if (!bolehAdmin(email)) {
+      await authClient.auth.signOut();
+      err.textContent = 'Akun ini tidak memiliki hak admin.';
+      err.style.display = 'block';
+      return;
+    }
+    masukApp(email);
+  } catch (ex) {
+    err.textContent = 'Gagal masuk: ' + ex.message;
+    err.style.display = 'block';
+  }
+}
+
+async function doLogout(){
+  await authClient.auth.signOut();
+  location.reload();
+}
+
+function masukApp(email){
+  document.getElementById('viewLogin').classList.add('d-none');
+  document.getElementById('viewApp').classList.remove('d-none');
+  document.getElementById('admEmailLabel').textContent = email;
+  muatData();
+}
+
+// ================= DATA =================
+async function muatData(){
+  document.getElementById('listPending').innerHTML = '<div class="spinner"></div>';
+  const { data, error } = await db.from('karya_guru').select('*');
+  if (error) { toast('Gagal memuat: ' + error.message); return; }
+  ALL = data || [];
+  ALL.sort((a,b) => parseTs(b) - parseTs(a));
+  renderStats();
+  renderPending();
+  renderSemua();
+  renderKontributor();
+  lucide.createIcons();
+}
+
+function parseTs(r){
+  const idMs = String(r['ID'] || '').match(/(\d{13})/);
+  if (idMs) return parseInt(idMs[1]);
+  const d = new Date(r['Timestamp']);
+  if (!isNaN(d.getTime())) return d.getTime();
+  return 0;
+}
+
+// ================= RENDER =================
+function renderStats(){
+  const total = ALL.length;
+  const ok    = ALL.filter(r => r['Status'] === 'DISETUJUI').length;
+  const pend  = ALL.filter(r => r['Status'] === 'PENDING').length;
+  const tolak = ALL.filter(r => r['Status'] === 'DITOLAK').length;
+  const views = ALL.reduce((a,r) => a + (parseInt(r['VIEWS']) || 0), 0);
+  const guru  = new Set(ALL.map(r => (r['Nama Guru']||'').trim()).filter(Boolean)).size;
+  document.getElementById('cntPending').textContent = pend;
+  document.getElementById('statsBox').innerHTML = `
+    <div class="stat teal"><div class="stat-val">${total}</div><div class="stat-lbl">Total Karya</div></div>
+    <div class="stat pending"><div class="stat-val">${pend}</div><div class="stat-lbl">Menunggu</div></div>
+    <div class="stat ok"><div class="stat-val">${ok}</div><div class="stat-lbl">Tayang</div></div>
+    <div class="stat bad"><div class="stat-val">${tolak}</div><div class="stat-lbl">Ditolak</div></div>
+    <div class="stat"><div class="stat-val">${views.toLocaleString('id-ID')}</div><div class="stat-lbl">Total Views</div></div>
+    <div class="stat"><div class="stat-val">${guru}</div><div class="stat-lbl">Kontributor</div></div>`;
+}
+
+function itemHTML(r, denganAksiModerasi){
+  const st = r['Status'] || 'PENDING';
+  const pill = st === 'DISETUJUI' ? 'pill-ok' : (st === 'DITOLAK' ? 'pill-bad' : 'pill-pending');
+  return `
+  <div class="item">
+    <div class="item-main">
+      <div class="item-title">${esc(r['Judul Media'])} <span class="pill ${pill}">${st}</span></div>
+      <div class="item-meta">${esc(r['Nama Guru'])} • ${esc(r['Nama Sekolah'])} • ${esc(r['Mata Pelajaran'])} • ${esc(r['Jenis Konten'])} • 👁 ${r['VIEWS']||0}</div>
+    </div>
+    <div class="item-actions">
+      <button class="iconbtn" title="Preview" onclick="preview('${r['ID']}')"><i data-lucide="eye"></i></button>
+      ${denganAksiModerasi ? `
+      <button class="iconbtn green" title="Setujui" onclick="setStatus('${r['ID']}','DISETUJUI')"><i data-lucide="check"></i></button>
+      <button class="iconbtn red" title="Tolak" onclick="setStatus('${r['ID']}','DITOLAK')"><i data-lucide="x"></i></button>` : ''}
+      <button class="iconbtn red" title="Hapus" onclick="hapus('${r['ID']}')"><i data-lucide="trash-2"></i></button>
+    </div>
+  </div>`;
+}
+
+function renderPending(){
+  const pend = ALL.filter(r => r['Status'] === 'PENDING');
+  document.getElementById('listPending').innerHTML = pend.length
+    ? pend.map(r => itemHTML(r, true)).join('')
+    : `<div class="empty"><i data-lucide="inbox"></i>Tidak ada karya yang menunggu moderasi.</div>`;
+}
+
+function renderSemua(){
+  const q = (document.getElementById('cariKarya').value || '').toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const list = ALL.filter(r => {
+    const teks = ((r['Judul Media']||'') + ' ' + (r['Nama Guru']||'')).toLowerCase();
+    return (!q || teks.includes(q)) && (!st || r['Status'] === st);
+  });
+  document.getElementById('listSemua').innerHTML = list.length
+    ? list.map(r => itemHTML(r, true)).join('')
+    : `<div class="empty"><i data-lucide="search-x"></i>Tidak ada karya yang cocok.</div>`;
+}
+
+function renderKontributor(){
+  const map = {};
+  ALL.forEach(r => {
+    const n = (r['Nama Guru']||'').trim();
+    if (!n) return;
+    if (!map[n]) map[n] = { nama:n, sekolah:r['Nama Sekolah']||'-', karya:0, views:0 };
+    map[n].karya++;
+    map[n].views += parseInt(r['VIEWS']) || 0;
+  });
+  const arr = Object.values(map).sort((a,b) => b.karya - a.karya);
+  document.getElementById('listKontributor').innerHTML = arr.length
+    ? arr.map(c => `
+      <div class="contrib">
+        <div class="contrib-av">${c.nama.charAt(0).toUpperCase()}</div>
+        <div class="contrib-info">
+          <div class="contrib-name">${esc(c.nama)}</div>
+          <div class="contrib-school">${esc(c.sekolah)}</div>
         </div>
-    </div>
+        <div class="contrib-num"><b>${c.karya}</b> karya<span>${c.views.toLocaleString('id-ID')} views</span></div>
+      </div>`).join('')
+    : `<div class="empty">Belum ada kontributor.</div>`;
+}
 
-    <div id="app" class="d-none">
-        <button class="mobile-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
-        
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand"><i class="fas fa-shapes text-warning"></i> GURU BERBAGI</div>
-            <div class="nav-menu">
-                <div class="nav-item active" onclick="go('HOME', this)"><i class="fas fa-chart-pie"></i> Ringkasan</div>
-                <div class="nav-item" onclick="go('DATA', this)"><i class="fas fa-database"></i> Database Karya</div>
-                <div class="nav-item" onclick="go('LEVEL', this)"><i class="fas fa-trophy"></i> Hall of Fame</div>
-                <div class="nav-item" onclick="go('FLYER', this)"><i class="fas fa-magic"></i> Buat Flyer</div>
-                <div class="nav-item" onclick="playStory()" style="color:#F59E0B"><i class="fas fa-play-circle"></i> Putar Story</div>
-            </div>
-            <div class="p-4 mt-auto">
-                <button onclick="logout()" class="btn w-100 rounded-pill fw-bold text-danger" style="background:#FEF2F2;"><i class="fas fa-sign-out-alt me-2"></i>Keluar</button>
-            </div>
-        </aside>
+function pindahTab(t){
+  tabAktif = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  ['moderasi','semua','kontributor'].forEach(x => {
+    document.getElementById('tab-' + x).classList.toggle('d-none', x !== t);
+  });
+}
 
-        <main class="main-content">
-            <div id="page-home" class="fade-in">
-                <div class="page-header"><div><h4 class="page-title">Dashboard Eksekutif</h4><div class="page-subtitle">Statistik Real-time</div></div></div>
-                <div class="row g-4 mb-5">
-                    <div class="col-md-4"><div class="card-custom stat-card"><div><div class="stat-lbl">Total Karya</div><div class="stat-val" id="stat-karya">0</div></div><div style="font-size:2rem; opacity:0.1;"><i class="fas fa-file-alt"></i></div></div></div>
-                    <div class="col-md-4"><div class="card-custom stat-card"><div><div class="stat-lbl">Populasi Guru</div><div class="stat-val" id="stat-guru">0</div></div><div style="font-size:2rem; opacity:0.1;"><i class="fas fa-users"></i></div></div></div>
-                    <div class="col-md-4"><div class="card-custom stat-card"><div><div class="stat-lbl">Sekolah</div><div class="stat-val" id="stat-sekolah">0</div></div><div style="font-size:2rem; opacity:0.1;"><i class="fas fa-school"></i></div></div></div>
-                </div>
-                <div class="row g-4">
-                    <div class="col-xl-6"><div class="card-custom h-100"><div class="p-4 border-bottom d-flex justify-content-between align-items-center"><h6 class="fw-bold m-0 text-success"><i class="fas fa-chart-line me-2"></i>Sekolah Teraktif</h6><span class="badge bg-success-soft text-success">Fair Play Score</span></div><div class="ranking-list" id="rank-sekolah"></div></div></div>
-                    <div class="col-xl-6"><div class="card-custom h-100"><div class="p-4 border-bottom"><h6 class="fw-bold m-0 text-primary"><i class="fas fa-medal me-2"></i>Top Guru Produktif</h6></div><div class="ranking-list" id="rank-guru"></div></div></div>
-                </div>
-            </div>
+// ================= AKSI =================
+async function setStatus(id, status){
+  const { error } = await db.from('karya_guru').update({ 'Status': status }).eq('ID', id);
+  if (error) { toast('Gagal: ' + error.message); return; }
+  toast(status === 'DISETUJUI' ? '✅ Karya disetujui & tayang.' : 'Karya ditolak.');
+  muatData();
+}
 
-            <div id="page-data" class="d-none fade-in">
-                <div class="page-header"><h4 class="page-title">Database Karya</h4><button onclick="load()" class="btn btn-dark rounded-pill px-4 fw-bold"><i class="fas fa-sync-alt me-2"></i>Refresh</button></div>
-                <div class="table-responsive"><table class="modern-table"><thead><tr><th>Judul & Mapel</th><th>Pengirim</th><th class="text-end">Aksi</th></tr></thead><tbody id="table-body"></tbody></table></div>
-            </div>
+async function hapus(id){
+  if (!confirm('Hapus permanen karya ini?')) return;
+  const { error } = await db.from('karya_guru').delete().eq('ID', id);
+  if (error) { toast('Gagal: ' + error.message); return; }
+  toast('Karya dihapus.');
+  muatData();
+}
 
-            <div id="page-level" class="d-none fade-in">
-                <div class="page-header"><h4 class="page-title">Hall of Fame</h4></div>
-                <div class="row g-3" id="level-grid-container"></div>
-                <div class="card-custom mt-4 d-none" id="level-detail-view"><div class="p-4 border-bottom d-flex justify-content-between"><h6 class="fw-bold text-primary m-0" id="level-detail-title">Detail</h6><button onclick="document.getElementById('level-detail-view').classList.add('d-none')" class="btn btn-sm btn-light rounded-circle"><i class="fas fa-times"></i></button></div><div class="p-3"><div class="table-responsive"><table class="table table-hover"><tbody id="level-table-body"></tbody></table></div></div></div>
-            </div>
+function preview(id){
+  const r = ALL.find(x => x['ID'] === id);
+  if (!r) return;
+  document.getElementById('previewTitle').textContent = r['Judul Media'] || 'Preview';
+  const body = document.getElementById('previewBody');
+  const html = r['Kode HTML/Canvas'] || '';
+  const link = r['Link Media Luar'] || '';
+  if (html && html.length > 10) {
+    body.innerHTML = `<iframe sandbox="allow-scripts allow-same-origin" srcdoc="${escAttr(html)}"></iframe>`;
+  } else if (link) {
+    body.innerHTML = `<iframe src="${escAttr(link)}" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
+  } else {
+    body.innerHTML = '<div class="empty">Tidak ada konten.</div>';
+  }
+  document.getElementById('previewOverlay').classList.add('open');
+}
+function tutupPreview(){
+  document.getElementById('previewOverlay').classList.remove('open');
+  document.getElementById('previewBody').innerHTML = '';
+}
 
-            <div id="page-flyer" class="d-none fade-in">
-                <div class="page-header"><h4 class="page-title">Flyer Generator</h4><button onclick="downloadFlyer()" class="btn btn-warning text-white fw-bold rounded-pill px-4 shadow"><i class="fas fa-download me-2"></i>Download HD</button></div>
-                <div id="flyer-preview-container">
-                    <div id="flyer-area">
-                        <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(45,139,131,0.2) 0%, transparent 70%); border-radius: 50%;"></div>
-                        <div style="position: absolute; bottom: -50px; left: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
-                        <div style="text-align: center; margin-bottom: 30px; position: relative; z-index: 2;">
-                            <div style="font-size:0.7rem; letter-spacing:4px; font-weight:700; color:var(--primary); margin-bottom:8px; text-transform:uppercase;">Update Resmi</div>
-                            <div style="font-size: 2.5rem; font-weight: 800; color: white; line-height: 1; margin-bottom: 5px; letter-spacing: -1px;">GURU BERBAGI</div>
-                            <div style="font-size: 0.9rem; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase;">Kecamatan Selogiri</div>
-                            <div style="width: 60px; height: 4px; background: #F59E0B; margin: 15px auto 0; border-radius: 2px;"></div>
-                        </div>
-                        <div style="display:flex; gap:12px; margin-bottom:35px; position: relative; z-index: 2;">
-                            <div style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:15px 5px; text-align:center;"><div style="font-size:1.8rem; font-weight:800; color:#F59E0B; line-height:1;" id="fl-total">0</div><div style="font-size:0.6rem; font-weight:600; color:#cbd5e1; margin-top:5px; text-transform:uppercase;">Karya</div></div>
-                            <div style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:15px 5px; text-align:center;"><div style="font-size:1.8rem; font-weight:800; color:#38bdf8; line-height:1;" id="fl-guru">0</div><div style="font-size:0.6rem; font-weight:600; color:#cbd5e1; margin-top:5px; text-transform:uppercase;">Guru</div></div>
-                            <div style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:15px 5px; text-align:center;"><div style="font-size:1.8rem; font-weight:800; color:#4ade80; line-height:1;" id="fl-sekolah">0</div><div style="font-size:0.6rem; font-weight:600; color:#cbd5e1; margin-top:5px; text-transform:uppercase;">Sekolah</div></div>
-                        </div>
-                        <div style="font-size:0.85rem; font-weight:800; color:white; text-transform:uppercase; margin-bottom:15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-school text-gold"></i> Sekolah Teraktif</div>
-                        <div id="fl-top-sekolah" style="display:flex; flex-direction:column; gap:8px; margin-bottom:30px;"></div>
-                        <div style="font-size:0.85rem; font-weight:800; color:white; text-transform:uppercase; margin-bottom:15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-medal text-gold"></i> Guru Produktif</div>
-                        <div id="fl-top-guru" style="display:flex; flex-direction:column; gap:8px; margin-bottom:auto;"></div>
-                        <div style="text-align:center; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); margin-top:20px;"><div style="font-size: 0.9rem; font-weight: 700; color: white; letter-spacing: 1px; margin-bottom: 4px;">BERBAGI & MENGINSPIRASI</div><div style="font-size:0.65rem; color:#64748b;">Data per: <span id="fl-date"></span> • #SelogiriBerkarya</div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="loader" class="text-center py-5 d-none"><div class="spinner-border text-primary"></div><p class="mt-2 fw-bold text-muted">Sinkronisasi Data...</p></div>
-        </main>
-    </div>
-
-    <div class="modal fade" id="previewModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius:20px;"><div class="modal-header border-bottom px-4 py-3"><h6 class="fw-bold m-0">Preview Karya</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light p-0 d-flex align-items-center justify-content-center" style="min-height:500px"><div id="modal-content" class="w-100 h-100 bg-white"></div></div></div></div></div>
-
-    <div id="story-overlay" class="d-none">
-        <div class="story-progress-container" id="story-bars"></div>
-        <div onclick="stopStory()" class="btn-close-story"><i class="fas fa-times"></i></div>
-        <div class="story-slide" id="slide-0"><div style="font-size:5rem; margin-bottom:20px;">🔥</div><div class="story-title">Update Terkini</div><h1 style="font-size:3rem; font-weight:800; line-height:1.2;">GURU BERBAGI<br>SELOGIRI</h1><p class="mt-4 text-muted">Mari lihat pencapaian kita hari ini!</p></div>
-        <div class="story-slide" id="slide-1"><div class="story-title">Total Kontribusi</div><div class="story-big-text" id="sty-total">0</div><div class="story-sub">KARYA DIGITAL</div><div style="margin-top:40px; font-size:1.5rem;" id="sty-guru">0 Guru Terdaftar</div></div>
-        <div class="story-slide" id="slide-2"><div class="story-title"><i class="fas fa-school"></i> Sekolah Teraktif</div><div class="story-list" id="sty-list-sekolah"></div></div>
-        <div class="story-slide" id="slide-3"><div class="story-title"><i class="fas fa-crown"></i> Guru Produktif</div><div class="story-list" id="sty-list-guru"></div></div>
-        <div class="story-footer">#SelogiriBerkarya • Data Realtime</div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec"; 
-        
-        var DATA = [];
-        var USERS_DATA = [];
-        var SERVER_POPULATION = {}; 
-        var MODAL = null;
-        var LEVEL_CACHE = [];
-        const LEVELS = [{id:1, n:'Pemula', m:1, c:'#94a3b8', bg:'#f1f5f9'}, {id:2, n:'Perintis', m:5, c:'#3b82f6', bg:'#eff6ff'}, {id:3, n:'Praktisi', m:10, c:'#10b981', bg:'#ecfdf5'}, {id:4, n:'Teladan', m:25, c:'#0ea5e9', bg:'#e0f2fe'}, {id:5, n:'Mentor', m:50, c:'#8b5cf6', bg:'#f5f3ff'}, {id:6, n:'Maestro', m:75, c:'#f59e0b', bg:'#fffbeb'}, {id:7, n:'Suhu', m:100, c:'#ef4444', bg:'#fef2f2'}];
-
-        // --- CHECK SESSION ON LOAD ---
-        function checkSession() {
-            let session = localStorage.getItem('GB_ADMIN_SESSION');
-            if(session) {
-                try {
-                    let s = JSON.parse(session);
-                    // Cek expired (24 jam)
-                    if(Date.now() < s.expiry && s.role === 'ADMIN') {
-                        document.getElementById('login-overlay').style.display = 'none';
-                        document.getElementById('app').classList.remove('d-none');
-                        MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
-                        load();
-                        return;
-                    }
-                } catch(e) { localStorage.removeItem('GB_ADMIN_SESSION'); }
-            }
-        }
-        window.onload = checkSession;
-
-        function toggleNav(){ document.getElementById('sidebar').classList.toggle('show'); }
-        function go(page, el){ 
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            if(el) el.classList.add('active');
-            ['home','data','level','flyer'].forEach(p=>document.getElementById('page-'+p).classList.add('d-none'));
-            document.getElementById('page-'+page.toLowerCase()).classList.remove('d-none');
-        }
-
-        function auth() {
-            let pin = document.getElementById('pinInput').value;
-            let btn = document.getElementById('btnLogin');
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
-            
-            fetch(API, {method:'POST', body:JSON.stringify({action:'login', payload:{pin:pin}})})
-            .then(r=>r.json()).then(res=>{
-                if(res.status==='success' && String(res.user.role).toUpperCase() === 'ADMIN') {
-                    // SIMPAN SESI (24 JAM)
-                    localStorage.setItem('GB_ADMIN_SESSION', JSON.stringify({
-                        pin: pin,
-                        role: 'ADMIN',
-                        expiry: Date.now() + (24 * 60 * 60 * 1000)
-                    }));
-
-                    document.getElementById('login-overlay').style.opacity = '0';
-                    setTimeout(()=>{ document.getElementById('login-overlay').style.display = 'none'; }, 500);
-                    
-                    document.getElementById('app').classList.remove('d-none');
-                    MODAL = new bootstrap.Modal(document.getElementById('previewModal'));
-                    load();
-                } else { Swal.fire({icon:'error', title:'Akses Ditolak', text:'PIN salah atau Anda bukan Admin.'}); btn.innerHTML = 'Masuk Dashboard <i class="fas fa-arrow-right ms-2"></i>'; }
-            }).catch(e => { Swal.fire('Error','Gagal terhubung ke server','error'); btn.innerHTML = 'Masuk Dashboard'; });
-        }
-
-        function logout() {
-            localStorage.removeItem('GB_ADMIN_SESSION');
-            location.reload();
-        }
-
-        async function load() {
-            document.getElementById('loader').classList.remove('d-none');
-            try {
-                let [r1, r2] = await Promise.all([fetch(API + "?action=read"), fetch(API, {method:'POST', body:JSON.stringify({action:'users', payload:{}})})]);
-                let j1 = await r1.json(); let j2 = await r2.json();
-                DATA = j1.media || []; USERS_DATA = j2.data || [];
-                SERVER_POPULATION = {}; USERS_DATA.forEach(u => { let school = (u[1] || "").toUpperCase().trim(); if(school) SERVER_POPULATION[school] = (SERVER_POPULATION[school] || 0) + 1; });
-                renderStats(); renderData(); initLevels(); renderFlyer();
-            } catch(e){ console.error(e); Swal.fire('Ups...', 'Gagal memuat data.', 'error'); }
-            document.getElementById('loader').classList.add('d-none');
-        }
-
-        function getSchoolScore(act, tot, works) {
-            let p = tot > 0 ? Math.round((act/tot)*100) : 0; if(p>100) p=100;
-            return {p, score: (p * 1000) + works};
-        }
-        function getLevelInfo(count) {
-            let lvl = LEVELS[0]; for(let i=LEVELS.length-1; i>=0; i--) { if(count >= LEVELS[i].m) { lvl = LEVELS[i]; break; } }
-            return lvl;
-        }
-
-        function renderStats() {
-            let sMap={}, gMap={};
-            DATA.forEach(i=>{ let s=i[2], g=i[1]; if(g) gMap[g]=(gMap[g]||0)+1; if(s){ if(!sMap[s]) sMap[s]={active:new Set(), works:0}; sMap[s].active.add(g); sMap[s].works++; } });
-            document.getElementById('stat-karya').innerText = DATA.length;
-            document.getElementById('stat-guru').innerText = USERS_DATA.length;
-            let uniqueSchools = new Set(USERS_DATA.map(u => (u[1] || "").trim().toUpperCase()).filter(s => s !== ""));
-            document.getElementById('stat-sekolah').innerText = uniqueSchools.size;
-
-            let topS = Object.entries(sMap).map(([n,d])=>{
-                let act = d.active.size; let tot = SERVER_POPULATION[n.toUpperCase()] || (act>0 ? act : 10); if(act > tot) tot = act;
-                let c = getSchoolScore(act, tot, d.works); return {n, ...c, works:d.works, act, tot};
-            }).sort((a,b)=>b.score - a.score).slice(0,10);
-            document.getElementById('rank-sekolah').innerHTML = topS.map((x,i)=>`<div class="rank-row top-${i+1}"><div class="rank-num">${i+1}</div><div class="flex-grow-1"><div class="fw-bold text-dark" style="font-size:0.9rem">${x.n}</div><div class="text-muted small">${x.act}/${x.tot} Guru • ${x.works} Karya</div></div><span class="badge bg-success-soft text-success badge-pill">${x.p}%</span></div>`).join('');
-
-            let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
-            document.getElementById('rank-guru').innerHTML = topG.map((x,i)=>`<div class="rank-row top-${i+1}"><div class="rank-num">${i+1}</div><div class="flex-grow-1 fw-bold text-dark" style="font-size:0.9rem">${x[0]}</div><span class="badge badge-pill text-white bg-primary">${x[1]}</span></div>`).join('');
-        }
-
-        function renderFlyer() {
-            document.getElementById('fl-total').innerText = DATA.length;
-            document.getElementById('fl-guru').innerText = USERS_DATA.length;
-            let uniqueSchools = new Set(USERS_DATA.map(u => (u[1] || "").trim().toUpperCase()).filter(s => s !== ""));
-            document.getElementById('fl-sekolah').innerText = uniqueSchools.size;
-            document.getElementById('fl-date').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}).toUpperCase();
-
-            let sMap={}, gMap={};
-            DATA.forEach(i=>{ let s=i[2], g=i[1]; if(g) gMap[g]=(gMap[g]||0)+1; if(s){ if(!sMap[s])sMap[s]={active:new Set(),works:0}; sMap[s].active.add(g); sMap[s].works++; } });
-            
-            let topS = Object.entries(sMap).map(([n,d])=>{
-                let act=d.active.size; let tot=SERVER_POPULATION[n.toUpperCase()] || act; if(act>tot) tot=act;
-                let c = getSchoolScore(act, tot, d.works); return {n, ...c, works:d.works, act, tot};
-            }).sort((a,b)=>b.score-a.score).slice(0,3);
-
-            document.getElementById('fl-top-sekolah').innerHTML = topS.map((x,i)=>`<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 15px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px;"><div style="display:flex; align-items:center;"><div style="width:24px; height:24px; background:#334155; border-radius:6px; font-size:0.7rem; font-weight:800; color:#94a3b8; display:flex; align-items:center; justify-content:center; margin-right:10px;">${i+1}</div><div><div style="font-weight:700; font-size:0.85rem; color:white; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${x.n}</div><div style="font-size:0.6rem; color:#94a3b8;">${x.act} dari ${x.tot} Guru Aktif</div></div></div><div style="text-align:right;"><div style="font-weight:800; color:#4ade80; font-size:0.9rem;">${x.p}%</div><div style="font-size:0.6rem; color:#94a3b8; text-transform:uppercase;">${x.works} KARYA</div></div></div>`).join('');
-
-            let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
-            document.getElementById('fl-top-guru').innerHTML = topG.map((x,i)=>{
-                let lvl = getLevelInfo(x[1]);
-                return `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 15px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px;"><div style="display:flex; align-items:center;"><div style="width:24px; height:24px; background:#334155; border-radius:6px; font-size:0.7rem; font-weight:800; color:#94a3b8; display:flex; align-items:center; justify-content:center; margin-right:10px;">${i+1}</div><div><div style="font-weight:700; font-size:0.85rem; color:white; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${x[0]}</div><div style="display:inline-block; margin-top:2px; padding:2px 6px; border-radius:4px; background:${lvl.c}; color:white; font-size:0.55rem; font-weight:700; text-transform:uppercase;">${lvl.n}</div></div></div><div style="background:#F59E0B; color:white; padding:4px 10px; border-radius:8px; font-size:0.8rem; font-weight:800;">${x[1]}</div></div>`;
-            }).join('');
-        }
-
-        function renderData() {
-            let h = DATA.map(i=> { let id = i[13]; let hasId = (id && String(id).trim() !== ""); let btnClass = hasId ? '' : 'btn-disabled';
-                return `<tr class="data-row"><td><div class="fw-bold text-dark text-limit-2">${i[5]}</div><div class="d-flex gap-2 mt-1"><span class="badge bg-light text-dark border">${i[6]}</span><span class="badge bg-light text-dark border">${i[11] || 'Media'}</span></div></td><td><div class="fw-bold small text-dark">${i[1]}</div><div class="small text-muted text-limit-2">${i[2]}</div></td><td class="text-end"><button onclick="viewApp('${id}','${i[7]}')" class="btn-icon btn-view ${btnClass}" ${hasId?'':'disabled'}><i class="fas fa-eye"></i></button><button onclick="askDel('${id}')" class="btn-icon btn-del ${btnClass}" ${hasId?'':'disabled'}><i class="fas fa-trash-alt"></i></button></td></tr>`;
-            }).join('');
-            document.getElementById('table-body').innerHTML = h;
-        }
-
-        function initLevels() {
-            let gMap = {}; DATA.forEach(i => { if(i[1]){ if(!gMap[i[1]]) gMap[i[1]]={s:i[2], c:0}; gMap[i[1]].c++; } });
-            LEVEL_CACHE = LEVELS.map(l => ({...l, users:[]}));
-            Object.entries(gMap).forEach(([n, d]) => { for(let i=LEVELS.length-1; i>=0; i--) { if(d.c >= LEVELS[i].m) { LEVEL_CACHE[i].users.push({n:n, s:d.s, c:d.c}); break; } } });
-            document.getElementById('level-grid-container').innerHTML = LEVEL_CACHE.map((l, idx) => `<div class="col-6 col-md-4 col-lg-3"><div class="lvl-card-modern" onclick="showLevel(${idx})" style="border-top: 4px solid ${l.c}; background: ${l.users.length>0 ? 'white' : '#f8fafc'}"><div class="lvl-icon" style="background:${l.bg}; color:${l.c}"><i class="fas fa-trophy"></i></div><div class="lvl-name" style="color:${l.c}">${l.n}</div><div class="lvl-count">${l.users.length}</div><div class="lvl-sub">GURU</div></div></div>`).join('');
-        }
-
-        function showLevel(idx) {
-            let l = LEVEL_CACHE[idx];
-            document.getElementById('level-detail-view').classList.remove('d-none'); document.getElementById('level-detail-title').innerText = `Guru Level ${l.n} (${l.m}+ Karya)`; document.getElementById('level-detail-view').scrollIntoView({behavior:'smooth'});
-            let h = l.users.sort((a,b)=>b.c-a.c).map(u => `<tr><td class="fw-bold small">${u.n}</td><td class="small text-muted">${u.s}</td><td class="text-end fw-bold text-primary">${u.c}</td></tr>`).join('');
-            document.getElementById('level-table-body').innerHTML = h || '<tr><td colspan="3" class="text-center p-3 small text-muted">Belum ada data.</td></tr>';
-        }
-
-        function downloadFlyer() { Swal.fire({title:'Meracik Flyer...', text:'Mohon tunggu sebentar', allowOutsideClick:false, didOpen:()=>Swal.showLoading()}); html2canvas(document.getElementById('flyer-area'), {scale:3, useCORS:true}).then(c=>{ Swal.close(); let a=document.createElement('a'); a.download='Laporan-GuruBerbagi-HD.png'; a.href=c.toDataURL(); a.click(); }); }
-
-        function viewApp(id, html) { document.getElementById('modal-content').innerHTML = '<div class="d-flex justify-content-center align-items-center h-100"><div class="spinner-border text-primary"></div></div>'; MODAL.show(); if(html==="HAS_HTML") { fetch(API,{method:'POST', body:JSON.stringify({action:'getDetail', payload:{id:id}})}).then(r=>r.json()).then(res=>{ if(res.status==='success') document.getElementById('modal-content').innerHTML = res.html.replace(/width="\d+"/g, 'width="100%"').replace(/height="\d+"/g, 'height="100%"'); }); } else document.getElementById('modal-content').innerHTML = html.replace(/width="\d+"/g, 'width="100%"').replace(/height="\d+"/g, 'height="100%"'); }
-
-        function askDel(id) { Swal.fire({title:'Hapus Karya?', text:"Data tidak bisa dikembalikan!", icon:'warning', showCancelButton:true, confirmButtonColor:'#dc2626', confirmButtonText:'Hapus'}).then(r=>{ if(r.isConfirmed){ Swal.fire({title:'Menghapus...', didOpen:()=>Swal.showLoading()}); fetch(API,{method:'POST',body:JSON.stringify({action:'hapus',payload:{id:id}})}).then(r=>r.json()).then(res=>{ if(res.status==='success') { Swal.fire('Berhasil','Data dihapus','success'); load(); } else Swal.fire('Gagal', res.message, 'error'); }); } }); }
-
-        // --- STORY MODE LOGIC ---
-        let storyTimer = null; const STORY_DURATION = 4000;
-        function playStory() {
-            document.getElementById('sty-total').innerText = DATA.length; document.getElementById('sty-guru').innerText = USERS_DATA.length + " GURU";
-            let sMap={}, gMap={}; DATA.forEach(i=>{ let s=i[2], g=i[1]; if(g) gMap[g]=(gMap[g]||0)+1; if(s){ if(!sMap[s])sMap[s]={active:new Set(),works:0}; sMap[s].active.add(g); sMap[s].works++; } });
-            let topS = Object.entries(sMap).map(([n,d])=>{ let act=d.active.size; let tot=SERVER_POPULATION[n.toUpperCase()] || (act>0 ? act : 10); if(act>tot) tot=act; let c = getSchoolScore(act, tot, d.works); return {n, ...c}; }).sort((a,b)=>b.score-a.score).slice(0, 5);
-            document.getElementById('sty-list-sekolah').innerHTML = topS.map((x,i)=>`<div class="story-item"><div class="d-flex align-items-center"><span class="story-rank">#${i+1}</span><div style="font-weight:700; font-size:1rem; text-align:left;">${x.n}</div></div><div style="font-weight:800; color:#4ade80;">${x.p}%</div></div>`).join('');
-            let topG = Object.entries(gMap).sort((a,b)=>b[1]-a[1]).slice(0, 5);
-            document.getElementById('sty-list-guru').innerHTML = topG.map((x,i)=>`<div class="story-item"><div class="d-flex align-items-center"><span class="story-rank">#${i+1}</span><div style="font-weight:700; font-size:1rem; text-align:left;">${x[0]}</div></div><div class="badge bg-warning text-dark">${x[1]}</div></div>`).join('');
-            
-            document.getElementById('story-overlay').classList.remove('d-none');
-            let barsHtml = ''; for(let i=0; i<4; i++) barsHtml += `<div class="story-progress-bar"><div class="story-progress-fill" id="fill-${i}"></div></div>`;
-            document.getElementById('story-bars').innerHTML = barsHtml;
-            runSlide(0);
-        }
-        function runSlide(idx) {
-            if(idx > 3) { stopStory(); return; }
-            document.querySelectorAll('.story-slide').forEach(el => el.classList.remove('active')); document.getElementById('slide-'+idx).classList.add('active');
-            let fill = document.getElementById('fill-'+idx); fill.style.transition = 'none'; fill.style.width = '0%';
-            setTimeout(() => { fill.style.transition = `width ${STORY_DURATION}ms linear`; fill.style.width = '100%'; }, 50);
-            clearTimeout(storyTimer); storyTimer = setTimeout(() => { runSlide(idx+1); }, STORY_DURATION);
-        }
-        function stopStory() { clearTimeout(storyTimer); document.getElementById('story-overlay').classList.add('d-none'); }
-    </script>
+// ================= UTIL =================
+function esc(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+let toastT = null;
+function toast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  lucide.createIcons();
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
 </body>
 </html>
