@@ -1,75 +1,54 @@
 =====================================================
-KONTEKS PROJECT: EKOSISTEM GURU BERBAGI SELOGIRI
+KONTEKS PROJECT: EKOSISTEM GURU BERBAGI SELOGIRI (v2)
 =====================================================
-
 [1. LATAR BELAKANG]
-- Saya punya database akun guru (~250 guru, 31 sekolah SD) untuk
-  "Guru Berbagi - Korwilcambidik Selogiri".
-- Database sudah migrasi dari Google Apps Script ke Supabase.
-  Project Supabase ini adalah PUSAT (identity provider) untuk
-  semua aplikasi saya sekarang dan mendatang.
-- Setiap aplikasi baru WAJIB memakai "SSO lite": guru login dengan
-  EMAIL + PIN dari database pusat. JANGAN buat sistem registrasi
-  atau login guru yang terpisah.
+- Database akun ±250 guru / 31 sekolah SD, migrasi dari GAS ke Supabase.
+- Project ini adalah PUSAT IDENTITAS (identity provider) untuk semua
+  aplikasi saya. Aplikasi baru WAJIB pakai SSO lite (Email + PIN),
+  jangan buat sistem login guru terpisah.
 
-[2. KREDENSIAL PUSAT (aman untuk frontend)]
-- Project URL : https://qamqqwfzhyiihqyzliwq.supabase.co
-- Anon key    : sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x
-- Endpoint SSO:
-  * POST {URL}/functions/v1/login-guru
-      body: {"email": "...", "pin": "..."}
-      sukses: {"token":"...", "profile":{"nama","email","sekolah","jabatan","npsn"}}
-      gagal : 401 (email/PIN salah atau akun nonaktif)
-  * {URL}/functions/v1/verify-guru
-      header: Authorization: Bearer <token>
-      hasil : {"valid":true,"profile":{...}} atau {"valid":false}
-  (Sertakan header apikey = anon key saat memanggil endpoint di atas.)
-- Jika kedua function itu belum ada, buat dulu di project pusat
-  sesuai spesifikasi bagian [5] sebelum membangun aplikasi.
+[2. KREDENSIAL & ENDPOINT]
+- URL   : https://qamqqwfzhyiihqyzliwq.supabase.co
+- Anon  : sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x
+- Endpoint Edge Functions (semua pakai header apikey = anon key):
+  * register-guru  POST {nama,nip,jabatan,satuan,npsn,email}
+  * login-guru     POST {email,pin} -> {token, profile}
+  * verify-guru    GET/POST + Authorization: Bearer <token> -> {valid, profile}
+  * ganti-pin      POST + Bearer token + {pin_lama,pin_baru}
+  * pulihkan-akun  POST {mode:"cari"|"reset", nip|nama, sekolah, pin_baru}
+- Admin login via Supabase Auth (bukan tabel manual).
 
-[3. SKEMA DATABASE PUSAT]
-- Tabel guru: id, waktu_input, nama_lengkap, nip, jabatan,
-  satuan_pendidikan, npsn, email (unique), pin (unique),
-  status_akun ('Aktif' / 'Non Aktif')
-- Tabel referensi: sekolah(nama, npsn), jabatan(nama)
-- Tabel guru dilindungi RLS: publik TIDAK bisa membaca langsung;
-  semua verifikasi hanya lewat Edge Function.
+[3. SKEMA]
+- guru: id, waktu_input, nama_lengkap, nip, jabatan, satuan_pendidikan,
+  npsn, email (unique), pin (unique), status_akun, pin_ver (int, default 1)
+- sekolah(nama,npsn), jabatan(nama), rate_limit(key,attempts,window_start)
+- RLS: publik hanya baca sekolah/jabatan; guru via service role & admin auth.
 
-[4. ATURAN SSO LITE UNTUK APLIKASI BARU]
-1. Form login hanya EMAIL + PIN → panggil login-guru.
-2. Simpan `token` dan `profile` di localStorage.
-3. Saat aplikasi dibuka / aksi penting → verifikasi token ke
-   verify-guru. Jika valid:false → paksa logout ke halaman login.
-4. JANGAN menyimpan PIN di aplikasi baru. PIN hanya diverifikasi
-   oleh function pusat.
-5. Gunakan `profile.sub` (id guru) atau `profile.email` sebagai
-   identitas pemilik data di tabel aplikasi baru.
-6. Hanya guru status 'Aktif' yang boleh masuk (sudah diurus
-   function pusat; tidak perlu cek ulang di frontend).
+[4. ATURAN SSO]
+- Token HMAC-SHA256 (secret: GURU_SSO_SECRET), berlaku 7 hari.
+- Token memuat "ver"; setiap ganti/reset PIN menaikkan pin_ver
+  sehingga token lama OTOMATIS gugur.
+- PIN = 5 digit angka, unik. Generator otomatis: 3 digit akhir NPSN + urutan.
+- Pemulihan akun: NIP+sekolah atau nama+sekolah -> email tersamar -> PIN baru.
+  Rate limit 5 percobaan/10 menit.
 
-[5. SPESIFIKASI TOKEN (jika function perlu dibuat ulang)]
-- Token = base64(payload) + "." + base64(HMAC-SHA256(payload, secret))
-- payload = {sub, email, nama, sekolah, jabatan, npsn, exp}
-  (exp = masa berlaku 7 hari)
-- Secret disimpan di Secrets Edge Function pusat dengan nama
-  GURU_SSO_SECRET. JANGAN pernah menulis nilai secret di chat,
-  frontend, atau file publik.
+[5. HALAMAN (GitHub Pages, satu file per halaman)]
+- index.html : form pendaftaran + korektor email cerdas + tautan guru/admin.
+- guru.html  : portal guru (login SSO, profil, ganti PIN, pemulihan akun).
+- admin.html : dashboard (statistik, tabel, edit, nonaktifkan, lihat/salin/WA/
+  ganti PIN, ekspor CSV, salin email, analitik, kesehatan data, cetak kartu).
 
-[6. PREFERENSI TEKNIS SAYA]
-- Frontend: HTML/CSS/JS satu file (tanpa build), host di GitHub Pages.
-- Supabase JS SDK + ikon Lucide via CDN; font Inter; UI modern.
-- Bahasa aplikasi & komentar kode: Indonesia.
-- Login admin (jika perlu): Supabase Auth project pusat.
+[6. PREFERENSI TEKNIS]
+- HTML/CSS/JS satu file tanpa build; CDN @supabase/supabase-js + Lucide;
+  font Inter; UI modern; bahasa Indonesia.
 
-- PRINSIP HEMAT KUOTA: project pusat harus tetap ramping karena
-  dipakai banyak aplikasi. Jangan menambahkan fitur berat (blast
-  email, dsb.) ke Supabase; prioritaskan solusi client-side atau
-  layanan eksternal di luar Supabase.
+[7. PRINSIP]
+- HEMAT KUOTA: jangan tambah fitur berat (blast email dsb.) ke Supabase;
+  utamakan solusi client-side atau layanan eksternal.
+- JANGAN pernah menulis Service Role Key / GURU_SSO_SECRET di frontend,
+  file publik, atau chat.
 
-
-[7. INSTRUKSI UMUM]
-Setelah membaca konteks ini, tunggu perintah saya berikutnya.
-Jika aplikasi butuh tabel data baru, buat di project pusat dengan
-kolom pemilik data merujuk ke id/email guru.
+[8. INSTRUKSI]
+Setelah membaca konteks ini, tunggu perintah saya. Tabel data aplikasi baru
+dibuat di project pusat dengan kolom pemilik merujuk id/email guru.
 =====================================================
-
