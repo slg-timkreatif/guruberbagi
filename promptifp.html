@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PromptForge — Guru Berbagi Selogiri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--p:#0d9488;--p2:#0f766e;--ps:#e6f7f5;--bg:#f5f6f8;--sf:#fff;--sf2:#f0f1f4;--bd:#e4e6ea;--bd2:#d5d8de;--t1:#16181d;--t2:#5c6270;--t3:#9aa0ad;--ok:#16a34a;--err:#dc2626;--warn:#d97706;--info:#2563eb;--gold:#b45309;--goldsoft:#fef3c7}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5}
+button,input,select,textarea{font-family:inherit}
+.d-none{display:none!important}
+svg.lucide{width:15px;height:15px;flex-shrink:0}
+
+.nav{position:sticky;top:0;z-index:50;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;padding:10px 16px}
+.logo{width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff}
+.logo svg{width:19px;height:19px}
+.nav b{font-size:.95rem;letter-spacing:-.01em}
+.nav small{display:block;color:var(--t3);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--p);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.pro-pill{display:inline-flex;align-items:center;gap:4px;background:var(--goldsoft);color:var(--gold);border-radius:999px;padding:4px 10px;font-size:.65rem;font-weight:800}
+.pro-pill svg{width:11px;height:11px}
+
+.wrap{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:980px){.wrap{grid-template-columns:1.05fr .95fr;align-items:start}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:16px}
+.sec{font-weight:800;font-size:.78rem;color:var(--p2);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px;display:flex;align-items:center;gap:7px}
+.sec:first-child{margin-top:0}
+.sec .pro-tag{background:var(--goldsoft);color:var(--gold);border-radius:999px;padding:2px 8px;font-size:.6rem;display:inline-flex;align-items:center;gap:3px}
+.sec .pro-tag svg{width:9px;height:9px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+label{font-size:.72rem;font-weight:700;color:var(--t2);display:block;margin-bottom:4px}
+.in{width:100%;padding:10px 12px;border:1px solid var(--bd2);border-radius:10px;background:var(--sf);font-size:.85rem;outline:none;transition:border-color .15s}
+.in:focus{border-color:var(--p)}
+textarea.in{min-height:64px;resize:vertical}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--bd2);background:var(--sf);font-size:.75rem;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--p)}
+.chip.on{background:var(--ps);border-color:var(--p);color:var(--p2)}
+.chip.locked{opacity:.6;border-style:dashed}
+.chip.locked svg{color:var(--gold)}
+
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:999px;font-weight:700;font-size:.8rem;padding:10px 16px;cursor:pointer;transition:all .15s}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--p2)}
+.btn-o{background:var(--sf);color:var(--t1);border:1px solid var(--bd2)}.btn-o:hover{background:var(--sf2)}
+.btn-d{background:var(--err);color:#fff}.btn-d:hover{filter:brightness(.9)}
+.btn-g{background:var(--gold);color:#fff}.btn-g:hover{filter:brightness(.95)}
+
+.pre{background:#101418;color:#d7e0e8;border-radius:14px;padding:16px;font:12px/1.6 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-word;max-height:50vh;overflow:auto}
+.meter{margin:10px 2px 4px}
+.meter-top{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;font-weight:800;color:var(--t2)}
+.meter-top .lockhint{display:inline-flex;align-items:center;gap:4px;color:var(--gold);cursor:pointer}
+.meter-top .lockhint svg{width:11px;height:11px}
+.meter-bar{height:8px;background:var(--sf2);border:1px solid var(--bd);border-radius:999px;overflow:hidden;margin-top:5px}
+.meter-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));border-radius:999px;transition:width .4s var(--ease, cubic-bezier(.25,.1,.25,1))}
+.meter-fill.gold{background:linear-gradient(90deg,#f59e0b,var(--gold))}
+.stats-line{display:flex;gap:12px;color:var(--t3);font-size:.7rem;font-weight:700;margin:6px 2px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.saved-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:10px;margin-bottom:6px;font-size:.78rem}
+.saved-item b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.mini{display:inline-flex;align-items:center;gap:4px;border:none;background:var(--sf2);border-radius:8px;padding:6px 9px;font-size:.7rem;font-weight:700;cursor:pointer}
+.mini:hover{background:var(--bd)}
+.mini.del:hover{background:var(--err);color:#fff}
+
+.login{position:fixed;inset:0;background:linear-gradient(160deg,var(--ps),var(--bg));display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+.login.open{display:flex}
+.login-card{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:30px 26px;width:100%;max-width:380px;text-align:center}
+.login-card .logo{width:60px;height:60px;margin:0 auto 14px;border-radius:16px}
+.login-card .logo svg{width:30px;height:30px}
+.err{color:var(--err);font-size:.78rem;font-weight:600;margin-top:8px;display:none}
+
+/* SHEET PRO */
+.sheet{position:fixed;inset:0;background:rgba(15,20,24,.5);backdrop-filter:blur(3px);z-index:120;display:none;align-items:flex-end;justify-content:center}
+.sheet.open{display:flex}
+.sheet-card{background:var(--sf);border-radius:20px 20px 0 0;max-width:560px;width:100%;padding:22px 20px calc(22px + env(safe-area-inset-bottom));animation:up .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes up{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet-head{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.95rem;margin-bottom:4px}
+.sheet-head svg{width:18px;height:18px;color:var(--gold)}
+.sheet-sub{font-size:.75rem;color:var(--t2);margin-bottom:14px}
+.benefit{display:flex;gap:9px;align-items:center;font-size:.78rem;font-weight:600;color:var(--t2);padding:6px 0}
+.benefit svg{width:15px;height:15px;color:var(--gold);flex-shrink:0}
+.sheet-btns{display:flex;gap:8px;margin-top:16px}
+.sheet-btns .btn{flex:1;justify-content:center}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:#101418;color:#f4f7fa;border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:.8rem;font-weight:700;z-index:400;opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 32px rgba(0,0,0,.25);max-width:92vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .t-ic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast .t-ic svg{width:15px;height:15px;color:#fff}
+.toast.ok .t-ic{background:var(--ok)}.toast.err .t-ic{background:var(--err)}.toast.info .t-ic{background:var(--info)}.toast.warn .t-ic{background:var(--warn)}
+.toast .t-bar{position:absolute;left:0;bottom:0;height:3px;border-radius:0 0 14px 14px;background:rgba(255,255,255,.35);animation:tbar linear forwards}
+@keyframes tbar{from{width:100%}to{width:0}}
+
+/* CONFIRM */
+.cfm{position:fixed;inset:0;background:rgba(15,20,24,.5);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:390;opacity:0;pointer-events:none;transition:opacity .2s}
+.cfm.open{opacity:1;pointer-events:auto}
+.cfm-card{background:var(--sf);border-radius:18px;padding:26px 22px;width:100%;max-width:340px;text-align:center;transform:scale(.9);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.cfm.open .cfm-card{transform:scale(1)}
+.cfm-ic{width:52px;height:52px;border-radius:16px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.cfm-ic svg{width:26px;height:26px;color:#fff}
+.cfm-card h4{font-size:.95rem;font-weight:800;margin-bottom:4px}
+.cfm-card p{font-size:.78rem;color:var(--t2);margin-bottom:16px}
+.cfm-btns{display:flex;gap:8px;justify-content:center}
+</style>
+</head>
+<body>
+
+<!-- LOGIN (hanya dibuka bila perlu) -->
+<div class="login" id="loginBox">
+  <div class="login-card">
+    <div class="logo"><i data-lucide="crown"></i></div>
+    <b style="font-size:1.1rem">Aktifkan Guru Pro</b>
+    <p style="color:var(--t3);font-size:.78rem;margin:4px 0 18px">Login SSO akun terpusat Korwilcambidik Selogiri.<br>Publik tetap bisa memakai Mode Publik tanpa login.</p>
+    <label style="text-align:left">Email Terdaftar</label>
+    <input type="email" class="in" id="loginEmail" placeholder="nama@gmail.com">
+    <label style="text-align:left;margin-top:10px">PIN</label>
+    <input type="password" class="in" id="loginPin" placeholder="••••••" inputmode="numeric" maxlength="6" style="text-align:center;letter-spacing:.3em;font-weight:800">
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-p" style="width:100%;margin-top:14px;justify-content:center" id="loginBtn" onclick="doLogin()"><i data-lucide="log-in"></i> Masuk & Aktifkan Pro</button>
+    <button class="btn btn-o" style="width:100%;margin-top:8px;justify-content:center" onclick="closeLogin()">Lanjutkan sebagai Tamu</button>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="logo"><i data-lucide="hammer"></i></div>
+  <div><b>PROMPTFORGE</b><small>Guru Berbagi • Selogiri</small></div>
+  <div class="nav-right">
+    <span class="pro-pill d-none" id="proPill"><i data-lucide="crown"></i> PRO</span>
+    <button class="btn btn-o d-none" id="btnLoginNav" onclick="openLogin()"><i data-lucide="log-in"></i> Login</button>
+    <button class="btn btn-o d-none" id="btnLogoutNav" onclick="confirmBox('Keluar aplikasi?','Mode Pro akan nonaktif dan Anda kembali menjadi tamu.','Ya, Keluar',true,logout)"><i data-lucide="log-out"></i></button>
+    <div class="av d-none" id="navAv">G</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- ============ FORM ============ -->
+  <div class="card">
+    <div class="sec"><i data-lucide="user"></i> Pembuat <span class="pro-tag d-none" id="tagVerified"><i data-lucide="badge-check"></i> Terverifikasi</span></div>
+    <div class="grid2">
+      <div><label>Nama (untuk footnote ©)</label><input class="in" id="fNama" placeholder="Nama Anda" oninput="render()"></div>
+      <div><label>Sekolah</label><input class="in" id="fSekolah" placeholder="Nama sekolah" oninput="render()"></div>
+    </div>
+
+    <div class="sec"><i data-lucide="book-open"></i> Materi</div>
+    <div class="grid2">
+      <div><label>Mata Pelajaran</label><select class="in" id="fMapel" onchange="render()"></select></div>
+      <div><label>Fase / Kelas</label><select class="in" id="fFase" onchange="render()"></select></div>
+      <div><label>Semester</label><select class="in" id="fSem" onchange="render()"><option>Ganjil</option><option>Genap</option><option>Semua</option></select></div>
+      <div><label>Topik / Materi</label><input class="in" id="fTopik" placeholder="mis. Wujud Zat & Perubahannya" oninput="render()"></div>
+    </div>
+    <label style="margin-top:8px">Tujuan Pembelajaran (opsional)</label>
+    <textarea class="in" id="fTujuan" placeholder="Kosongkan = dibuat otomatis oleh peracik" oninput="render()"></textarea>
+
+    <div class="sec"><i data-lucide="shapes"></i> Jenis Media & Mode</div>
+    <div class="chips" id="presetBox"></div>
+    <div class="chips" id="modeBox" style="margin-top:8px"></div>
+
+    <div class="sec"><i data-lucide="list-checks"></i> Soal & Kognitif</div>
+    <div class="grid2">
+      <div><label>Jumlah Soal</label><select class="in" id="fJumlah" onchange="render()"></select></div>
+      <div><label>Komposisi Kognitif</label><select class="in" id="fKomp" onchange="render()"></select></div>
+    </div>
+
+    <div class="sec"><i data-lucide="sparkles"></i> Fitur Interaktif</div>
+    <div class="chips" id="featBox"></div>
+
+    <div class="sec"><i data-lucide="sunrise"></i> Program KAIH</div>
+    <div class="chips" id="kaihBox"></div>
+    <select class="in d-none" id="fKaih" style="margin-top:8px" onchange="render()"></select>
+
+    <div class="sec"><i data-lucide="palette"></i> Desain & Perangkat</div>
+    <div class="grid2">
+      <div><label>Tema Visual <button class="mini" id="btnAcak" onclick="acakTema()" style="margin-left:6px"><i data-lucide="dices"></i> Acak</button></label><select class="in" id="fTema" onchange="render()"></select></div>
+      <div><label>Perangkat Utama</label><select class="in" id="fDev" onchange="render()"><option value="ifp">IFP / Smart Board (prioritas)</option><option value="hp">HP / Tablet</option><option value="both">IFP + HP (responsif)</option></select></div>
+    </div>
+
+    <div class="sec"><i data-lucide="crown"></i> Blok Prompt Pro <span class="pro-tag"><i data-lucide="crown"></i> PRO</span></div>
+    <div class="chips" id="proBox"></div>
+
+    <div class="sec"><i data-lucide="bot"></i> Mesin AI Target</div>
+    <div class="chips" id="engineBox"></div>
+
+    <div class="sec"><i data-lucide="history"></i> Racikan Saya</div>
+    <div id="savedBox"></div>
+    <button class="btn btn-o" onclick="simpanRacikan()"><i data-lucide="save"></i> Simpan Racikan Ini</button>
+  </div>
+
+  <!-- ============ PREVIEW ============ -->
+  <div class="card">
+    <div class="sec" style="margin-top:0"><i data-lucide="file-text"></i> Hasil Racikan Prompt</div>
+    <div class="pre" id="out"></div>
+    <div class="meter">
+      <div class="meter-top">
+        <span><i data-lucide="gauge" style="width:12px;height:12px;vertical-align:-2px"></i> Kekuatan Prompt: <b id="stScore">0</b>/100</span>
+        <span class="lockhint d-none" id="lockHint" onclick="openSheet()"><i data-lucide="lock"></i> Buka Pro untuk 100</span>
+      </div>
+      <div class="meter-bar"><div class="meter-fill" id="meterFill"></div></div>
+    </div>
+    <div class="stats-line"><span id="stChar"></span><span id="stWord"></span><span id="stTok"></span></div>
+    <div class="actions">
+      <button class="btn btn-p" onclick="copyPrompt()"><i data-lucide="copy"></i> Salin</button>
+      <button class="btn btn-o" onclick="downloadTxt()"><i data-lucide="download"></i> Unduh .txt</button>
+      <button class="btn btn-o" onclick="shareWA()"><i data-lucide="message-circle"></i> WhatsApp</button>
+    </div>
+    <div class="sec"><i data-lucide="wrench"></i> Prompt Lanjutan</div>
+    <div class="chips" id="followBox"></div>
+    <textarea class="in" id="fCustom" style="margin-top:8px" placeholder="Tambahkan permintaan lanjutan sendiri (opsional)..." oninput="render()"></textarea>
+  </div>
+</div>
+
+<!-- SHEET PRO -->
+<div class="sheet" id="proSheet">
+  <div class="sheet-card">
+    <div class="sheet-head"><i data-lucide="crown"></i> Fitur Guru Pro</div>
+    <div class="sheet-sub">Login SSO guru Selogiri untuk membuka kekuatan prompt penuh (100/100).</div>
+    <div class="benefit"><i data-lucide="shapes"></i> Semua jenis media: Storybook, Simulasi, Latihan AKM</div>
+    <div class="benefit"><i data-lucide="swords"></i> Mode game Kompetisi 2 tim untuk IFP</div>
+    <div class="benefit"><i data-lucide="list-checks"></i> Sampai 25 soal + komposer HOTS</div>
+    <div class="benefit"><i data-lucide="volume-2"></i> TTS + pilihan suara, drag&drop, sertifikat, papan peringkat</div>
+    <div class="benefit"><i data-lucide="graduation-cap"></i> Blok Pro: diferensiasi, pedagogi, AKM, IFP lanjutan, QA</div>
+    <div class="benefit"><i data-lucide="badge-check"></i> Identitas otomatis + badge "Terverifikasi" di footnote</div>
+    <div class="sheet-btns">
+      <button class="btn btn-g" onclick="closeSheet();openLogin()"><i data-lucide="log-in"></i> Login Guru</button>
+      <button class="btn btn-o" onclick="closeSheet()">Lanjutkan sebagai Tamu</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST & CONFIRM -->
+<div class="toast" id="toast"><span class="t-ic"><i data-lucide="check"></i></span><span id="toastMsg"></span><span class="t-bar"></span></div>
+<div class="cfm" id="cfm">
+  <div class="cfm-card">
+    <div class="cfm-ic" id="cfmIc"><i data-lucide="alert-triangle"></i></div>
+    <h4 id="cfmTitle"></h4><p id="cfmMsg"></p>
+    <div class="cfm-btns">
+      <button class="btn btn-o" onclick="cfmClose()">Batal</button>
+      <button class="btn btn-d" id="cfmYes">Ya</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= KONFIG ================= */
+const APP_NAME = 'PromptForge';
+const SSO_URL  = 'https://qamqqwfzhyiihqyzliwq.supabase.co';
+const SSO_ANON = 'sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x';
+const TAHUN = new Date().getFullYear();
+let USER = null; // null = tamu (Mode Publik, 0 panggilan Supabase)
+const STATE = { preset:'game', mode:'solo', engine:'gemini', feats:new Set(['score','feedback','confetti']), pro:new Set(), follows:new Set(), kaih:false };
+
+/* Data referensi (sesuai settings pusat) */
+const MAPEL = ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','Ilmu Pengetahuan Alam dan Sosial (IPAS)','Pendidikan Jasmani, Olahraga, dan Kesehatan (PJOK)','Seni dan Budaya','Bahasa Inggris','Bahasa Jawa','Muatan Lokal','Teknologi Informasi dan Komunikasi','Koding dan Kecerdasan Artifisial (KKA)'];
+const FASE = ['Fase A / Kelas 1','Fase A / Kelas 2','Fase B / Kelas 3','Fase B / Kelas 4','Fase C / Kelas 5','Fase C / Kelas 6','Semua Fase'];
+const KAIH = ['Gemar Belajar','Berolahraga','Beribadah','Bangun Pagi','Bermasyarakat','Makan Sehat & Bergizi','Tidur Cepat'];
+
+const PRESETS = {
+  game:['gamepad-2','Game Kuis','Game kuis interaktif: layar pembuka, materi singkat, ronde soal, layar pemenang dengan skor, nyawa, dan efek kemenangan.',false],
+  modul:['book-open','Modul + Kuis','Modul materi berhalaman (kartu materi beremoji + contoh) diakhiri kuis pemahaman dan rangkuman.',false],
+  flash:['layers','Flashcards','Kartu bolak-balik (flip) + tantangan cepat berwaktu + skor akurasi.',false],
+  story:['book-marked','Storybook','Storybook interaktif bernarasi dengan tokoh, alur halaman, nilai karakter, dan kuis ringan.',true],
+  simulasi:['flask-conical','Simulasi Visual','Simulasi/lab virtual sederhana yang dapat dimanipulasi siswa (geser/klik) dengan tantangan penerapan.',true],
+  akm:['list-checks','Latihan AKM','Soal berbasis stimulus (teks/tabel/gambar) tipe PG, PG kompleks, isian, benar/salah plus pembahasan.',true]
+};
+const MODES = {
+  solo:['user','Solo','Mode bermain tunggal (1 pemain) melawan skor terbaik (localStorage).',false],
+  kompetisi:['swords','Kompetisi','MODE KOMPETISI untuk IFP: 2 pemain / 2 tim menjawab bergantian di layar yang sama; papan skor berdampingan; animasi penobatan pemenang.',true]
+};
+const FEATS = [
+  ['score','heart','Skor + nyawa + progress','Skor, nyawa (3 hati), dan progress bar',false],
+  ['feedback','message-circle','Feedback + penjelasan','Feedback benar/salah disertai penjelasan materi',false],
+  ['confetti','party-popper','Confetti & perayaan','Confetti + animasi perayaan saat benar / menang',false],
+  ['timer','timer','Timer per soal','Timer per soal dengan bonus kecepatan',false],
+  ['hint','lightbulb','Tombol petunjuk','Tombol petunjuk yang mengurangi skor',false],
+  ['tts','volume-2','Narasi TTS bhs Indonesia','Text-to-Speech bahasa Indonesia (Web Speech API) dengan fallback aman; sertakan opsi pilihan suara',true],
+  ['drag','puzzle','Drag & drop','Aktivitas drag & drop ramah layar sentuh',true],
+  ['cert','award','Layar sertifikat','Layar sertifikat dengan nama siswa, skor, dan tanggal',true],
+  ['leader','trophy','Papan peringkat lokal','Papan peringkat lokal (localStorage)',true]
+];
+const PROBLOCKS = [
+  ['diff','users','Diferensiasi','[DIFERENSIASI]\nSediakan 3 jalur kesulitan (bantuan bertahap untuk siswa lambat, tantangan ekstra untuk siswa cepat).'],
+  ['ped','graduation-cap','Pedagogi / CP','[PEDAGOGI]\nSelaraskan dengan CP/ATP; sertakan pertanyaan pemantik di pembuka dan refleksi singkat di penutup.'],
+  ['akm','file-text','Stimulus AKM','[AKM]\nMinimal 3 soal berbasis stimulus (teks/tabel/gambar) yang melatih literasi & numerasi.'],
+  ['ifpx','monitor','IFP lanjutan','[IFP LANJUTAN]\nTambahkan mode layar belah untuk kompetisi dan dukung keyboard sebagai buzzer tim (tombol A vs L).'],
+  ['qa','shield-check','QA & keandalan','[QA & KEANDALAN]\nChecklist wajib: bebas error console, fallback font sistem, tetap berfungsi offline, semua tombol teruji.'],
+  ['suara','audio-lines','Suara Pro','[SUARA PRO]\nGunakan voice TTS pilihan (Aoede/Kore/Puck bila tersedia) + opsi musik latar yang bisa dimatikan.']
+];
+const THEMES = [
+  ['Lab Ceria','biru muda + hijau mint + aksen kuning','Fredoka (judul) + Nunito (isi)'],
+  ['Savana Petualang','hijau daun + oranye matahari + krem','Baloo 2 + Nunito'],
+  ['Nusantara','terakota + emas + cokelat kayu','Plus Jakarta Sans tebal + Nunito'],
+  ['Luar Angkasa','biru malam + ungu nebula + kuning bintang','Fredoka + Nunito'],
+  ['Samudra','biru laut + toska + putih pasir','Baloo 2 + Nunito'],
+  ['Permen','pink + ungu muda + mint','Fredoka + Nunito']
+];
+const ENGINES = {
+  gemini:['sparkles','Gemini','Gunakan Canvas bila tersedia. Jika keluaran terpotong, lanjutkan tepat dari baris terakhir tanpa mengulang.'],
+  chatgpt:['bot','ChatGPT','Keluarkan kode dalam SATU blok. Bila terpotong, saya akan mengetik "lanjutkan" — lanjutkan tepat dari baris terakhir.'],
+  claude:['cpu','Claude','Gunakan artifact html; pastikan kode lengkap, valid, dan langsung berjalan.']
+};
+const FOLLOWS = [
+  ['Tambahkan timer 20 detik per soal dengan efek suara detak.',false],
+  ['Perbesar semua tombol dan kontras teks agar nyaman di layar IFP.',false],
+  ['Buat versi kompetisi 2 tim dengan papan skor berdampingan untuk IFP.',true],
+  ['Tambahkan mode baca materi dengan text-to-speech bahasa Indonesia.',true],
+  ['Tambahkan 5 soal L3 berbasis studi kasus kehidupan sehari-hari.',true],
+  ['Tambahkan layar sertifikat dengan nama siswa dan skor.',true]
+];
+const KOMPOSISI = { seimbang:['Seimbang (L1-L2-L3)',[30,40,30],false], dasar:['Fokus Dasar (L1 berat)',[50,40,10],true], hots:['Fokus HOTS (L3 berat)',[20,40,40],true] };
+
+function isPro(){ return !!USER; }
+
+/* ================= TOAST & CONFIRM ================= */
+let toastT=null;
+function toast(msg, type='ok'){
+  const t=document.getElementById('toast');
+  const icons={ok:'check',err:'x',info:'info',warn:'alert-triangle'};
+  t.className='toast show '+type;
+  t.querySelector('.t-ic').innerHTML=`<i data-lucide="${icons[type]}"></i>`;
+  document.getElementById('toastMsg').textContent=msg;
+  const bar=t.querySelector('.t-bar'); bar.style.animation='none'; void bar.offsetWidth; bar.style.animation=''; bar.style.animationDuration='2.8s';
+  lucide.createIcons();
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+let cfmFn=null;
+function confirmBox(title,msg,yesText,danger,fn){
+  document.getElementById('cfmTitle').textContent=title;
+  document.getElementById('cfmMsg').textContent=msg;
+  const y=document.getElementById('cfmYes'); y.textContent=yesText;
+  y.className='btn '+(danger?'btn-d':'btn-p');
+  document.getElementById('cfmIc').style.background=danger?'var(--err)':'var(--p)';
+  cfmFn=fn; document.getElementById('cfm').classList.add('open');
+}
+function cfmClose(){ document.getElementById('cfm').classList.remove('open'); cfmFn=null; }
+document.getElementById('cfmYes').onclick=()=>{ const f=cfmFn; cfmClose(); if(f) f(); };
+
+/* ================= SSO (hanya dipanggil saat login / ada token) ================= */
+function openLogin(){ document.getElementById('loginBox').classList.add('open'); }
+function closeLogin(){ document.getElementById('loginBox').classList.remove('open'); }
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pin=document.getElementById('loginPin').value.trim();
+  const err=document.getElementById('loginErr'); err.style.display='none';
+  document.getElementById('loginBtn').disabled=true;
+  try{
+    const res=await fetch(SSO_URL+'/functions/v1/login-guru',{method:'POST',headers:{'Content-Type':'application/json','apikey':SSO_ANON},body:JSON.stringify({email,pin})});
+    if(res.status===401){ err.textContent='Email/PIN salah atau akun nonaktif.'; err.style.display='block'; return; }
+    if(!res.ok){ err.textContent='Server sibuk.'; err.style.display='block'; return; }
+    const {token,profile}=await res.json();
+    localStorage.setItem('pf_token',token); localStorage.setItem('pf_profile',JSON.stringify(profile));
+    USER=profile; closeLogin(); applyAuth(); toast('Mode Pro aktif. Selamat berkarya, '+USER.nama+'!','ok');
+  }catch(e){ err.textContent='Gagal terhubung ke server pusat.'; err.style.display='block'; }
+  finally{ document.getElementById('loginBtn').disabled=false; }
+}
+async function boot(){
+  const token=localStorage.getItem('pf_token'), saved=localStorage.getItem('pf_profile');
+  if(!token||!saved) return; // tamu murni: TANPA panggilan jaringan
+  try{
+    const r=await fetch(SSO_URL+'/functions/v1/verify-guru',{method:'POST',headers:{'Content-Type':'application/json','apikey':SSO_ANON,'Authorization':'Bearer '+token}});
+    const d=await r.json();
+    USER=(d&&d.valid)?d.profile:JSON.parse(saved);
+  }catch(e){ USER=JSON.parse(saved); }
+  applyAuth();
+}
+function applyAuth(){
+  const pro=isPro();
+  document.getElementById('proPill').classList.toggle('d-none',!pro);
+  document.getElementById('btnLoginNav').classList.toggle('d-none',pro);
+  document.getElementById('btnLogoutNav').classList.toggle('d-none',!pro);
+  document.getElementById('navAv').classList.toggle('d-none',!pro);
+  document.getElementById('tagVerified').classList.toggle('d-none',!pro);
+  if(pro){
+    document.getElementById('navAv').textContent=(USER.nama||'G').charAt(0).toUpperCase();
+    document.getElementById('fNama').value=USER.nama||'';
+    document.getElementById('fSekolah').value=USER.sekolah||'';
+  }
+  buildUI(); render();
+}
+function logout(){ localStorage.removeItem('pf_token'); localStorage.removeItem('pf_profile'); location.reload(); }
+
+/* ================= SHEET PRO ================= */
+function openSheet(){ document.getElementById('proSheet').classList.add('open'); }
+function closeSheet(){ document.getElementById('proSheet').classList.remove('open'); }
+function needPro(){ openSheet(); }
+
+/* ================= UI ================= */
+function makeChip(ic,label,on,locked,fn){
+  const c=document.createElement('button');
+  c.className='chip'+(on?' on':'')+(locked?' locked':'');
+  c.innerHTML=`<i data-lucide="${locked?'lock':ic}"></i><span>${label}</span>`;
+  c.onclick=()=>{ locked?needPro():fn(); };
+  return c;
+}
+function buildUI(){
+  const pro=isPro();
+  document.getElementById('fMapel').innerHTML=MAPEL.map(x=>`<option>${x}</option>`).join('');
+  document.getElementById('fFase').innerHTML=FASE.map(x=>`<option>${x}</option>`).join('');
+  document.getElementById('fKaih').innerHTML=KAIH.map(x=>`<option>${x}</option>`).join('');
+  document.getElementById('fJumlah').innerHTML=(pro?[5,10,15,20,25]:[5,10]).map(n=>`<option ${n===10?'selected':''}>${n}</option>`).join('');
+  document.getElementById('fKomp').innerHTML=Object.entries(KOMPOSISI).map(([k,v])=>`<option value="${k}" ${(!pro&&v[2])?'disabled':''}>${v[0]}</option>`).join('');
+  document.getElementById('fTema').innerHTML=THEMES.map((x,i)=>(pro||i<2)?`<option value="${i}">${x[0]}</option>`:'').join('');
+  document.getElementById('btnAcak').style.opacity=pro?1:.5;
+
+  const pb=document.getElementById('presetBox'); pb.innerHTML='';
+  Object.entries(PRESETS).forEach(([k,v])=>{
+    pb.appendChild(makeChip(v[0],v[1],STATE.preset===k,(!pro&&v[3]),()=>{ STATE.preset=k; buildUI(); render(); }));
+  });
+  const mb=document.getElementById('modeBox'); mb.innerHTML='';
+  Object.entries(MODES).forEach(([k,v])=>{
+    mb.appendChild(makeChip(v[0],v[1],STATE.mode===k,(!pro&&v[2]),()=>{ STATE.mode=k; buildUI(); render(); }));
+  });
+  const fb=document.getElementById('featBox'); fb.innerHTML='';
+  FEATS.forEach(([k,ic,l,t,locked])=>{
+    fb.appendChild(makeChip(ic,l,STATE.feats.has(k),(!pro&&locked),()=>{ STATE.feats.has(k)?STATE.feats.delete(k):STATE.feats.add(k); buildUI(); render(); }));
+  });
+  const kb=document.getElementById('kaihBox'); kb.innerHTML='';
+  kb.appendChild(makeChip('sunrise','Integrasi KAIH',STATE.kaih,false,()=>{ STATE.kaih=!STATE.kaih; document.getElementById('fKaih').classList.toggle('d-none',!STATE.kaih); buildUI(); render(); }));
+  const ob=document.getElementById('proBox'); ob.innerHTML='';
+  PROBLOCKS.forEach(([k,ic,l])=>{
+    ob.appendChild(makeChip(ic,l,STATE.pro.has(k),!pro,()=>{ STATE.pro.has(k)?STATE.pro.delete(k):STATE.pro.add(k); buildUI(); render(); }));
+  });
+  const eb=document.getElementById('engineBox'); eb.innerHTML='';
+  Object.entries(ENGINES).forEach(([k,v])=>{
+    eb.appendChild(makeChip(v[0],v[1],STATE.engine===k,false,()=>{ STATE.engine=k; buildUI(); render(); }));
+  });
+  const fo=document.getElementById('followBox'); fo.innerHTML='';
+  FOLLOWS.forEach((f,i)=>{
+    fo.appendChild(makeChip('wrench',f[0].split(' ').slice(0,5).join(' ')+'…',STATE.follows.has(i),(!pro&&f[1]),()=>{ STATE.follows.has(i)?STATE.follows.delete(i):STATE.follows.add(i); buildUI(); render(); }));
+  });
+  lucide.createIcons();
+}
+function acakTema(){
+  if(!isPro()){ needPro(); return; }
+  document.getElementById('fTema').value=Math.floor(Math.random()*THEMES.length);
+  render(); toast('Tema diacak: '+THEMES[document.getElementById('fTema').value][0],'info');
+}
+
+/* ================= KEKUATAN PROMPT ================= */
+function strength(){
+  let s=40;
+  s+=Math.min(STATE.feats.size,5)*3;                     // max 15
+  if(STATE.kaih)s+=4;
+  if(document.getElementById('fTopik').value.trim())s+=5;
+  if(document.getElementById('fTujuan').value.trim())s+=4;
+  if(STATE.follows.size||document.getElementById('fCustom').value.trim())s+=3;
+  if(isPro()){
+    if(PRESETS[STATE.preset][3])s+=6;
+    if(STATE.mode==='kompetisi')s+=6;
+    s+=STATE.pro.size*4;                                 // 6 blok = 24
+    s+=Math.max(0,STATE.feats.size-5)*2;
+    s+=5;                                                // identitas terverifikasi
+  }
+  return Math.min(100,s);
+}
+
+/* ================= PROMPT BUILDER ================= */
+function buildPrompt(){
+  const pro=isPro();
+  const nama=document.getElementById('fNama').value.trim()||(pro?USER.nama:'Kreator Tamu');
+  const sekolah=document.getElementById('fSekolah').value.trim()||(pro?USER.sekolah:'Indonesia');
+  const mapel=document.getElementById('fMapel').value;
+  const fase=document.getElementById('fFase').value;
+  const sem=document.getElementById('fSem').value;
+  const topik=document.getElementById('fTopik').value.trim()||'(tuliskan topik materi)';
+  const tujuan=document.getElementById('fTujuan').value.trim()||`Siswa mampu memahami dan menerapkan konsep ${topik} melalui aktivitas interaktif yang menyenangkan.`;
+  const n=parseInt(document.getElementById('fJumlah').value);
+  const [p1,p2]=KOMPOSISI[document.getElementById('fKomp').value][1], p3=100-p1-p2;
+  const l1=Math.round(n*p1/100), l2=Math.round(n*p2/100), l3=Math.max(0,n-l1-l2);
+  const th=THEMES[parseInt(document.getElementById('fTema').value)||0];
+  const dev=document.getElementById('fDev').value;
+  const featLines=FEATS.filter(([k])=>STATE.feats.has(k)).map(([k,ic,l,t],i)=>`${i+1}. ${t}`).join('\n');
+
+  const devText=dev==='ifp'
+    ?'Media DIPRIORITASKAN untuk IFP (Interactive Flat Panel / smart board kelas):\n- Layout landscape 16:9; judul >= 2.5rem, isi >= 1.25rem\n- Tombol/area sentuh besar (min 64px), jarak renggang, JANGAN andalkan hover\n- Kontras tinggi, warna cerah ramah kelas, animasi halus\n- Tetap responsif sebagai fallback di HP/tablet'
+    :dev==='hp'
+    ?'Media DIPRIORITASKAN untuk HP/tablet potret: satu kolom, tombol >= 48px, isi >= 1rem, hemat layar.'
+    :'Responsif penuh: layout IFP landscape sebagai utama, otomatis satu kolom di HP/tablet.';
+
+  const out=[];
+  out.push(`PROMPT MEDIA PEMBELAJARAN — ${APP_NAME} • Guru Berbagi Kec. Selogiri${pro?` • Kreator: ${nama} (Terverifikasi)`:''}`);
+  out.push(`[PERAN & KONTEKS]\nKamu adalah developer front-end ahli sekaligus desainer pembelajaran SD berpengalaman yang membuat media pembelajaran interaktif SATU file HTML (CSS+JS menyatu), ramah anak, dan bebas error.`);
+  out.push(`[TUGAS]\nBuat SATU file HTML lengkap berisi media pembelajaran interaktif. Jangan memberi penjelasan — langsung tampilkan kode penuh yang siap disimpan sebagai .html dan langsung berjalan saat dibuka.`);
+  out.push(`[PROFIL PEMBUAT]\nNama: ${nama}\nInstansi: ${sekolah}${pro?'\nStatus: Guru terverifikasi Korwilcambidik Selogiri':''}`);
+  out.push(`[MATERI]\n- Mapel: ${mapel}\n- Fase/Kelas: ${fase} • Semester ${sem}\n- Topik: "${topik}"\n- Tujuan: ${tujuan}\n- Jumlah soal: ${n} (distribusi kognitif L1: ${l1}, L2: ${l2}, L3: ${l3})`);
+  if(STATE.kaih) out.push(`[INTEGRASI KAIH]\nSelipkan pesan kebiasaan baik "${document.getElementById('fKaih').value}" secara halus dalam materi/feedback (Kebiasaan Anak Indonesia Hebat).`);
+  out.push(`[JENIS MEDIA]\n${PRESETS[STATE.preset][2]}`);
+  if(STATE.preset==='game') out.push(`[MODE PERMAINAN]\n${MODES[STATE.mode][2]}`);
+  out.push(`[PERANGKAT TARGET — PRIORITAS UTAMA]\n${devText}`);
+  out.push(`[FITUR WAJIB]\n${featLines}`);
+  if(pro&&STATE.pro.size) out.push(`[BLOK PRO]\n`+[...STATE.pro].map(k=>PROBLOCKS.find(b=>b[0]===k)[3]).join('\n'));
+  out.push(`[DESAIN]\n- Tema "${th[0]}": palet ${th[1]}\n- Font ${th[2]}\n- Emoji melimpah, sudut membulat, animasi pop/bounce halus, bahasa Indonesia ramah anak SD`);
+  out.push(`[STRUKTUR LAYAR]\nWajib ada: pembuka (judul + nama guru${STATE.feats.has('cert')?' + kredit':''}) -> materi -> aktivitas/kuis -> hasil (skor + feedback + perayaan${STATE.feats.has('cert')?' + sertifikat':''}) -> tombol Ulangi.`);
+  out.push(`[WATERMARK WAJIB — 3 LAPIS, JANGAN DIHAPUS]\n1. Footnote kecil elegan di bawah media (font 10-11px, opacity 60%):\n   "© ${TAHUN} ${nama} • ${sekolah} — ${pro?'Guru Berbagi Kec. Selogiri ✦ Terverifikasi':'Dibuat dengan '+APP_NAME+' • Guru Berbagi Kec. Selogiri'}"\n2. Komentar HTML di dalam kode: <!-- Dibuat dengan ${APP_NAME} — Guru Berbagi Kecamatan Selogiri -->\n3. Baris kredit kecil di layar pembuka: "Media ini dibuat dengan ${APP_NAME}"`);
+  out.push(`[TEKNIS]\n- Tanpa backend/API key; semua data soal tertanam di dalam file\n- Tanpa library eksternal selain Google Fonts (Tailwind CDN opsional)\n- Pastikan tidak ada error console; semua tombol berfungsi\n- Simpan nama pembuat di variabel JS agar footnote konsisten; JANGAN hapus baris kredit`);
+  out.push(`[MESIN: ${ENGINES[STATE.engine][1]}]\n${ENGINES[STATE.engine][2]}`);
+
+  const fol=[...STATE.follows].map(i=>FOLLOWS[i][0]).concat(document.getElementById('fCustom').value.trim()?[document.getElementById('fCustom').value.trim()]:[]);
+  if(fol.length) out.push(`[PROMPT LANJUTAN (kirim SETELAH hasil pertama)]\n`+fol.map((s,i)=>`${i+1}. ${s}`).join('\n'));
+  return out.join('\n\n');
+}
+
+function render(){
+  const txt=buildPrompt();
+  document.getElementById('out').textContent=txt;
+  document.getElementById('stChar').textContent=txt.length+' karakter';
+  document.getElementById('stWord').textContent=txt.split(/\s+/).length+' kata';
+  document.getElementById('stTok').textContent='±'+Math.round(txt.length/4)+' token';
+  const s=strength();
+  document.getElementById('stScore').textContent=s;
+  const fill=document.getElementById('meterFill');
+  fill.style.width=s+'%'; fill.classList.toggle('gold',isPro());
+  document.getElementById('lockHint').classList.toggle('d-none',isPro()||s<60);
+}
+
+/* ================= AKSI ================= */
+function copyPrompt(){ navigator.clipboard.writeText(buildPrompt()).then(()=>toast('Prompt tersalin — tempel di '+ENGINES[STATE.engine][1]+'!','ok')); }
+function downloadTxt(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([buildPrompt()],{type:'text/plain'}));
+  a.download='PromptForge_'+(document.getElementById('fTopik').value.trim()||'Media').replace(/\s+/g,'_')+'.txt';
+  a.click(); toast('File .txt diunduh.','ok');
+}
+function shareWA(){ toast('Membuka WhatsApp...','info'); location.href='https://wa.me/?text='+encodeURIComponent(buildPrompt()); }
+
+/* ================= RACIKAN SAYA ================= */
+function getSaved(){ try{ return JSON.parse(localStorage.getItem('pf_saved')||'[]'); }catch(e){ return []; } }
+function simpanRacikan(){
+  const list=getSaved();
+  const nama=(document.getElementById('fTopik').value.trim()||'Racikan')+' ('+PRESETS[STATE.preset][1]+')';
+  list.unshift({n:nama,t:buildPrompt(),ts:Date.now()});
+  localStorage.setItem('pf_saved',JSON.stringify(list.slice(0,20)));
+  renderSaved(); toast('Racikan disimpan di perangkat ini.','ok');
+}
+function renderSaved(){
+  const box=document.getElementById('savedBox'); box.innerHTML='';
+  getSaved().forEach((s,i)=>{
+    const d=document.createElement('div'); d.className='saved-item';
+    d.innerHTML=`<b><i data-lucide="file-text"></i>${s.n}</b>`;
+    const b1=document.createElement('button'); b1.className='mini'; b1.innerHTML='<i data-lucide="upload"></i>Pakai';
+    b1.onclick=()=>{ document.getElementById('out').textContent=s.t; toast('Racikan dimuat ke preview.','info'); };
+    const b2=document.createElement('button'); b2.className='mini del'; b2.innerHTML='<i data-lucide="trash-2"></i>';
+    b2.onclick=()=>confirmBox('Hapus racikan ini?','"'+s.n+'" akan dihapus permanen dari perangkat.','Ya, Hapus',true,()=>{ const l=getSaved(); l.splice(i,1); localStorage.setItem('pf_saved',JSON.stringify(l)); renderSaved(); toast('Racikan dihapus.','err'); });
+    d.appendChild(b1); d.appendChild(b2); box.appendChild(d);
+  });
+  lucide.createIcons();
+}
+
+/* ================= INIT ================= */
+buildUI(); renderSaved(); render(); boot();
+document.getElementById('btnLoginNav').classList.toggle('d-none',isPro());
+lucide.createIcons();
+</script>
+</body>
+</html>
