@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pendaftaran Akun Guru Berbagi - Selogiri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
+  body{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;display:flex;align-items:center;justify-content:center}
+  .container{background:#fff;max-width:500px;width:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:30px}
+  .header{text-align:center;margin-bottom:22px}
+  .logo{max-width:78px;margin-bottom:10px}
+  .header h1{color:#1e293b;font-size:21px;font-weight:800}
+  .subtitle{color:#64748b;font-size:13px;margin-top:4px}
+  .form-group{margin-bottom:16px}
+  .form-group label{display:block;margin-bottom:6px;color:#334155;font-weight:600;font-size:13px}
+  .form-group input[type="text"],.form-group input[type="email"],.form-group select{width:100%;padding:11px 12px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:.15s}
+  .form-group input:focus,.form-group select:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+  .form-group input[readonly]{background:#f8fafc;cursor:not-allowed}
+  .checkbox-group{display:flex;align-items:center;margin-top:8px;font-size:12.5px;color:#555}
+  .checkbox-group input{margin-right:6px}
+  .suggest{margin-top:8px;font-size:12.5px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:8px 10px;color:#92400e;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .suggest button{background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer}
+  .btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-primary:hover{opacity:.92}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed}
+  .footer-link{text-align:center;margin-top:18px;font-size:13px;color:#94a3b8}
+  .footer-link a{color:#4f46e5;text-decoration:none;font-weight:600}
+  .footer-link a:hover{text-decoration:underline}
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+  .modal-content{background:#fff;max-width:420px;width:90%;border-radius:16px;overflow:hidden;animation:pop .25s ease}
+  @keyframes pop{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
+  .modal-header{background:#2c3e50;color:#fff;padding:20px;text-align:center}
+  .modal-header.error{background:#e74c3c}
+  .modal-header h2{font-size:17px}
+  .modal-body{padding:25px;text-align:center}
+  .pin-box{background:#eef2ff;border-left:5px solid #4f46e5;padding:18px;margin:18px 0;border-radius:8px}
+  .pin-number{font-size:34px;font-weight:800;letter-spacing:6px;color:#4f46e5}
+  .pin-note{font-size:12px;color:#777;margin-top:12px}
+  .modal-content .btn-primary{margin:0 25px 25px;width:calc(100% - 50px)}
+  .hidden{display:none!important}
+  @media(max-width:480px){.container{padding:20px}.pin-number{font-size:26px}}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo" class="logo" />
+      <h1>Pendaftaran Akun Guru Berbagi</h1>
+      <p class="subtitle">Korwilcambidik Kecamatan Selogiri</p>
+    </div>
+
+    <form id="formDaftar" autocomplete="off">
+      <div class="form-group">
+        <label for="nama">Nama Lengkap (dengan gelar)</label>
+        <input type="text" id="nama" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Aktif</label>
+        <input type="email" id="email" required />
+        <div id="emailSuggest" class="suggest hidden">
+          <span>Maksud Anda: <b id="emailSuggestVal"></b>?</span>
+          <button type="button" id="emailSuggestBtn">Gunakan</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="nip">NIP</label>
+        <input type="text" id="nip" placeholder="18 digit NIP" />
+        <div class="checkbox-group">
+          <input type="checkbox" id="noNip" />
+          <label for="noNip">Saya belum memiliki NIP (Gunakan Email sebagai ID)</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="jabatan">Jabatan</label>
+        <select id="jabatan" required><option value="">Memuat data...</option></select>
+        <input type="text" id="jabatanLainnya" placeholder="Sebutkan Jabatan Lainnya" style="display:none;margin-top:8px" />
+      </div>
+      <div class="form-group">
+        <label for="satuan">Satuan Pendidikan</label>
+        <select id="satuan" required><option value="">Memuat data...</option></select>
+      </div>
+      <div class="form-group">
+        <label for="npsn">NPSN</label>
+        <input type="text" id="npsn" readonly />
+      </div>
+      <button type="submit" id="btnSubmit" class="btn-primary">
+        <span class="btn-text">Daftarkan & Generate PIN</span>
+        <span class="btn-loader" style="display:none">Sedang memproses... Mohon tunggu.</span>
+      </button>
+    </form>
+
+    <div class="footer-link">
+      <a href="guru.html">🎓 Masuk Guru</a> &nbsp;·&nbsp; <a href="admin.html">🔐 Login Admin</a>
+    </div>
+  </div>
+
+  <div id="modalPinContainer" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header" id="modalHeader"><h2>Pendaftaran Berhasil!</h2></div>
+      <div class="modal-body">
+        <p>Halo, <strong id="modalNama"></strong>.</p>
+        <p id="modalPesan">PIN Anda adalah:</p>
+        <div class="pin-box"><span id="modalPinValue" class="pin-number"></span></div>
+        <p class="pin-note">*Simpan PIN ini. Jangan bagikan kepada siswa. Lupa PIN? Buka menu “Masuk Guru”.</p>
+      </div>
+      <button id="btnTutupModal" class="btn-primary">Tutup</button>
+    </div>
+  </div>
+
+  <div id="modalError" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header error"><h2>Terjadi Kesalahan</h2></div>
+      <div class="modal-body"><p id="errorPesan"></p></div>
+      <button id="btnTutupError" class="btn-primary">Tutup</button>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://qamqqwfzhyiihqyzliwq.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x";
+  const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/register-guru`;
+  const $ = (id) => document.getElementById(id);
+  let db = null, lastSuggestion = null;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    loadDropdowns(); setupEventListeners();
+  });
+
+  // ---------- KOREKTOR EMAIL CERDAS ----------
+  function fixDomain(d) {
+    d = d.toLowerCase().trim();
+    const MAP = { "g.mail.com": "gmail.com", "gmail.co": "gmail.com", "gmail.con": "gmail.com", "gmal.com": "gmail.com", "gmial.com": "gmail.com", "gmail.cm": "gmail.com", "gmail.cim": "gmail.com", "yahooo.com": "yahoo.com", "addmin.sd.belajar.id": "admin.sd.belajar.id", "guru.sd.belajar.id.sd.belajar.id": "guru.sd.belajar.id" };
+    if (MAP[d]) return MAP[d];
+    if (d.startsWith("gmail") && d !== "gmail.com") return "gmail.com";
+    if (d.includes("belajar.id")) return d.replace("addmin", "admin");
+    return d;
+  }
+  function checkEmailSuggestion() {
+    const v = $("email").value.trim().toLowerCase();
+    const at = v.indexOf("@");
+    const box = $("emailSuggest");
+    if (at < 1 || !v.includes(".")) { box.classList.add("hidden"); lastSuggestion = null; return; }
+    const local = v.slice(0, at), dom = v.slice(at + 1);
+    const fixed = fixDomain(dom);
+    if (fixed !== dom) {
+      lastSuggestion = `${local}@${fixed}`;
+      $("emailSuggestVal").textContent = lastSuggestion;
+      box.classList.remove("hidden");
+    } else { box.classList.add("hidden"); lastSuggestion = null; }
+  }
+  $("emailSuggestBtn").addEventListener("click", () => {
+    if (lastSuggestion) { $("email").value = lastSuggestion; $("emailSuggest").classList.add("hidden"); }
+  });
+
+  async function loadDropdowns() {
+    try {
+      const [{ data: jabatanData }, { data: sekolahData }] = await Promise.all([
+        db.from("jabatan").select("nama").order("nama"),
+        db.from("sekolah").select("nama, npsn").order("nama"),
+      ]);
+      const j = $("jabatan");
+      j.innerHTML = '<option value="">-- Pilih Jabatan --</option>';
+      (jabatanData || []).forEach((x) => j.add(new Option(x.nama, x.nama)));
+      j.add(new Option("Lainnya...", "__lainnya__"));
+      const s = $("satuan");
+      s.innerHTML = '<option value="">-- Pilih Satuan Pendidikan --</option>';
+      window.sekolahMap = {};
+      (sekolahData || []).forEach((x) => { s.add(new Option(x.nama, x.nama)); window.sekolahMap[x.nama] = x.npsn; });
+    } catch (e) { alert("Gagal memuat data. Silakan refresh."); }
+  }
+
+  function setupEventListeners() {
+    $("email").addEventListener("input", checkEmailSuggestion);
+    $("noNip").addEventListener("change", (e) => {
+      const nip = $("nip");
+      if (e.target.checked) { nip.value = $("email").value; nip.readOnly = true; }
+      else { nip.value = ""; nip.readOnly = false; }
+    });
+    $("email").addEventListener("input", (e) => { if ($("noNip").checked) $("nip").value = e.target.value; });
+    $("jabatan").addEventListener("change", (e) => {
+      const lain = $("jabatanLainnya");
+      const show = e.target.value === "__lainnya__";
+      lain.style.display = show ? "block" : "none";
+      lain.required = show;
+      if (!show) lain.value = "";
+    });
+    $("satuan").addEventListener("change", (e) => { $("npsn").value = (window.sekolahMap && window.sekolahMap[e.target.value]) || ""; });
+    $("formDaftar").addEventListener("submit", handleSubmit);
+    $("btnTutupModal").addEventListener("click", () => $("modalPinContainer").classList.add("hidden"));
+    $("btnTutupError").addEventListener("click", () => $("modalError").classList.add("hidden"));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const btn = $("btnSubmit"), txt = btn.querySelector(".btn-text"), lod = btn.querySelector(".btn-loader");
+    const nama = $("nama").value.trim(), email = $("email").value.trim(), nip = $("nip").value.trim();
+    const jRaw = $("jabatan").value, jLain = $("jabatanLainnya").value.trim();
+    const jabatan = jRaw === "__lainnya__" ? jLain : jRaw;
+    const satuan = $("satuan").value, npsn = $("npsn").value.trim();
+    if (!jabatan) { tampilkanError("Mohon pilih atau isi jabatan."); return; }
+    btn.disabled = true; txt.style.display = "none"; lod.style.display = "inline";
+    try {
+      const res = await fetch(FUNCTION_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify({ nama, nip, jabatan, satuan, npsn, email }),
+      });
+      const r = await res.json();
+      if (r.status === "sukses") { tampilkanModal(r.nama, r.pin, "sukses"); $("formDaftar").reset(); $("nip").readOnly = false; $("jabatanLainnya").style.display = "none"; $("emailSuggest").classList.add("hidden"); }
+      else if (r.status === "duplikat") { tampilkanModal(r.nama, r.pin, "duplikat"); }
+      else { tampilkanError(r.error || "Terjadi kesalahan tidak diketahui."); }
+    } catch (err) { tampilkanError("Gagal terhubung ke server: " + err.message); }
+    finally { btn.disabled = false; txt.style.display = "inline"; lod.style.display = "none"; }
+  }
+
+  function tampilkanModal(nama, pin, tipe) {
+    const h = $("modalHeader");
+    if (tipe === "duplikat") { h.querySelector("h2").textContent = "Akun Sudah Terdaftar"; h.style.background = "#d35400"; $("modalPesan").textContent = "Kami menemukan akun Anda. PIN Anda adalah:"; }
+    else { h.querySelector("h2").textContent = "Pendaftaran Berhasil!"; h.style.background = "#2c3e50"; $("modalPesan").textContent = "PIN Anda adalah:"; }
+    $("modalNama").textContent = nama;
+    $("modalPinValue").textContent = pin;
+    $("modalPinContainer").classList.remove("hidden");
+  }
+  function tampilkanError(p) { $("errorPesan").textContent = p; $("modalError").classList.remove("hidden"); }
+</script>
+</body>
+</html>
