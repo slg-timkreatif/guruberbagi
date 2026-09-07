@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root{--primary:#6366f1;--primary-600:#4f46e5;--primary-soft:#eef2ff;--bg:#f1f5f9;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--green:#059669;--green-soft:#ecfdf5;--red:#dc2626;--red-soft:#fef2f2;--amber:#d97706;--amber-soft:#fffbeb;--radius:16px;--shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.07)}
+  :root{--primary:#0D9488;--primary-600:#0F766E;--primary-soft:#CCFBF1;--bg:#f1f5f9;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--green:#059669;--green-soft:#ecfdf5;--red:#dc2626;--red-soft:#fef2f2;--amber:#d97706;--amber-soft:#fffbeb;--radius:16px;--shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.07)}
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
   .hidden{display:none!important}
@@ -15,7 +15,7 @@
   .lucide{width:18px;height:18px}
   .spin{animation:rot 1s linear infinite}
   @keyframes rot{to{transform:rotate(360deg)}}
-  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2);padding:20px}
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0D9488,#0891B2);padding:20px}
   .login-card{background:#fff;border-radius:20px;padding:38px 34px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
   .login-logo{width:64px;height:64px;border-radius:18px;background:var(--primary-soft);color:var(--primary-600);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
   .login-logo .lucide{width:30px;height:30px}
@@ -26,11 +26,11 @@
   .input-icon{position:relative;display:flex;align-items:center}
   .input-icon>.lucide{position:absolute;left:12px;width:16px;height:16px;color:var(--muted);pointer-events:none}
   .input-icon input{width:100%;padding:11px 40px 11px 38px;border:1px solid var(--border);border-radius:10px;font-size:14px;outline:none}
-  .input-icon input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+  .input-icon input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
   .pass-toggle{position:absolute;right:8px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:flex}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:14px;cursor:pointer;transition:.15s}
   .btn-primary{background:var(--primary-600);color:#fff;width:100%}
-  .btn-primary:hover{background:#4338ca}
+  .btn-primary:hover{background:#115E59}
   .btn-primary:disabled{opacity:.6;cursor:not-allowed}
   .btn-danger{background:var(--red);color:#fff}
   .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
@@ -38,7 +38,7 @@
   .back-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:var(--muted);font-size:12.5px;text-decoration:none}
   .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:12px 24px;gap:12px}
   .topbar-left{display:flex;align-items:center;gap:12px}
-  .brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;display:flex;align-items:center;justify-content:center}
+  .brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#0D9488,#0891B2);color:#fff;display:flex;align-items:center;justify-content:center}
   .topbar-left h1{font-size:15px;font-weight:800}
   .topbar-left span{font-size:11.5px;color:var(--muted)}
   .topbar-right{display:flex;align-items:center;gap:10px}
@@ -63,7 +63,7 @@
   .search-box input:focus{border-color:var(--primary)}
   .toolbar-controls select{padding:9px 10px;border:1px solid var(--border);border-radius:10px;font-size:13px;background:#fff;cursor:pointer}
   .icon-btn{height:36px;padding:0 10px;border:1px solid var(--border);background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);cursor:pointer;font-size:12.5px;font-weight:600}
-  .icon-btn:hover{color:var(--primary-600);border-color:#c7d2fe;background:var(--primary-soft)}
+  .icon-btn:hover{color:var(--primary-600);border-color:var(--primary);background:var(--primary-soft)}
   .icon-btn .lucide{width:15px;height:15px}
   .table-wrap{overflow-x:auto}
   table{width:100%;border-collapse:collapse;min-width:980px}
@@ -102,7 +102,7 @@
   .input:focus{border-color:var(--primary)}
   .input[readonly]{background:#f8fafc;color:var(--muted)}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .pin-display{background:var(--primary-soft);border:2px dashed #c7d2fe;border-radius:14px;padding:18px;text-align:center;margin:14px 0}
+  .pin-display{background:var(--primary-soft);border:2px dashed var(--primary);border-radius:14px;padding:18px;text-align:center;margin:14px 0}
   .pin-display .pin{font-size:38px;font-weight:800;letter-spacing:8px;color:var(--primary-600)}
   .confirm-icon{width:56px;height:56px;border-radius:16px;background:var(--red-soft);color:var(--red);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
   .confirm-icon .lucide{width:26px;height:26px}
@@ -127,7 +127,8 @@
   #printArea{display:none}
   @media print{#appRoot{display:none!important}#printArea{display:block}}
   .print-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
-  .pcard{border:1.5px solid #333;border-radius:10px;padding:12px;break-inside:avoid}
+  .pcard{border:1.5px solid #0F766E;border-radius:10px;padding:12px;break-inside:avoid}
+  .pcard h4{color:#0F766E;font-size:10px;letter-spacing:.1em;margin-bottom:4px}
   @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:560px){.stats{grid-template-columns:1fr}.admin-chip{display:none}.search-box input{width:100%}.grid-2{grid-template-columns:1fr}}
 </style>
@@ -135,7 +136,6 @@
 <body>
 <div id="appRoot">
 
-<!-- LOGIN -->
 <div id="loginView" class="login-wrap">
   <div class="login-card">
     <div class="login-logo"><i data-lucide="shield-check"></i></div>
@@ -155,7 +155,6 @@
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboardView" class="hidden">
   <header class="topbar">
     <div class="topbar-left">
@@ -181,10 +180,10 @@
           <div class="search-box"><i data-lucide="search"></i><input id="searchInput" placeholder="Cari nama, email, NIP, PIN..." /></div>
           <select id="statusFilter"><option value="semua">Semua Status</option><option value="Aktif">Aktif</option><option value="Non Aktif">Non Aktif</option></select>
           <button class="icon-btn" id="refreshBtn" title="Muat ulang"><i data-lucide="refresh-cw"></i></button>
-          <button class="icon-btn" id="exportBtn" title="Unduh CSV data (sesuai filter)"><i data-lucide="download"></i> CSV</button>
-          <button class="icon-btn" id="copyEmailsBtn" title="Salin daftar email aktif"><i data-lucide="copy"></i> Email</button>
-          <button class="icon-btn" id="analyticsBtn" title="Analitik distribusi"><i data-lucide="pie-chart"></i> Analitik</button>
-          <button class="icon-btn" id="healthBtn" title="Periksa kesehatan data"><i data-lucide="activity"></i> Kesehatan</button>
+          <button class="icon-btn" id="exportBtn" title="Unduh CSV"><i data-lucide="download"></i> CSV</button>
+          <button class="icon-btn" id="copyEmailsBtn" title="Salin email aktif"><i data-lucide="copy"></i> Email</button>
+          <button class="icon-btn" id="analyticsBtn" title="Analitik"><i data-lucide="pie-chart"></i> Analitik</button>
+          <button class="icon-btn" id="healthBtn" title="Kesehatan data"><i data-lucide="activity"></i> Kesehatan</button>
           <button class="icon-btn" id="printBtn" title="Cetak kartu PIN"><i data-lucide="printer"></i> Kartu</button>
         </div>
       </div>
@@ -199,7 +198,6 @@
   </main>
 </div>
 
-<!-- MODAL EDIT -->
 <div id="editModal" class="modal hidden">
   <div class="modal-card">
     <div class="modal-head"><h3><i data-lucide="pencil"></i> Edit Data Guru</h3><button class="modal-close" data-close="editModal"><i data-lucide="x"></i></button></div>
@@ -221,7 +219,6 @@
   </div>
 </div>
 
-<!-- MODAL PIN -->
 <div id="pinModal" class="modal hidden">
   <div class="modal-card" style="max-width:420px">
     <div class="modal-head"><h3><i data-lucide="key-round"></i> PIN Akses</h3><button class="modal-close" data-close="pinModal"><i data-lucide="x"></i></button></div>
@@ -248,7 +245,6 @@
   </div>
 </div>
 
-<!-- MODAL KONFIRMASI NONAKTIF -->
 <div id="confirmModal" class="modal hidden">
   <div class="modal-card" style="max-width:420px">
     <div class="modal-body" style="padding:30px 26px">
@@ -259,7 +255,6 @@
   </div>
 </div>
 
-<!-- MODAL ANALITIK -->
 <div id="analyticsModal" class="modal hidden">
   <div class="modal-card">
     <div class="modal-head"><h3><i data-lucide="pie-chart"></i> Analitik Distribusi</h3><button class="modal-close" data-close="analyticsModal"><i data-lucide="x"></i></button></div>
@@ -270,7 +265,6 @@
   </div>
 </div>
 
-<!-- MODAL KESEHATAN DATA -->
 <div id="healthModal" class="modal hidden">
   <div class="modal-card">
     <div class="modal-head"><h3><i data-lucide="activity"></i> Kesehatan Data</h3><button class="modal-close" data-close="healthModal"><i data-lucide="x"></i></button></div>
@@ -278,7 +272,6 @@
   </div>
 </div>
 
-<!-- MODAL CETAK -->
 <div id="printModal" class="modal hidden">
   <div class="modal-card" style="max-width:400px">
     <div class="modal-head"><h3><i data-lucide="printer"></i> Cetak Kartu PIN</h3><button class="modal-close" data-close="printModal"><i data-lucide="x"></i></button></div>
@@ -293,7 +286,7 @@
 </div>
 
 <div id="toastContainer"></div>
-</div><!-- /appRoot -->
+</div>
 
 <div id="printArea"></div>
 
@@ -398,7 +391,6 @@
     if (b.dataset.action === "disable") openDisable(id);
   });
 
-  // ---------- PIN ----------
   function openPin(id) {
     const g = allGuru.find((x) => x.id === id); if (!g) return;
     currentPinId = id;
@@ -429,7 +421,6 @@
     toast("PIN guru berhasil diperbarui.", "success"); await loadData();
   });
 
-  // ---------- EDIT ----------
   function openEdit(id) {
     const g = allGuru.find((x) => x.id === id); if (!g) return;
     currentEditId = id;
@@ -448,7 +439,6 @@
     $("editModal").classList.add("hidden"); toast("Data berhasil diperbarui.", "success"); await loadData();
   });
 
-  // ---------- NONAKTIFKAN ----------
   function openDisable(id) {
     const g = allGuru.find((x) => x.id === id); if (!g) return;
     confirmId = id;
@@ -462,7 +452,6 @@
     toast("Akun berhasil dinonaktifkan.", "success"); await loadData();
   });
 
-  // ---------- EKSPOR / SALIN ----------
   $("exportBtn").addEventListener("click", () => {
     const rows = currentFiltered();
     const head = ["nama_lengkap", "nip", "jabatan", "satuan_pendidikan", "npsn", "email", "pin", "status_akun"];
@@ -478,7 +467,6 @@
     catch { toast("Gagal menyalin.", "error"); }
   });
 
-  // ---------- ANALITIK ----------
   function bars(entries) {
     const max = entries[0] ? entries[0][1] : 1;
     return entries.map(([n, c]) => `<div class="bar-row"><span class="bar-lbl">${esc(n)}</span><div class="bar-track"><div class="bar-fill" style="width:${(c / max * 100).toFixed(1)}%"></div></div><b>${c}</b></div>`).join("");
@@ -491,7 +479,6 @@
     $("analyticsModal").classList.remove("hidden"); lucide.createIcons();
   });
 
-  // ---------- KESEHATAN DATA ----------
   function fixDomain(d) {
     d = d.toLowerCase();
     const MAP = { "g.mail.com": "gmail.com", "gmail.co": "gmail.com", "gmail.con": "gmail.com", "gmal.com": "gmail.com", "gmial.com": "gmail.com", "addmin.sd.belajar.id": "admin.sd.belajar.id" };
@@ -524,20 +511,18 @@
     $("healthModal").classList.add("hidden"); openEdit(Number(b.dataset.fix));
   });
 
-  // ---------- CETAK KARTU ----------
   $("printBtn").addEventListener("click", () => { $("printModal").classList.remove("hidden"); });
   $("btnDoPrint").addEventListener("click", () => {
     const scope = $("printScope").value;
     let rows = allGuru.filter((g) => g.status_akun === "Aktif");
     if (scope !== "semua") rows = rows.filter((g) => g.satuan_pendidikan === scope);
     if (!rows.length) { toast("Tidak ada data untuk dicetak.", "error"); return; }
-    $("printArea").innerHTML = `<h2 style="text-align:center;font-size:16px;margin:10px">Kartu PIN — Guru Berbagi Selogiri</h2><div class="print-grid">` +
-      rows.map((g) => `<div class="pcard"><div style="font-size:9px;letter-spacing:.08em;color:#555">GURU BERBAGI · KORWILCAMBIDIK SELOGIRI</div><div style="font-size:14px;font-weight:700;margin:4px 0">${esc(g.nama_lengkap)}</div><div style="font-size:11px">${esc(g.jabatan)} — ${esc(g.satuan_pendidikan)}</div><div style="font-size:20px;font-weight:800;letter-spacing:4px;margin:6px 0">PIN: ${esc(g.pin)}</div><div style="font-size:10px">Email: ${esc(g.email)}</div></div>`).join("") + `</div>`;
+    $("printArea").innerHTML = `<h2 style="text-align:center;font-size:16px;margin:10px;color:#0F766E">Kartu PIN — Guru Berbagi Selogiri</h2><div class="print-grid">` +
+      rows.map((g) => `<div class="pcard"><h4>GURU BERBAGI · KORWILCAMBIDIK SELOGIRI</h4><div style="font-size:14px;font-weight:700;margin:4px 0">${esc(g.nama_lengkap)}</div><div style="font-size:11px">${esc(g.jabatan)} — ${esc(g.satuan_pendidikan)}</div><div style="font-size:20px;font-weight:800;letter-spacing:4px;margin:6px 0;color:#0F766E">PIN: ${esc(g.pin)}</div><div style="font-size:10px">Email: ${esc(g.email)}</div></div>`).join("") + `</div>`;
     $("printModal").classList.add("hidden");
     setTimeout(() => window.print(), 150);
   });
 
-  // ---------- MODAL & TOAST ----------
   document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => $(b.dataset.close).classList.add("hidden")));
   document.querySelectorAll(".modal").forEach((m) => m.addEventListener("click", (e) => { if (e.target === m) m.classList.add("hidden"); }));
   function toast(msg, type = "success") {
