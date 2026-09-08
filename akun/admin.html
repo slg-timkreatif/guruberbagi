@@ -427,7 +427,7 @@
     $("editNama").value = g.nama_lengkap; $("editNip").value = g.nip || ""; $("editEmail").value = g.email; $("editJabatan").value = g.jabatan;
     let opts = sekolahList.map((s) => `<option value="${esc(s.nama)}">${esc(s.nama)}</option>`).join("");
     if (!sekolahList.some((s) => s.nama === g.satuan_pendidikan)) opts = `<option value="${esc(g.satuan_pendidikan)}">${esc(g.satuan_pendidikan)}</option>` + opts;
-    $("editSekolah").innerHTML = opts; $("editSekolah").value = g.satuan_pendidikan; $("editNpsn").value = g.npsn;
+    $("editSekolah").innerHTML = opts; $("editSekolah").value = g.satuan_pendidikan; $("editNpsn").value = sekolahMap[g.satuan_pendidikan] || g.npsn;
     $("editModal").classList.remove("hidden");
   }
   $("editSekolah").addEventListener("change", () => { $("editNpsn").value = sekolahMap[$("editSekolah").value] || ""; });
