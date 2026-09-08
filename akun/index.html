@@ -161,7 +161,7 @@
     try {
       const [{ data: jabatanData }, { data: sekolahData }] = await Promise.all([
         db.from("jabatan").select("nama").order("nama"),
-        db.from("sekolah").select("nama, npsn").order("nama"),
+        db.from("sekolah").select("nama, npsn").eq("aktif", true).order("nama"),
       ]);
       const j = $("jabatan");
       j.innerHTML = '<option value="">-- Pilih Jabatan --</option>';
