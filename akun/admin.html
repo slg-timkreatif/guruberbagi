@@ -22,7 +22,8 @@
 .pass-toggle{position:absolute;right:8px;background:none;border:none;color:var(--mu);cursor:pointer;padding:4px;display:flex}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:14px;cursor:pointer;transition:.15s}
 .btn-primary{background:var(--p6);color:#fff;width:100%}.btn-primary:hover{background:#115E59}.btn-primary:disabled{opacity:.6;cursor:not-allowed}
-.btn-danger{background:var(--r);color:#fff}.btn-ghost{background:transparent;color:var(--mu);border:1px solid var(--bd)}.btn-ghost:hover{background:#f1f5f9;color:var(--tx)}
+.btn-danger{background:var(--r);color:#fff}.btn-danger:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--mu);border:1px solid var(--bd)}.btn-ghost:hover{background:#f1f5f9;color:var(--tx)}
 .back-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:var(--mu);font-size:12.5px;text-decoration:none}
 /* layout */
 #appRoot{display:flex;min-height:100vh}
@@ -53,10 +54,11 @@
 .search-box input:focus{border-color:var(--p)}
 .tools select,.input{padding:9px 10px;border:1px solid var(--bd);border-radius:10px;font-size:13px;background:#fff;outline:none}
 .input{width:100%;font-size:14px;padding:10px 12px}.input:focus{border-color:var(--p)}
+.input[readonly]{background:#f8fafc;color:var(--mu)}
 .icon-btn{height:36px;padding:0 10px;border:1px solid var(--bd);background:#fff;border-radius:10px;display:flex;align-items:center;gap:6px;color:var(--mu);cursor:pointer;font-size:12.5px;font-weight:600}
 .icon-btn:hover{color:var(--p6);border-color:var(--p);background:var(--ps)}.icon-btn .lucide{width:15px;height:15px}
 .table-wrap{overflow-x:auto}.cards{display:none;padding:14px;gap:12px;grid-template-columns:1fr}
-table{width:100%;border-collapse:collapse;min-width:900px}
+table{width:100%;border-collapse:collapse;min-width:960px}
 thead th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);text-align:left;padding:11px 16px;background:#f8fafc;border-bottom:1px solid var(--bd);white-space:nowrap}
 tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:middle}tbody tr:hover{background:#f8fafc}
 .col-no{color:var(--mu);font-size:12.5px}.mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--mu)}
@@ -66,6 +68,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .badge-aktif{background:var(--gs);color:var(--g)}.badge-aktif .dot{background:var(--g)}.badge-non{background:var(--rs);color:var(--r)}.badge-non .dot{background:var(--r)}
 .acts{display:flex;gap:6px}.act-btn{width:34px;height:34px;border:1px solid var(--bd);background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mu)}.act-btn .lucide{width:15px;height:15px}
 .act-btn.view:hover{background:var(--ps);color:var(--p6)}.act-btn.edit:hover{background:var(--as);color:var(--a)}.act-btn.disable:hover{background:var(--rs);color:var(--r)}
+.act-btn.del:hover{background:var(--rs);color:var(--r);border-color:#fecaca}
 .card-foot{padding:11px 18px;font-size:12.5px;color:var(--mu)}
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:40px;color:var(--mu)}.empty .lucide{width:34px;height:34px;opacity:.5}
 .mcard{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px;box-shadow:var(--sh)}
@@ -77,7 +80,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .health-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--bd);border-radius:10px;margin:0 14px 8px;font-size:12.5px}
 .health-item b{display:block}.health-item span{color:var(--mu)}.hi-fix{flex-shrink:0;padding:7px 12px;font-size:12px}
 .tabs{display:flex;gap:8px;padding:14px 18px 0}.tab{padding:8px 14px;border:1px solid var(--bd);border-bottom:none;border-radius:10px 10px 0 0;background:#f8fafc;font-weight:600;font-size:13px;color:var(--mu);cursor:pointer}
-.tab.active{background:#fff;color:var(--p6);border-color:var(--bd)}
+.tab.active{background:#fff;color:var(--p6)}
 /* modals */
 .modal{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-card{background:#fff;border-radius:20px;width:100%;max-width:480px;box-shadow:0 24px 80px rgba(0,0,0,.3);animation:pop .25s ease;overflow:hidden;max-height:92vh;display:flex;flex-direction:column}
@@ -116,7 +119,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}
 .table-wrap{display:none}.cards{display:grid}
 .search-box input{width:100%}.tools{width:100%}
-.modal{align-items:flex-end;padding:0}.modal-card{max-width:100%;border-radius:20px 20px 0 0;max-height:92vh}
+.modal{align-items:flex-end;padding:0}.modal-card{max-width:100%;border-radius:20px 20px 0 0}
 #toastContainer{bottom:86px;right:12px;left:12px;align-items:stretch}.toast{max-width:100%}
 .bar-lbl{width:110px}
 }
@@ -268,38 +271,6 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
     </div>
   </div>
 
-  <!-- MODAL SEKOLAH -->
-  <div id="sekModal" class="modal hidden"><div class="modal-card">
-    <div class="modal-head"><h3><i data-lucide="building-2"></i> <span id="sekModalTitle">Tambah Sekolah</span></h3><button class="modal-close" data-close="sekModal"><i data-lucide="x"></i></button></div>
-    <div class="modal-body">
-      <div class="field"><label>Nama Sekolah</label><input class="input" id="sekNama"/></div>
-      <div class="grid2">
-        <div class="field"><label>NPSN (8 digit)</label><input class="input" id="sekNpsn" inputmode="numeric" maxlength="8"/></div>
-        <div class="field"><label>Jenjang</label><select class="input" id="sekJenjang"><option>SD</option><option>SMP</option></select></div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label>Status</label><select class="input" id="sekStatusIn"><option>Negeri</option><option>Swasta</option></select></div>
-        <div class="field"><label>Kecamatan</label><input class="input" id="sekKecamatan" value="Selogiri"/></div>
-      </div>
-      <div class="field"><label>Email Sekolah (opsional)</label><input class="input" id="sekEmail" type="email"/></div>
-      <div class="checkbox-group" style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="sekAktif" checked/><label for="sekAktif">Sekolah aktif (muncul di dropdown pendaftaran)</label></div>
-    </div>
-    <div class="modal-foot"><button class="btn btn-ghost" data-close="sekModal">Batal</button><button class="btn btn-primary" style="width:auto" id="sekSave"><i data-lucide="save"></i> Simpan</button></div>
-  </div></div>
-
-  <!-- MODAL JABATAN -->
-  <div id="jabModal" class="modal hidden"><div class="modal-card" style="max-width:420px">
-    <div class="modal-head"><h3><i data-lucide="briefcase"></i> <span id="jabModalTitle">Tambah Jabatan</span></h3><button class="modal-close" data-close="jabModal"><i data-lucide="x"></i></button></div>
-    <div class="modal-body">
-      <div class="field"><label>Nama Jabatan</label><input class="input" id="jabNama"/></div>
-      <div class="grid2">
-        <div class="field"><label>Kategori</label><select class="input" id="jabKategori"><option>Kepala Sekolah</option><option>Guru</option><option>Tenaga Kependidikan</option></select></div>
-        <div class="field"><label>Level</label><input class="input" id="jabLevel" type="number" min="1" max="9"/></div>
-      </div>
-    </div>
-    <div class="modal-foot"><button class="btn btn-ghost" data-close="jabModal">Batal</button><button class="btn btn-primary" style="width:auto" id="jabSave"><i data-lucide="save"></i> Simpan</button></div>
-  </div></div>
-
   <!-- MODAL EDIT GTK -->
   <div id="guruModal" class="modal hidden"><div class="modal-card">
     <div class="modal-head"><h3><i data-lucide="pencil"></i> Edit Data GTK</h3><button class="modal-close" data-close="guruModal"><i data-lucide="x"></i></button></div>
@@ -334,10 +305,52 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
     </div>
   </div></div>
 
+  <!-- MODAL SEKOLAH -->
+  <div id="sekModal" class="modal hidden"><div class="modal-card">
+    <div class="modal-head"><h3><i data-lucide="building-2"></i> <span id="sekModalTitle">Tambah Sekolah</span></h3><button class="modal-close" data-close="sekModal"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nama Sekolah</label><input class="input" id="sekNama"/></div>
+      <div class="grid2">
+        <div class="field"><label>NPSN (8 digit)</label><input class="input" id="sekNpsn" inputmode="numeric" maxlength="8"/></div>
+        <div class="field"><label>Jenjang</label><select class="input" id="sekJenjang"><option>SD</option><option>SMP</option></select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Status</label><select class="input" id="sekStatusIn"><option>Negeri</option><option>Swasta</option></select></div>
+        <div class="field"><label>Kecamatan</label><input class="input" id="sekKecamatan" value="Selogiri"/></div>
+      </div>
+      <div class="field"><label>Email Sekolah (opsional)</label><input class="input" id="sekEmail" type="email"/></div>
+      <div style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="sekAktif" checked/><label for="sekAktif">Sekolah aktif (muncul di dropdown pendaftaran)</label></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close="sekModal">Batal</button><button class="btn btn-primary" style="width:auto" id="sekSave"><i data-lucide="save"></i> Simpan</button></div>
+  </div></div>
+
+  <!-- MODAL JABATAN -->
+  <div id="jabModal" class="modal hidden"><div class="modal-card" style="max-width:420px">
+    <div class="modal-head"><h3><i data-lucide="briefcase"></i> <span id="jabModalTitle">Tambah Jabatan</span></h3><button class="modal-close" data-close="jabModal"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nama Jabatan</label><input class="input" id="jabNama"/></div>
+      <div class="grid2">
+        <div class="field"><label>Kategori</label><select class="input" id="jabKategori"><option>Kepala Sekolah</option><option>Guru</option><option>Tenaga Kependidikan</option></select></div>
+        <div class="field"><label>Level</label><input class="input" id="jabLevel" type="number" min="1" max="9"/></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close="jabModal">Batal</button><button class="btn btn-primary" style="width:auto" id="jabSave"><i data-lucide="save"></i> Simpan</button></div>
+  </div></div>
+
   <!-- MODAL KONFIRMASI -->
   <div id="confirmModal" class="modal hidden"><div class="modal-card" style="max-width:420px">
     <div class="modal-body" style="padding:28px 24px"><div class="confirm-icon"><i data-lucide="alert-triangle"></i></div><p class="confirm-text" id="confirmText"></p></div>
     <div class="modal-foot" style="justify-content:center"><button class="btn btn-ghost" data-close="confirmModal">Batal</button><button class="btn btn-danger" id="confirmYes">Ya, Lanjutkan</button></div>
+  </div></div>
+
+  <!-- MODAL HAPUS PERMANEN -->
+  <div id="deleteModal" class="modal hidden"><div class="modal-card" style="max-width:440px">
+    <div class="modal-head"><h3><i data-lucide="trash-2"></i> Hapus Akun Permanen</h3><button class="modal-close" data-close="deleteModal"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--mu);line-height:1.6">Akun <strong id="delName"></strong> (<span id="delEmail" class="mono"></span>) akan <b style="color:var(--r)">dihapus permanen</b> dan tidak dapat dikembalikan. Email & PIN-nya akan bebas digunakan lagi.<br><br>Ketik email akun ini untuk konfirmasi:</p>
+      <input class="input" id="delInput" placeholder="email@akun.com" style="margin-top:10px"/>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close="deleteModal">Batal</button><button class="btn btn-danger" id="delYes" disabled><i data-lucide="trash-2"></i> Hapus Permanen</button></div>
   </div></div>
 
   <!-- MODAL PASSWORD -->
@@ -373,10 +386,10 @@ const cleanName=n=>(n||"").toLowerCase().replace(/[^a-z]/g,"");
 const badge=s=>s==="Aktif"?'<span class="badge badge-aktif"><span class="dot"></span>Aktif</span>':'<span class="badge badge-non"><span class="dot"></span>Non Aktif</span>';
 const emptyRow=n=>`<tr><td colspan="${n}"><div class="empty"><i data-lucide="inbox"></i><p>Tidak ada data.</p></div></td></tr>`;
 function fixDomain(d){d=d.toLowerCase();const M={"g.mail.com":"gmail.com","gmail.co":"gmail.com","gmail.con":"gmail.com","gmal.com":"gmail.com","gmial.com":"gmail.com","gmail.cm":"gmail.com","gmail.cim":"gmail.com","yahooo.com":"yahoo.com","addmin.sd.belajar.id":"admin.sd.belajar.id"};if(M[d])return M[d];if(d.startsWith("gmail")&&d!=="gmail.com")return "gmail.com";if(d.includes("belajar.id"))return d.replace("addmin","admin");return d;}
-let allGuru=[],sekolahList=[],jabatanList=[],roleList=[],confirmFn=null,curPinId=null,curGuruId=null,curSekId=null,curJabId=null,curTab="jabatan";
+let allGuru=[],sekolahList=[],jabatanList=[],roleList=[],confirmFn=null,delId=null,curPinId=null,curGuruId=null,curSekId=null,curJabId=null,curTab="jabatan";
 
 (async()=>{const{data:{session}}=await db.auth.getSession();if(session)enterApp();lucide.createIcons();})();
-db.auth.onAuthStateChange(e=>{if(e==="SIGNED_OUT"){location.reload();}});
+db.auth.onAuthStateChange(e=>{if(e==="SIGNED_OUT")location.reload();});
 
 $("loginForm").addEventListener("submit",async e=>{e.preventDefault();$("loginBtn").disabled=true;$("loginLabel").textContent="Memeriksa...";
 const{data,error}=await db.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
@@ -405,7 +418,7 @@ if(e.target.closest("#btnDrawer")){$("drawer").classList.remove("hidden");lucide
 if(e.target.closest("#drawerClose")){$("drawer").classList.add("hidden");return;}
 if(e.target.closest("#avatarBtn")){$("avatarMenu").classList.toggle("hidden");lucide.createIcons();return;}
 const cl=e.target.closest("[data-close]");if(cl){$(cl.dataset.close).classList.add("hidden");return;}
-if(e.target.closest(".modal")&&e.target.classList.contains("modal"))e.target.classList.add("hidden");});
+if(e.target.classList.contains("modal"))e.target.classList.add("hidden");});
 
 /* ---------- BERANDA ---------- */
 function renderBeranda(){
@@ -422,13 +435,18 @@ $("widgetTerbaru").innerHTML=allGuru.slice(0,5).map(g=>`<div class="mini-row"><b
 function gtkFiltered(){const q=$("gtkSearch").value.trim().toLowerCase(),st=$("gtkStatus").value,sk=$("gtkSchool").value;
 return allGuru.filter(g=>{const mQ=!q||[g.nama_lengkap,g.email,String(g.nip||""),String(g.pin),g.satuan_pendidikan,g.jabatan].some(v=>String(v||"").toLowerCase().includes(q));
 return mQ&&(st==="semua"||g.status_akun===st)&&(sk==="semua"||g.satuan_pendidikan===sk);});}
+function gtkActs(g){return `<div class="acts">
+<button class="act-btn view" data-act="pin" data-id="${g.id}" title="Lihat PIN"><i data-lucide="key-round"></i></button>
+<button class="act-btn edit" data-act="guru" data-id="${g.id}" title="Edit"><i data-lucide="pencil"></i></button>
+${g.status_akun==="Aktif"?`<button class="act-btn disable" data-act="non" data-id="${g.id}" title="Nonaktifkan"><i data-lucide="user-x"></i></button>`:""}
+<button class="act-btn del" data-act="del" data-id="${g.id}" title="Hapus permanen"><i data-lucide="trash-2"></i></button>
+</div>`;}
 function renderGtk(){const sel=$("gtkSchool"),cur=sel.value;
 sel.innerHTML='<option value="semua">Semua Sekolah</option>'+sekolahList.map(s=>`<option value="${esc(s.nama)}">${esc(s.nama)}${s.aktif?"":" (nonaktif)"}</option>`).join("");
 if([...sel.options].some(o=>o.value===cur))sel.value=cur;
 const rows=gtkFiltered();$("gtkCount").textContent=`Menampilkan ${rows.length} dari ${allGuru.length} data`;
-const acts=g=>`<div class="acts"><button class="act-btn view" data-act="pin" data-id="${g.id}" title="PIN"><i data-lucide="key-round"></i></button><button class="act-btn edit" data-act="guru" data-id="${g.id}" title="Edit"><i data-lucide="pencil"></i></button>${g.status_akun==="Aktif"?`<button class="act-btn disable" data-act="non" data-id="${g.id}" title="Nonaktifkan"><i data-lucide="user-x"></i></button>`:""}</div>`;
-$("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru"><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${acts(g)}</td></tr>`).join("")||emptyRow(8);
-$("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${acts(g)}</div></div>`).join("")||"<p class='muted'>Tidak ada data.</p>";}
+$("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru"><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${gtkActs(g)}</td></tr>`).join("")||emptyRow(8);
+$("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("")||"<p class='muted'>Tidak ada data.</p>";}
 
 /* ---------- SEKOLAH ---------- */
 function renderSekolah(){const q=$("sekSearch").value.trim().toLowerCase(),st=$("sekStatus").value;
@@ -444,8 +462,8 @@ function renderMaster(){const jab=curTab==="jabatan";$("tabJab").classList.toggl
 $("tabJabBtn").classList.toggle("active",jab);$("tabRoleBtn").classList.toggle("active",!jab);
 $("jabBody").innerHTML=jabatanList.map(j=>`<tr><td><b>${esc(j.nama)}</b></td><td>${esc(j.kategori||"—")}</td><td>${j.level??"—"}</td><td><div class="acts"><button class="act-btn edit" data-act="jabedit" data-id="${j.id}"><i data-lucide="pencil"></i></button></div></td></tr>`).join("")||emptyRow(4);
 $("roleBody").innerHTML=roleList.map(r=>`<tr><td class="mono">${esc(r.kode)}</td><td><b>${esc(r.nama)}</b></td><td>Level ${r.level}</td><td class="muted">${esc(r.deskripsi||"")}</td></tr>`).join("")||emptyRow(4);}
-$("tabJabBtn").onclick=()=>{curTab="jabatan";renderMaster();};
-$("tabRoleBtn").onclick=()=>{curTab="role";renderMaster();};
+$("tabJabBtn").onclick=()=>{curTab="jabatan";renderMaster();lucide.createIcons();};
+$("tabRoleBtn").onclick=()=>{curTab="role";renderMaster();lucide.createIcons();};
 
 /* ---------- ANALITIK ---------- */
 function renderAnalitik(){const byS={},byJ={},bySt={};allGuru.forEach(g=>{byS[g.satuan_pendidikan]=(byS[g.satuan_pendidikan]||0)+1;byJ[g.jabatan]=(byJ[g.jabatan]||0)+1;bySt[g.status_akun]=(bySt[g.status_akun]||0)+1;});
@@ -473,9 +491,10 @@ if(b.dataset.act==="guru"||b.dataset.act==="fixguru")openGuru(id);
 if(b.dataset.act==="fixsek")openSekModal(id);
 if(b.dataset.act==="sekedit")openSekModal(id);
 if(b.dataset.act==="jabedit")openJabModal(id);
-if(b.dataset.act==="sekview"){$("gtkSchool").value=b.dataset.name;showPage("gtk");renderGtk();}
+if(b.dataset.act==="sekview"){$("gtkSchool").value=b.dataset.name;showPage("gtk");renderGtk();lucide.createIcons();}
 if(b.dataset.act==="non"){const g=allGuru.find(x=>x.id===id);openConfirm(`Nonaktifkan akun <strong>${esc(g.nama_lengkap)}</strong>?<br>Data tetap aman dan bisa dilihat via filter "Non Aktif".`,async()=>{const{error}=await db.from("guru").update({status_akun:"Non Aktif"}).eq("id",id);if(error)return toast(error.message,"error");toast("Akun dinonaktifkan.","success");await loadData();});}
-if(b.dataset.act==="sektoggle")toggleSekolah(id);});
+if(b.dataset.act==="sektoggle")toggleSekolah(id);
+if(b.dataset.act==="del")openDelete(id);});
 
 /* ---------- SEKOLAH CRUD ---------- */
 $("sekAdd").onclick=()=>openSekModal(null);
@@ -502,7 +521,7 @@ function openJabModal(id){curJabId=id;const j=jabatanList.find(x=>x.id===id);
 $("jabModalTitle").textContent=j?"Edit Jabatan":"Tambah Jabatan";
 $("jabNama").value=j?.nama||"";$("jabKategori").value=j?.kategori||"Guru";$("jabLevel").value=j?.level??2;
 $("jabModal").classList.remove("hidden");}
-$("jabKategori").onchange=()=>{$("jabLevel").value={ "Kepala Sekolah":1,"Guru":2,"Tenaga Kependidikan":3 }[$("jabKategori").value]||2;};
+$("jabKategori").onchange=()=>{$("jabLevel").value={"Kepala Sekolah":1,"Guru":2,"Tenaga Kependidikan":3}[$("jabKategori").value]||2;};
 $("jabSave").onclick=async()=>{const nama=$("jabNama").value.trim();if(!nama)return toast("Nama jabatan wajib diisi.","error");
 const payload={nama,kategori:$("jabKategori").value,level:+$("jabLevel").value||2};
 if(curJabId){const{error}=await db.from("jabatan").update(payload).eq("id",curJabId);if(error)return toast(error.message,"error");}
@@ -514,7 +533,7 @@ function openGuru(id){const g=allGuru.find(x=>x.id===id);if(!g)return;curGuruId=
 $("editNama").value=g.nama_lengkap;$("editNip").value=g.nip||"";$("editEmail").value=g.email;$("editJabatan").value=g.jabatan;
 $("jabatanList").innerHTML=jabatanList.map(j=>`<option value="${esc(j.nama)}">`).join("");
 const opts=sekolahList.map(s=>`<option value="${esc(s.nama)}">${esc(s.nama)}${s.aktif?"":" (nonaktif)"}</option>`).join("");
-$("editSekolah").innerHTML=([...sekolahList].some(s=>s.nama===g.satuan_pendidikan)?"":`<option value="${esc(g.satuan_pendidikan)}">${esc(g.satuan_pendidikan)}</option>`)+opts;
+$("editSekolah").innerHTML=(sekolahList.some(s=>s.nama===g.satuan_pendidikan)?"":`<option value="${esc(g.satuan_pendidikan)}">${esc(g.satuan_pendidikan)}</option>`)+opts;
 $("editSekolah").value=g.satuan_pendidikan;
 $("editNpsn").value=(sekolahList.find(s=>s.nama===g.satuan_pendidikan)?.npsn)||g.npsn;
 $("guruModal").classList.remove("hidden");}
@@ -543,6 +562,17 @@ const g=allGuru.find(x=>x.id===curPinId);
 const{error}=await db.from("guru").update({pin:baru,pin_ver:((g.pin_ver)||1)+1}).eq("id",curPinId);if(error)return toast(error.message,"error");
 $("pinValue").textContent=baru;$("ubahPinBox").classList.add("hidden");toast("PIN diperbarui.","success");await loadData();};
 
+/* ---------- HAPUS PERMANEN ---------- */
+function openDelete(id){const g=allGuru.find(x=>x.id===id);if(!g)return;delId=id;
+$("delName").textContent=g.nama_lengkap;$("delEmail").textContent=g.email;
+$("delInput").value="";$("delYes").disabled=true;
+$("deleteModal").classList.remove("hidden");}
+$("delInput").addEventListener("input",()=>{$("delYes").disabled=$("delInput").value.trim().toLowerCase()!==$("delEmail").textContent.toLowerCase();});
+$("delYes").addEventListener("click",async()=>{const{error}=await db.from("guru").delete().eq("id",delId);
+$("deleteModal").classList.add("hidden");
+if(error)return toast(error.message,"error");
+toast("Akun dihapus permanen.","success");await loadData();});
+
 /* ---------- EKSPOR / CETAK ---------- */
 function doExport(){const rows=gtkFiltered();const head=["nama_lengkap","nip","jabatan","satuan_pendidikan","npsn","email","pin","status_akun"];
 const lines=[head.join(",")].concat(rows.map(g=>head.map(h=>`"${String(g[h]??"").replace(/"/g,'""')}"`).join(",")));
@@ -559,9 +589,11 @@ $("printModal").classList.add("hidden");setTimeout(()=>window.print(),150);};
 $("qSekolah").onclick=()=>openSekModal(null);
 $("gtkRefresh").onclick=async()=>{$("gtkRefresh").classList.add("spin");await loadData();$("gtkRefresh").classList.remove("spin");};
 $("healthRefresh").onclick=()=>{renderKesehatan();lucide.createIcons();toast("Pemeriksaan selesai.","success");};
-["gtkSearch"].forEach(i=>$(i).addEventListener("input",renderGtk));
-["gtkStatus","gtkSchool"].forEach(i=>$(i).addEventListener("change",renderGtk));
-$("sekSearch").addEventListener("input",renderSekolah);$("sekStatus").addEventListener("change",renderSekolah);
+$("gtkSearch").addEventListener("input",renderGtk);
+$("gtkStatus").addEventListener("change",renderGtk);
+$("gtkSchool").addEventListener("change",renderGtk);
+$("sekSearch").addEventListener("input",renderSekolah);
+$("sekStatus").addEventListener("change",renderSekolah);
 
 /* ---------- KONFIRMASI & PASSWORD ---------- */
 function openConfirm(html,fn){$("confirmText").innerHTML=html;confirmFn=fn;$("confirmModal").classList.remove("hidden");}
