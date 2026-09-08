@@ -252,7 +252,7 @@
   function clearSession() { localStorage.removeItem("gb_token"); token = null; profile = null; }
 
   async function loadSekolah() {
-    const { data } = await db.from("sekolah").select("nama").order("nama");
+    const { data } = await db.from("sekolah").select("nama").eq("aktif", true).order("nama");
     const sel = $("recSekolah");
     sel.innerHTML = '<option value="">-- Pilih Sekolah --</option>';
     (data || []).forEach((s) => { const o = document.createElement("option"); o.value = s.nama; o.textContent = s.nama; sel.add(o); });
