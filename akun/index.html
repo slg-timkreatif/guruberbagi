@@ -71,7 +71,7 @@
         <input type="text" id="nip" placeholder="18 digit NIP" />
         <div class="checkbox-group">
           <input type="checkbox" id="noNip" />
-          <label for="noNip">Saya belum memiliki NIP (Gunakan Email sebagai ID)</label>
+          <label for="noNip">Saya belum memiliki NIP (Non ASN) — NIP dikosongkan</label>
         </div>
       </div>
       <div class="form-group">
@@ -178,10 +178,10 @@
     $("email").addEventListener("input", checkEmailSuggestion);
     $("noNip").addEventListener("change", (e) => {
       const nip = $("nip");
-      if (e.target.checked) { nip.value = $("email").value; nip.readOnly = true; }
-      else { nip.value = ""; nip.readOnly = false; }
+      nip.value = "";
+      nip.readOnly = e.target.checked;
+      nip.placeholder = e.target.checked ? "Non ASN: NIP dikosongkan" : "18 digit NIP";
     });
-    $("email").addEventListener("input", (e) => { if ($("noNip").checked) $("nip").value = e.target.value; });
     $("jabatan").addEventListener("change", (e) => {
       const lain = $("jabatanLainnya");
       const show = e.target.value === "__lainnya__";
@@ -198,7 +198,8 @@
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = $("btnSubmit"), txt = btn.querySelector(".btn-text"), lod = btn.querySelector(".btn-loader");
-    const nama = $("nama").value.trim(), email = $("email").value.trim(), nip = $("nip").value.trim();
+    const nama = $("nama").value.trim(), email = $("email").value.trim();
+    const nip = $("noNip").checked ? null : ($("nip").value.trim() || null);
     const jRaw = $("jabatan").value, jLain = $("jabatanLainnya").value.trim();
     const jabatan = jRaw === "__lainnya__" ? jLain : jRaw;
     const satuan = $("satuan").value, npsn = $("npsn").value.trim();
