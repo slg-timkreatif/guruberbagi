@@ -476,7 +476,7 @@ const dup={},emDup={};allGuru.forEach(g=>{const k=cleanName(g.nama_lengkap)+"|"+
 allGuru.forEach(g=>{const em=(g.email||"").toLowerCase();
 if(!emailRe.test(em))issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"Email tidak valid",d:em});
 else{const dom=em.split("@")[1];if(fixDomain(dom)!==dom)issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"Email kemungkinan typo",d:em+" → "+em.split("@")[0]+"@"+fixDomain(dom)});}
-const nip=g.nip||"";if(nip&&!/^\d{18}$/.test(nip)&&!nip.includes("@"))issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"Format NIP aneh",d:nip});
+const nip=g.nip||"";if(nip&&!/^\d{18}$/.test(nip))issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"Format NIP aneh",d:nip});
 if(!g.sekolah_id)issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"Belum terhubung ke master sekolah",d:g.satuan_pendidikan});
 else if(sekMap[g.satuan_pendidikan]&&g.npsn!==sekMap[g.satuan_pendidikan].npsn)issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"NPSN tidak cocok dengan master",d:g.npsn+" vs "+sekMap[g.satuan_pendidikan].npsn});
 if(dup[cleanName(g.nama_lengkap)+"|"+g.satuan_pendidikan]>1)issues.push({t:"guru",id:g.id,n:g.nama_lengkap,j:"Nama duplikat di sekolah sama",d:g.satuan_pendidikan});});
