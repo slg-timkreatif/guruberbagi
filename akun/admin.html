@@ -61,11 +61,15 @@ textarea.input{resize:vertical;min-height:80px}
 .icon-btn{height:36px;padding:0 10px;border:1px solid var(--bd);background:#fff;border-radius:10px;display:flex;align-items:center;gap:6px;color:var(--mu);cursor:pointer;font-size:12.5px;font-weight:600}
 .icon-btn:hover{color:var(--p6);border-color:var(--p);background:var(--ps)}.icon-btn .lucide{width:15px;height:15px}
 .table-wrap{overflow-x:auto}.cards{display:none;padding:14px;gap:12px;grid-template-columns:1fr}
-table{width:100%;border-collapse:collapse;min-width:960px}
+table{width:100%;border-collapse:collapse;min-width:990px}
 thead th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);text-align:left;padding:11px 16px;background:#f8fafc;border-bottom:1px solid var(--bd);white-space:nowrap}
 tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:middle}tbody tr:hover{background:#f8fafc}
 .col-no{color:var(--mu);font-size:12.5px}.mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--mu)}
+.cell-guru{display:flex;gap:8px;align-items:center}
 .cell-guru strong{display:block;font-weight:600}.cell-guru span{display:block;font-size:12px;color:var(--mu);margin-top:2px}
+.thumbwrap{width:34px;height:34px;border-radius:50%;background:var(--ps);color:var(--p6);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;position:relative;overflow:hidden;flex-shrink:0}
+.thumbwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumbwrap.big{width:64px;height:64px;font-size:24px}
 .pin-mask{letter-spacing:2px;color:var(--mu)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}.badge .dot{width:6px;height:6px;border-radius:50%}
 .badge-aktif{background:var(--gs);color:var(--g)}.badge-aktif .dot{background:var(--g)}.badge-non{background:var(--rs);color:var(--r)}.badge-non .dot{background:var(--r)}
@@ -75,7 +79,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .card-foot{padding:11px 18px;font-size:12.5px;color:var(--mu)}
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:40px;color:var(--mu)}.empty .lucide{width:34px;height:34px;opacity:.5}
 .mcard{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px;box-shadow:var(--sh)}
-.mcard-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.mcard-sub{display:block;color:var(--mu);font-size:12px;margin-top:3px}
+.mcard-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.mcard-sub{display:block;color:var(--mu);font-size:12px;margin-top:3px}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}.bar-lbl{width:170px;font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar-track{flex:1;background:var(--ps);border-radius:999px;height:10px}.bar-fill{background:var(--p);height:10px;border-radius:999px}.bar-row b{width:30px;text-align:right;font-size:12px}
 .mini-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--bd);font-size:13px}.mini-row span{color:var(--mu)}
@@ -310,6 +314,14 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
   <div id="guruModal" class="modal hidden"><div class="modal-card">
     <div class="modal-head"><h3><i data-lucide="pencil"></i> Edit Data GTK</h3><button class="modal-close" data-close="guruModal"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+        <span class="thumbwrap big" id="fotoEditWrap"><i id="fotoEditInit" style="font-style:normal">G</i><img id="fotoEditImg" src="" alt="" onerror="this.remove()"/></span>
+        <div style="flex:1">
+          <input type="file" id="fileEditFoto" accept="image/*" style="display:none"/>
+          <button class="btn btn-ghost btn-sm" id="btnEditFoto" style="width:100%"><i data-lucide="camera"></i> Ganti Foto GTK</button>
+          <p class="muted" style="margin-top:6px">Foto dikompresi otomatis di browser (±50 KB) sebelum diunggah.</p>
+        </div>
+      </div>
       <div class="field"><label>Nama Lengkap</label><input class="input" id="editNama"/></div>
       <div class="grid-2">
         <div class="field"><label>NIP</label><input class="input" id="editNip" placeholder="Kosongkan jika tidak ada"/></div>
@@ -441,6 +453,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 <script>
 const SUPABASE_URL="https://qamqqwfzhyiihqyzliwq.supabase.co";
 const ANON="sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x";
+const FOTO_BASE=`${SUPABASE_URL}/storage/v1/object/public/foto-gtk`;
 const db=window.supabase.createClient(SUPABASE_URL,ANON);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -456,6 +469,12 @@ function fixDomain(d){d=d.toLowerCase();const M={"g.mail.com":"gmail.com","gmail
 const penOf=gid=>penugasanList.filter(p=>p.guru_id===gid);
 const isRangkap=gid=>penOf(gid).length>1;
 const rangkapChip=gid=>isRangkap(gid)?' <span class="chip" style="margin-top:0">Rangkap</span>':"";
+const thumbImg=g=>`<span class="thumbwrap">${esc((g.nama_lengkap||"G").trim().charAt(0).toUpperCase())}<img loading="lazy" src="${FOTO_BASE}/${g.id}_t.webp" onerror="this.remove()"></span>`;
+function kompresFoto(file,maxSize,quality){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();
+img.onload=()=>{URL.revokeObjectURL(url);let w=img.width,h=img.height;const sc=Math.min(1,maxSize/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
+let d=c.toDataURL("image/webp",quality);if(!d.startsWith("data:image/webp"))d=c.toDataURL("image/jpeg",quality);res(d);};
+img.onerror=rej;img.src=url;});}
 let allGuru=[],sekolahList=[],jabatanList=[],roleList=[],ultList=[],penugasanList=[],confirmFn=null,delId=null,curPinId=null,curGuruId=null,curSekId=null,curJabId=null,curUlt=null,curTab="jabatan";
 
 (async()=>{const{data:{session}}=await db.auth.getSession();if(session)enterApp();lucide.createIcons();})();
@@ -516,8 +535,8 @@ function renderGtk(){const sel=$("gtkSchool"),cur=sel.value;
 sel.innerHTML='<option value="semua">Semua Sekolah</option>'+sekolahList.map(s=>`<option value="${esc(s.nama)}">${esc(s.nama)}${s.aktif?"":" (nonaktif)"}</option>`).join("");
 if([...sel.options].some(o=>o.value===cur))sel.value=cur;
 const rows=gtkFiltered();$("gtkCount").textContent=`Menampilkan ${rows.length} dari ${allGuru.length} data`;
-$("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru"><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${gtkActs(g)}</td></tr>`).join("")||emptyRow(8);
-$("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("")||"<p class='muted'>Tidak ada data.</p>";}
+$("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru">${thumbImg(g)}<div><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${gtkActs(g)}</td></tr>`).join("")||emptyRow(8);
+$("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top">${thumbImg(g)}<div style="flex:1"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div></div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("")||"<p class='muted'>Tidak ada data.</p>";}
 
 /* ---------- SEKOLAH ---------- */
 function renderSekolah(){const q=$("sekSearch").value.trim().toLowerCase(),st=$("sekStatus").value;
@@ -608,6 +627,8 @@ const opts=sekolahList.map(s=>`<option value="${esc(s.nama)}">${esc(s.nama)}${s.
 $("editSekolah").innerHTML=(sekolahList.some(s=>s.nama===g.satuan_pendidikan)?"":`<option value="${esc(g.satuan_pendidikan)}">${esc(g.satuan_pendidikan)}</option>`)+opts;
 $("editSekolah").value=g.satuan_pendidikan;
 $("editNpsn").value=(sekolahList.find(s=>s.nama===g.satuan_pendidikan)?.npsn)||g.npsn;
+$("fotoEditInit").textContent=(g.nama_lengkap||"G").trim().charAt(0).toUpperCase();
+$("fotoEditImg").src=FOTO_BASE+"/"+g.id+".webp";
 fillPenSelects();renderPenList();
 $("guruModal").classList.remove("hidden");}
 $("editSekolah").onchange=()=>{$("editNpsn").value=(sekolahList.find(s=>s.nama===$("editSekolah").value)?.npsn)||"";};
@@ -615,6 +636,22 @@ $("guruSave").onclick=async()=>{const payload={nama_lengkap:$("editNama").value.
 if(!payload.nama_lengkap||!payload.email)return toast("Nama dan email wajib diisi.","error");
 const{error}=await db.from("guru").update(payload).eq("id",curGuruId);if(error)return toast(error.message,"error");
 $("guruModal").classList.add("hidden");toast("Data GTK diperbarui.","success");await loadData();};
+
+/* ---------- FOTO GTK (upload oleh admin) ---------- */
+$("btnEditFoto").addEventListener("click",()=>$("fileEditFoto").click());
+$("fileEditFoto").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;
+try{
+  const{data:{session}}=await db.auth.getSession();
+  if(!session)throw new Error("Sesi admin tidak valid.");
+  const foto=await kompresFoto(file,512,0.75);
+  const thumb=await kompresFoto(file,96,0.7);
+  const r=await(await fetch(`${SUPABASE_URL}/functions/v1/simpan-foto-gtk`,{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({foto,thumb,guru_id:curGuruId})})).json();
+  if(r.error)throw new Error(r.error);
+  $("fotoEditImg").src=r.url+"?v="+Date.now();
+  document.querySelectorAll(`img[src^="${FOTO_BASE}/${curGuruId}_t.webp"]`).forEach(im=>{im.src=r.thumb_url+"?v="+Date.now();});
+  toast("Foto GTK diperbarui.","success");
+}catch(err){toast(err.message||"Gagal unggah foto.","error");}
+e.target.value="";});
 
 /* ---------- PENUGASAN ---------- */
 function renderPenList(){const rows=penOf(curGuruId).filter(p=>p.jenis==="Rangkap");
@@ -680,8 +717,8 @@ return mQ&&(st==="semua"||t.status===st);});}
 function renderULT(){const rows=ultFiltered();$("ultCount").textContent=`Menampilkan ${rows.length} dari ${ultList.length} tiket`;
 const act=t=>`<div class="acts"><button class="act-btn view" data-act="ultview" data-id="${t.id}" title="Buka tiket"><i data-lucide="inbox"></i></button></div>`;
 $("ultTbody").innerHTML=rows.map(t=>`<tr>
-<td><div class="cell-guru"><strong>${esc(t.subjek)}</strong><span class="chip">${esc(t.kategori)}</span></div></td>
-<td><div class="cell-guru"><strong>${esc(t.guru?.nama_lengkap||"-")}</strong><span>${esc(t.guru?.email||"")}</span></div></td>
+<td><div class="cell-guru"><div><strong>${esc(t.subjek)}</strong><span class="chip">${esc(t.kategori)}</span></div></div></td>
+<td><div class="cell-guru"><div><strong>${esc(t.guru?.nama_lengkap||"-")}</strong><span>${esc(t.guru?.email||"")}</span></div></div></td>
 <td>${sBadge(t.status)}</td><td class="col-no">${fmtDT(t.diperbarui_pada)}</td><td>${act(t)}</td></tr>`).join("")||emptyRow(5);
 $("ultCards").innerHTML=rows.map(t=>`<div class="mcard"><div class="mcard-top"><b>${esc(t.subjek)}</b>${sBadge(t.status)}</div>
 <span class="mcard-sub">${esc(t.guru?.nama_lengkap||"-")} · ${esc(t.kategori)}</span>
