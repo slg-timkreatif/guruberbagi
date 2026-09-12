@@ -202,9 +202,26 @@ textarea.input{resize:vertical;min-height:90px}
     </div>
     <div id="recStep2" class="hidden">
       <div class="found-box"><div class="nm" id="recFoundNama"></div><div class="em" id="recFoundEmail"></div></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;background:#f8fafc;border:1px solid var(--bd);border-radius:10px;padding:10px 12px">
+        <input type="checkbox" id="recOwner" style="margin-top:2px"/>
+        <label for="recOwner" style="font-size:12.5px;color:var(--mu);line-height:1.5">Saya menyatakan bahwa saya adalah <b>pemilik sah</b> akun ini dan bertanggung jawab atas kerahasiaan PIN.</label>
+      </div>
+      <button class="btn btn-primary" id="btnShowPin" disabled style="margin-top:10px"><i data-lucide="eye"></i> Tampilkan PIN Saya</button>
+      <div id="recPinBox" class="hidden" style="margin-top:12px">
+        <div style="background:var(--ps);border:2px dashed var(--p);border-radius:14px;padding:16px;text-align:center">
+          <span id="recPinValue" style="font-size:32px;font-weight:800;letter-spacing:6px;color:var(--p6)"></span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-ghost" id="recCopyPin" style="flex:1"><i data-lucide="copy"></i> Salin</button>
+          <button class="btn btn-ghost" id="recWaPin" style="flex:1;color:#16a34a;border-color:#bbf7d0"><i data-lucide="message-circle"></i> Catat via WhatsApp</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:var(--mu);font-size:12px">
+        <span style="flex:1;height:1px;background:var(--bd)"></span> atau ganti dengan PIN baru <span style="flex:1;height:1px;background:var(--bd)"></span>
+      </div>
       <div class="field"><label>PIN Baru (5 digit)</label><input class="input" id="recPinBaru" inputmode="numeric" maxlength="5"/></div>
       <div class="field"><label>Ulangi PIN Baru</label><input class="input" id="recPinKonfirm" inputmode="numeric" maxlength="5"/></div>
-      <button class="btn btn-primary" id="btnReset"><i data-lucide="key-round"></i> Atur PIN Baru</button>
+      <button class="btn btn-ghost" id="btnReset"><i data-lucide="refresh-cw"></i> Atur PIN Baru</button>
     </div>
     <div id="recStep3" class="hidden">
       <div class="success-box"><div class="success-icon"><i data-lucide="check"></i></div>
@@ -254,7 +271,7 @@ const SUPABASE_URL="https://qamqqwfzhyiihqyzliwq.supabase.co";
 const ANON="sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x";
 const F=n=>`${SUPABASE_URL}/functions/v1/${n}`;
 const db=window.supabase.createClient(SUPABASE_URL,ANON);
-let token=null,profile=null,myPin=null,pinVisible=false,curTiket=null;
+let token=null,profile=null,myPin=null,pinVisible=false,curTiket=null,recPin=null;
 const fmtT=w=>new Date(w).toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
 const sBadge=s=>({"Baru":'<span class="sbadge sb-baru"><i data-lucide="clock"></i> Baru</span>',
 "Diproses":'<span class="sbadge sb-diproses"><i data-lucide="loader"></i> Diproses</span>',
@@ -388,6 +405,9 @@ $("btnCari").addEventListener("click",async()=>{
   const r=await(await fetch(F("pulihkan-akun"),{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON},body:JSON.stringify({mode:"cari",email,sekolah})})).json();
   if(r.error)return toast(r.error,"error");
   $("recFoundNama").textContent=r.nama;$("recFoundEmail").textContent="Email terdaftar: "+r.email_masked;
+  recPin=r.pin||null;
+  $("recOwner").checked=false;$("btnShowPin").disabled=true;
+  $("recPinBox").classList.add("hidden");$("recPinValue").textContent="";
   $("recStep1").classList.add("hidden");$("recStep2").classList.remove("hidden");lucide.createIcons();
 });
 $("btnReset").addEventListener("click",async()=>{
@@ -398,6 +418,10 @@ $("btnReset").addEventListener("click",async()=>{
   if(r.error)return toast(r.error,"error");
   $("recStep2").classList.add("hidden");$("recStep3").classList.remove("hidden");lucide.createIcons();
 });
+$("recOwner").addEventListener("change",e=>{$("btnShowPin").disabled=!e.target.checked;});
+$("btnShowPin").addEventListener("click",()=>{$("recPinValue").textContent=recPin||"";$("recPinBox").classList.remove("hidden");});
+$("recCopyPin").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(recPin||"");toast("PIN disalin.","success");}catch{toast("Gagal menyalin.","error");}});
+$("recWaPin").addEventListener("click",()=>{const msg=`Catatan PIN Guru Berbagi\n\nNama: ${$("recFoundNama").textContent}\nPIN: ${recPin}\n\nSimpan pesan ini di "Saved Messages" sebagai cadangan.`;window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");});
 $("btnKeLogin").addEventListener("click",()=>{$("recoveryModal").classList.add("hidden");$("loginPin").value="";$("loginPin").focus();});
 
 /* MODAL & TOAST */
