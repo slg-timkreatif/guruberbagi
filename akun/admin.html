@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin Dashboard v2 · Guru Berbagi Selogiri</title>
+<title>Admin Dashboard · Guru Berbagi Selogiri</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{--p:#0D9488;--p6:#0F766E;--ps:#CCFBF1;--bg:#f1f5f9;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--g:#059669;--gs:#ecfdf5;--r:#dc2626;--rs:#fef2f2;--a:#d97706;--as:#fffbeb;--sh:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.07)}
@@ -80,6 +80,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .bar-track{flex:1;background:var(--ps);border-radius:999px;height:10px}.bar-fill{background:var(--p);height:10px;border-radius:999px}.bar-row b{width:30px;text-align:right;font-size:12px}
 .mini-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--bd);font-size:13px}.mini-row span{color:var(--mu)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .health-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--bd);border-radius:10px;margin:0 14px 8px;font-size:12.5px}
 .health-item b{display:block}.health-item span{color:var(--mu)}.hi-fix{flex-shrink:0;padding:7px 12px;font-size:12px}
 .tabs{display:flex;gap:8px;padding:14px 18px 0}.tab{padding:8px 14px;border:1px solid var(--bd);border-bottom:none;border-radius:10px 10px 0 0;background:#f8fafc;font-weight:600;font-size:13px;color:var(--mu);cursor:pointer}
@@ -107,7 +108,6 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .pin-display{background:var(--ps);border:2px dashed var(--p);border-radius:14px;padding:16px;text-align:center;margin:12px 0}.pin-display .pin{font-size:36px;font-weight:800;letter-spacing:8px;color:var(--p6)}
 .confirm-icon{width:54px;height:54px;border-radius:16px;background:var(--rs);color:var(--r);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}.confirm-icon .lucide{width:25px;height:25px}
 .confirm-text{text-align:center;color:var(--mu);line-height:1.6}.confirm-text strong{color:var(--tx)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 /* bottom nav & drawer */
 #bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bd);z-index:50;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
 #bottomNav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--mu);font-size:10.5px;font-weight:600;padding:6px 0;cursor:pointer}
@@ -271,7 +271,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
         </div>
       </section>
 
-      <!-- LAYANAN (ULT) -->
+      <!-- LAYANAN ULT -->
       <section class="page hidden" id="page-ult">
         <div class="card">
           <div class="card-head"><h2><i data-lucide="headphones"></i> Layanan (ULT) <span id="ultBadge" class="count-pill hidden">0</span></h2>
@@ -320,6 +320,16 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
         <div class="field"><label>Satuan Pendidikan</label><select class="input" id="editSekolah"></select></div>
         <div class="field"><label>NPSN (otomatis)</label><input class="input" id="editNpsn" readonly/></div>
       </div>
+      <div class="field" style="margin-top:6px">
+        <label>Penugasan Tambahan (Rangkap)</label>
+        <div id="penList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <select class="input" id="penSekolah"></select>
+          <select class="input" id="penJabatan"></select>
+          <button class="btn btn-ghost" id="penAdd" style="width:auto;flex-shrink:0"><i data-lucide="plus"></i></button>
+        </div>
+        <p class="muted" style="margin-top:6px">Penugasan induk mengikuti kolom Satuan Pendidikan di atas.</p>
+      </div>
     </div>
     <div class="modal-foot"><button class="btn btn-ghost" data-close="guruModal">Batal</button><button class="btn btn-primary" style="width:auto" id="guruSave"><i data-lucide="save"></i> Simpan</button></div>
   </div></div>
@@ -328,7 +338,9 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
   <div id="pinModal" class="modal hidden"><div class="modal-card" style="max-width:420px">
     <div class="modal-head"><h3><i data-lucide="key-round"></i> PIN Akses</h3><button class="modal-close" data-close="pinModal"><i data-lucide="x"></i></button></div>
     <div class="modal-body" style="text-align:center">
-      <p style="font-weight:700" id="pinNama"></p><p class="muted" id="pinSekolah"></p>
+      <p style="font-weight:700" id="pinNama"></p>
+      <p class="muted" id="pinSekolah"></p>
+      <p class="muted" id="pinDilihat" style="margin-top:2px;font-size:11.5px"></p>
       <div class="pin-display"><span class="pin" id="pinValue"></span></div>
       <div style="display:flex;gap:10px"><button class="btn btn-primary" id="copyPin" style="flex:1"><i data-lucide="copy"></i> Salin</button><button class="btn btn-ghost" id="waPin" style="flex:1;color:#16a34a;border-color:#bbf7d0"><i data-lucide="message-circle"></i> WhatsApp</button></div>
       <button class="btn btn-ghost" id="toggleUbahPin" style="width:100%;margin-top:10px"><i data-lucide="pencil"></i> Ganti PIN</button>
@@ -441,7 +453,10 @@ const sBadge=s=>({"Baru":'<span class="sbadge sb-baru"><i data-lucide="clock"></
 "Selesai":'<span class="sbadge sb-selesai"><i data-lucide="check-circle"></i> Selesai</span>',
 "Ditutup":'<span class="sbadge sb-ditutup"><i data-lucide="x-circle"></i> Ditutup</span>'}[s]||"");
 function fixDomain(d){d=d.toLowerCase();const M={"g.mail.com":"gmail.com","gmail.co":"gmail.com","gmail.con":"gmail.com","gmal.com":"gmail.com","gmial.com":"gmail.com","gmail.cm":"gmail.com","gmail.cim":"gmail.com","yahooo.com":"yahoo.com","addmin.sd.belajar.id":"admin.sd.belajar.id"};if(M[d])return M[d];if(d.startsWith("gmail")&&d!=="gmail.com")return "gmail.com";if(d.includes("belajar.id"))return d.replace("addmin","admin");return d;}
-let allGuru=[],sekolahList=[],jabatanList=[],roleList=[],ultList=[],confirmFn=null,delId=null,curPinId=null,curGuruId=null,curSekId=null,curJabId=null,curUlt=null,curTab="jabatan";
+const penOf=gid=>penugasanList.filter(p=>p.guru_id===gid);
+const isRangkap=gid=>penOf(gid).length>1;
+const rangkapChip=gid=>isRangkap(gid)?' <span class="chip" style="margin-top:0">Rangkap</span>':"";
+let allGuru=[],sekolahList=[],jabatanList=[],roleList=[],ultList=[],penugasanList=[],confirmFn=null,delId=null,curPinId=null,curGuruId=null,curSekId=null,curJabId=null,curUlt=null,curTab="jabatan";
 
 (async()=>{const{data:{session}}=await db.auth.getSession();if(session)enterApp();lucide.createIcons();})();
 db.auth.onAuthStateChange(e=>{if(e==="SIGNED_OUT")location.reload();});
@@ -454,12 +469,13 @@ $("togglePass").addEventListener("click",()=>{const i=$("loginPassword");const s
 
 async function enterApp(){$("loginView").classList.add("hidden");$("appRoot").classList.remove("hidden");await loadData();showPage("beranda");}
 async function loadData(){
-const[g,s,j,r]=await Promise.all([
+const[g,s,j,r,pg]=await Promise.all([
 db.from("guru").select("*").order("waktu_input",{ascending:false}),
 db.from("sekolah").select("*").order("nama"),
 db.from("jabatan").select("*").order("level","nama"),
-db.from("role").select("*").order("level")]);
-allGuru=g.data||[];sekolahList=s.data||[];jabatanList=j.data||[];roleList=r.data||[];renderAll();}
+db.from("role").select("*").order("level"),
+db.from("penugasan").select("id,guru_id,jenis,aktif,sekolah_id,jabatan_id,sekolah(nama),jabatan(nama)").eq("aktif",true)]);
+allGuru=g.data||[];sekolahList=s.data||[];jabatanList=j.data||[];roleList=r.data||[];penugasanList=pg.data||[];renderAll();}
 function renderAll(){renderBeranda();renderGtk();renderSekolah();renderMaster();renderAnalitik();renderKesehatan();loadULT();fillPrintScope();lucide.createIcons();}
 
 function showPage(p){document.querySelectorAll(".page").forEach(el=>el.classList.add("hidden"));$("page-"+p).classList.remove("hidden");
@@ -500,8 +516,8 @@ function renderGtk(){const sel=$("gtkSchool"),cur=sel.value;
 sel.innerHTML='<option value="semua">Semua Sekolah</option>'+sekolahList.map(s=>`<option value="${esc(s.nama)}">${esc(s.nama)}${s.aktif?"":" (nonaktif)"}</option>`).join("");
 if([...sel.options].some(o=>o.value===cur))sel.value=cur;
 const rows=gtkFiltered();$("gtkCount").textContent=`Menampilkan ${rows.length} dari ${allGuru.length} data`;
-$("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru"><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${gtkActs(g)}</td></tr>`).join("")||emptyRow(8);
-$("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("")||"<p class='muted'>Tidak ada data.</p>";}
+$("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru"><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${gtkActs(g)}</td></tr>`).join("")||emptyRow(8);
+$("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("")||"<p class='muted'>Tidak ada data.</p>";}
 
 /* ---------- SEKOLAH ---------- */
 function renderSekolah(){const q=$("sekSearch").value.trim().toLowerCase(),st=$("sekStatus").value;
@@ -592,6 +608,7 @@ const opts=sekolahList.map(s=>`<option value="${esc(s.nama)}">${esc(s.nama)}${s.
 $("editSekolah").innerHTML=(sekolahList.some(s=>s.nama===g.satuan_pendidikan)?"":`<option value="${esc(g.satuan_pendidikan)}">${esc(g.satuan_pendidikan)}</option>`)+opts;
 $("editSekolah").value=g.satuan_pendidikan;
 $("editNpsn").value=(sekolahList.find(s=>s.nama===g.satuan_pendidikan)?.npsn)||g.npsn;
+fillPenSelects();renderPenList();
 $("guruModal").classList.remove("hidden");}
 $("editSekolah").onchange=()=>{$("editNpsn").value=(sekolahList.find(s=>s.nama===$("editSekolah").value)?.npsn)||"";};
 $("guruSave").onclick=async()=>{const payload={nama_lengkap:$("editNama").value.trim(),nip:$("editNip").value.trim()||null,email:$("editEmail").value.trim().toLowerCase(),jabatan:$("editJabatan").value.trim(),satuan_pendidikan:$("editSekolah").value,npsn:$("editNpsn").value.trim()};
@@ -599,10 +616,27 @@ if(!payload.nama_lengkap||!payload.email)return toast("Nama dan email wajib diis
 const{error}=await db.from("guru").update(payload).eq("id",curGuruId);if(error)return toast(error.message,"error");
 $("guruModal").classList.add("hidden");toast("Data GTK diperbarui.","success");await loadData();};
 
+/* ---------- PENUGASAN ---------- */
+function renderPenList(){const rows=penOf(curGuruId).filter(p=>p.jenis==="Rangkap");
+$("penList").innerHTML=rows.length?rows.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:12.5px"><span><b>${esc(p.sekolah?.nama||"-")}</b> · ${esc(p.jabatan?.nama||"-")}</span><button class="act-btn del" data-pendel="${p.id}" title="Lepas penugasan"><i data-lucide="trash-2"></i></button></div>`).join(""):`<p class="muted">Tidak ada penugasan tambahan.</p>`;
+lucide.createIcons();}
+function fillPenSelects(){$("penSekolah").innerHTML='<option value="">Sekolah...</option>'+sekolahList.filter(s=>s.aktif).map(s=>`<option value="${s.id}">${esc(s.nama)}</option>`).join("");
+$("penJabatan").innerHTML='<option value="">Jabatan...</option>'+jabatanList.map(j=>`<option value="${j.id}">${esc(j.nama)}</option>`).join("");}
+$("penAdd").addEventListener("click",async()=>{const sid=+$("penSekolah").value,jid=+$("penJabatan").value;
+if(!sid||!jid)return toast("Pilih sekolah dan jabatan penugasan.","error");
+const{error}=await db.from("penugasan").insert({guru_id:curGuruId,sekolah_id:sid,jabatan_id:jid,jenis:"Rangkap"});
+if(error)return toast(error.message,"error");
+toast("Penugasan rangkap ditambahkan.","success");await loadData();openGuru(curGuruId);});
+$("penList").addEventListener("click",async e=>{const b=e.target.closest("[data-pendel]");if(!b)return;
+const{error}=await db.from("penugasan").delete().eq("id",+b.dataset.pendel);
+if(error)return toast(error.message,"error");
+toast("Penugasan dilepas.","success");await loadData();openGuru(curGuruId);});
+
 /* ---------- PIN ---------- */
 function openPin(id){const g=allGuru.find(x=>x.id===id);if(!g)return;curPinId=id;
 $("ubahPinBox").classList.add("hidden");$("inputPinBaru").value="";$("pinBaruInfo").textContent="";
 $("pinNama").textContent=g.nama_lengkap;$("pinSekolah").textContent=g.satuan_pendidikan;$("pinValue").textContent=g.pin;
+$("pinDilihat").textContent=g.pin_dilihat_pada?("PIN terakhir dilihat via pemulihan: "+fmtDT(g.pin_dilihat_pada)):"";
 $("pinModal").classList.remove("hidden");}
 $("copyPin").onclick=async()=>{try{await navigator.clipboard.writeText($("pinValue").textContent);toast("PIN disalin.","success");}catch{toast("Gagal menyalin.","error");}};
 $("waPin").onclick=()=>{const g=allGuru.find(x=>x.id===curPinId);if(!g)return;
