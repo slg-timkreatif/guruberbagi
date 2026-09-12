@@ -69,6 +69,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
 .cell-guru strong{display:block;font-weight:600}.cell-guru span{display:block;font-size:12px;color:var(--mu);margin-top:2px}
 .thumbwrap{width:34px;height:34px;border-radius:50%;background:var(--ps);color:var(--p6);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;position:relative;overflow:hidden;flex-shrink:0}
 .thumbwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tw-init{font-style:normal;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
 .thumbwrap.big{width:64px;height:64px;font-size:24px}
 .pin-mask{letter-spacing:2px;color:var(--mu)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}.badge .dot{width:6px;height:6px;border-radius:50%}
@@ -315,7 +316,7 @@ tbody td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:midd
     <div class="modal-head"><h3><i data-lucide="pencil"></i> Edit Data GTK</h3><button class="modal-close" data-close="guruModal"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
-        <span class="thumbwrap big" id="fotoEditWrap"><i id="fotoEditInit" style="font-style:normal">G</i><img id="fotoEditImg" src="" alt="" onerror="this.remove()"/></span>
+        <span class="thumbwrap big" id="fotoEditWrap"><i id="fotoEditInit" class="tw-init">G</i><img id="fotoEditImg" src="" alt="" onerror="this.style.display='none'" onload="this.style.display=''"/></span>
         <div style="flex:1">
           <input type="file" id="fileEditFoto" accept="image/*" style="display:none"/>
           <button class="btn btn-ghost btn-sm" id="btnEditFoto" style="width:100%"><i data-lucide="camera"></i> Ganti Foto GTK</button>
@@ -469,7 +470,7 @@ function fixDomain(d){d=d.toLowerCase();const M={"g.mail.com":"gmail.com","gmail
 const penOf=gid=>penugasanList.filter(p=>p.guru_id===gid);
 const isRangkap=gid=>penOf(gid).length>1;
 const rangkapChip=gid=>isRangkap(gid)?' <span class="chip" style="margin-top:0">Rangkap</span>':"";
-const thumbImg=g=>`<span class="thumbwrap">${esc((g.nama_lengkap||"G").trim().charAt(0).toUpperCase())}<img loading="lazy" src="${FOTO_BASE}/${g.id}_t.webp" onerror="this.remove()"></span>`;
+const thumbImg=g=>`<span class="thumbwrap"><i class="tw-init">${esc((g.nama_lengkap||"G").trim().charAt(0).toUpperCase())}</i><img loading="lazy" src="${FOTO_BASE}/${g.id}_t.webp" onerror="this.style.display='none'" onload="this.style.display=''"></span>`;
 function kompresFoto(file,maxSize,quality){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();
 img.onload=()=>{URL.revokeObjectURL(url);let w=img.width,h=img.height;const sc=Math.min(1,maxSize/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
 const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
@@ -628,7 +629,7 @@ $("editSekolah").innerHTML=(sekolahList.some(s=>s.nama===g.satuan_pendidikan)?""
 $("editSekolah").value=g.satuan_pendidikan;
 $("editNpsn").value=(sekolahList.find(s=>s.nama===g.satuan_pendidikan)?.npsn)||g.npsn;
 $("fotoEditInit").textContent=(g.nama_lengkap||"G").trim().charAt(0).toUpperCase();
-$("fotoEditImg").src=FOTO_BASE+"/"+g.id+".webp";
+const fe=$("fotoEditImg");fe.style.display="";fe.src=FOTO_BASE+"/"+g.id+".webp";
 fillPenSelects();renderPenList();
 $("guruModal").classList.remove("hidden");}
 $("editSekolah").onchange=()=>{$("editNpsn").value=(sekolahList.find(s=>s.nama===$("editSekolah").value)?.npsn)||"";};
@@ -647,8 +648,8 @@ try{
   const thumb=await kompresFoto(file,96,0.7);
   const r=await(await fetch(`${SUPABASE_URL}/functions/v1/simpan-foto-gtk`,{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({foto,thumb,guru_id:curGuruId})})).json();
   if(r.error)throw new Error(r.error);
-  $("fotoEditImg").src=r.url+"?v="+Date.now();
-  document.querySelectorAll(`img[src^="${FOTO_BASE}/${curGuruId}_t.webp"]`).forEach(im=>{im.src=r.thumb_url+"?v="+Date.now();});
+  const fe=$("fotoEditImg");fe.style.display="";fe.src=r.url+"?v="+Date.now();
+  document.querySelectorAll(`img[src^="${FOTO_BASE}/${curGuruId}_t.webp"]`).forEach(im=>{im.style.display="";im.src=r.thumb_url+"?v="+Date.now();});
   toast("Foto GTK diperbarui.","success");
 }catch(err){toast(err.message||"Gagal unggah foto.","error");}
 e.target.value="";});
