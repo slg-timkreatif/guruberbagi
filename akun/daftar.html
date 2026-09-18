@@ -1,248 +1,456 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Daftar Akun — Guru Berbagi Selogiri</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0D9488"/>
+<title>Buat Akun Baru · Guru Berbagi Selogiri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
-  body{background:linear-gradient(135deg,#0D9488 0%,#0891B2 100%);min-height:100vh;padding:20px;display:flex;align-items:center;justify-content:center}
-  .container{background:#fff;max-width:500px;width:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:30px}
-  .header{text-align:center;margin-bottom:22px}
-  .logo{max-width:78px;margin-bottom:10px}
-  .header h1{color:#0F172A;font-size:21px;font-weight:800}
-  .subtitle{color:#64748b;font-size:13px;margin-top:4px}
-  .form-group{margin-bottom:16px}
-  .form-group label{display:block;margin-bottom:6px;color:#334155;font-weight:600;font-size:13px}
-  .form-group input[type="text"],.form-group input[type="email"],.form-group select{width:100%;padding:11px 12px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:.15s}
-  .form-group input:focus,.form-group select:focus{border-color:#0D9488;box-shadow:0 0 0 3px rgba(13,148,136,.15)}
-  .form-group input[readonly]{background:#f8fafc;cursor:not-allowed}
-  .checkbox-group{display:flex;align-items:center;margin-top:8px;font-size:12.5px;color:#555}
-  .checkbox-group input{margin-right:6px}
-  .suggest{margin-top:8px;font-size:12.5px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:8px 10px;color:#92400e;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .suggest button{background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer}
-  .btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,#0D9488,#0891B2);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:.15s;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px}
-  .btn-primary .lucide{width:17px;height:17px}
-  .btn-primary:hover{opacity:.92}
-  .btn-primary:disabled{opacity:.6;cursor:not-allowed}
-  .footer-link{text-align:center;margin-top:18px;font-size:13px;color:#94a3b8}
-  .footer-link a{color:#0F766E;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px}
-  .footer-link a:hover{text-decoration:underline}
-  .footer-link .lucide{width:13px;height:13px}
-  .modal{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
-  .modal-content{background:#fff;max-width:420px;width:90%;border-radius:16px;overflow:hidden;animation:pop .25s ease}
-  @keyframes pop{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
-  .modal-header{background:#0F766E;color:#fff;padding:20px;text-align:center}
-  .modal-header.error{background:#e74c3c}
-  .modal-header.duplikat{background:#d97706}
-  .modal-header h2{font-size:17px}
-  .modal-body{padding:25px;text-align:center}
-  .pin-box{background:#CCFBF1;border-left:5px solid #0D9488;padding:18px;margin:18px 0;border-radius:8px}
-  .pin-number{font-size:34px;font-weight:800;letter-spacing:6px;color:#0F766E}
-  .pin-note{font-size:12px;color:#777;margin-top:12px}
-  .modal-actions{display:flex;gap:10px;margin:0 25px 25px}
-  .modal-actions .btn-primary{flex:1;margin:0;width:auto}
-  .hidden{display:none!important}
-  @media(max-width:480px){.container{padding:20px}.pin-number{font-size:26px}}
+/* ================= TOKENS v5 ================= */
+:root{
+  --acc:#0D9488;--acc-hover:#0F766E;--acc-soft:#CCFBF1;--acc-text:#0F766E;
+  --bg:#F4F6F8;--card:#FFFFFF;--border:#E2E8F0;
+  --text:#0F172A;--text-muted:#64748B;--text-soft:#94A3B8;
+  --ok:#059669;--ok-soft:#ECFDF5;
+  --warn:#D97706;--warn-soft:#FFFBEB;--warn-border:#FDE68A;--warn-text:#92400E;
+  --err:#DC2626;--err-soft:#FEF2F2;
+  --fs-xs:11px;--fs-sm:12px;--fs-base:14px;--fs-md:16px;--fs-lg:20px;--fs-xl:24px;--fs-2xl:32px;
+  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-full:999px;
+  --sh-sm:0 1px 2px rgba(15,23,42,.05);
+  --sh-md:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.07);
+  --sh-float:0 1px 2px rgba(15,23,42,.06),0 16px 40px rgba(15,23,42,.18);
+  --dur-fast:120ms;--dur-base:180ms;--dur-slow:260ms;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;background:linear-gradient(160deg,#0D9488,#0891B2);display:flex;align-items:center;justify-content:center;padding:20px;font-size:var(--fs-base);color:var(--text);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:var(--fs-base);color:inherit}
+.hidden{display:none!important}
+.lucide{width:18px;height:18px;flex-shrink:0}
+:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:var(--r-sm)}
+.card :focus-visible,.modal-card :focus-visible{outline-color:var(--acc)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ================= UTIL ================= */
+.spin{animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ================= WRAP & BRAND ================= */
+.wrap{width:100%;max-width:500px}
+.brand{text-align:center;color:#fff;margin-bottom:22px}
+.logo{width:80px;height:80px;border-radius:var(--r-lg);background:#fff;padding:10px;box-shadow:0 12px 32px rgba(0,0,0,.22);margin:0 auto 16px}
+.logo img{width:100%;height:100%;object-fit:contain}
+.brand h1{font-size:var(--fs-xl);font-weight:800;letter-spacing:-.015em;line-height:1.15;text-shadow:0 2px 12px rgba(0,0,0,.15)}
+.brand .sub{font-size:13px;line-height:1.5;margin-top:8px;color:rgba(255,255,255,.9);font-weight:500}
+
+/* ================= CARD ================= */
+.card{background:var(--card);border-radius:var(--r-lg);padding:24px 20px;box-shadow:var(--sh-float)}
+
+/* ================= FORM SECTION ================= */
+.form-section{margin-bottom:24px}
+.form-section:last-of-type{margin-bottom:22px}
+.kicker{display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;padding-left:2px}
+.kicker::before{content:"";width:4px;height:14px;background:var(--acc);border-radius:2px;flex-shrink:0}
+
+/* ================= FORM FIELD ================= */
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field>label{display:block;font-size:var(--fs-sm);font-weight:600;color:var(--text-muted);margin-bottom:7px}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:var(--r-md);outline:none;background:var(--card);color:var(--text);transition:border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease)}
+.field input:focus,.field select:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+.field input[readonly]{background:#F8FAFC;color:var(--text-muted);cursor:not-allowed}
+.field input[readonly]:focus{border-color:var(--border);box-shadow:none}
+.field input::placeholder{color:var(--text-soft)}
+.field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.field .field-extra{margin-top:10px}
+
+/* ================= CHECKBOX ROW ================= */
+.checkbox-row{display:flex;align-items:flex-start;gap:10px;margin-top:10px;padding:12px 14px;background:#F8FAFC;border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease)}
+.checkbox-row:hover{background:#F1F5F9;border-color:#CBD5E1}
+.checkbox-row input{margin-top:2px;accent-color:var(--acc);flex-shrink:0;width:16px;height:16px;cursor:pointer}
+.checkbox-row span{font-size:var(--fs-sm);color:var(--text);line-height:1.5;font-weight:500}
+
+/* ================= EMAIL SUGGESTION ================= */
+.email-suggest{margin-top:10px;padding:12px 14px;background:var(--warn-soft);border:1px solid var(--warn-border);border-radius:var(--r-md);font-size:var(--fs-sm);color:var(--warn-text);display:flex;align-items:center;gap:10px;flex-wrap:wrap;animation:fade var(--dur-base) var(--ease);line-height:1.4}
+.email-suggest .lucide{width:16px;height:16px;flex-shrink:0}
+.email-suggest b{font-weight:700;color:#78350F;word-break:break-all;min-width:0}
+.email-suggest button{margin-left:auto;background:var(--warn);color:#fff;border:none;border-radius:var(--r-sm);padding:6px 12px;font-size:var(--fs-sm);font-weight:700;cursor:pointer;transition:background var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease);white-space:nowrap;font-family:inherit}
+.email-suggest button:hover{background:#B45309}
+.email-suggest button:active{transform:scale(.96)}
+
+/* ================= BUTTONS ================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border:none;border-radius:var(--r-md);font-weight:700;font-size:var(--fs-base);cursor:pointer;transition:transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease);text-decoration:none;line-height:1.2}
+.btn .lucide{width:17px;height:17px}
+.btn:active{transform:scale(.98)}
+.btn-block{width:100%}
+.btn-primary{background:var(--acc);color:#fff}
+.btn-primary:hover{background:var(--acc-hover)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+.btn-ghost{background:#F1F5F9;color:var(--text-muted);border:none}
+.btn-ghost:hover{background:#E2E8F0;color:var(--text)}
+.btn-text,.btn-loader{display:inline-flex;align-items:center;gap:8px}
+.btn-loader{display:none}
+.btn[data-loading="true"] .btn-text{display:none}
+.btn[data-loading="true"] .btn-loader{display:inline-flex}
+
+/* ================= FOOTER LINKS ================= */
+.footer{margin-top:22px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;color:rgba(255,255,255,.88);font-size:var(--fs-sm)}
+.footer a{color:rgba(255,255,255,.88);text-decoration:none;font-weight:500;display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:var(--r-full);transition:background var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.footer a:hover{color:#fff;background:rgba(255,255,255,.12)}
+.footer .lucide{width:13px;height:13px}
+.footer .sep{opacity:.5;user-select:none}
+
+/* ================= MODAL ================= */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:1000}
+.modal-card{background:var(--card);width:100%;max-height:92dvh;border-radius:var(--r-lg) var(--r-lg) 0 0;display:flex;flex-direction:column;animation:sheet var(--dur-slow) var(--ease)}
+@keyframes sheet{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.modal-head h3{font-size:var(--fs-base);font-weight:700}
+.modal-close{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px;display:flex;border-radius:var(--r-sm);transition:background var(--dur-fast) var(--ease)}
+.modal-close:hover{background:#F1F5F9}
+.modal-body{padding:22px 20px;overflow-y:auto;text-align:center}
+.modal-foot{padding:12px 20px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border);display:flex;gap:10px;background:#F8FAFC;flex-shrink:0}
+.modal-foot .btn{flex:1}
+
+/* ================= SUCCESS / DUPLICATE STATE ================= */
+.result-icon{width:58px;height:58px;border-radius:var(--r-md);background:var(--ok-soft);color:var(--ok);display:flex;align-items:center;justify-content:center;margin:4px auto 14px}
+.result-icon .lucide{width:28px;height:28px}
+.result-icon.is-warn{background:var(--warn-soft);color:var(--warn)}
+.result-heading{font-size:var(--fs-md);font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.01em;line-height:1.3}
+.result-heading span{color:var(--acc-text)}
+.result-text{font-size:var(--fs-base);color:var(--text-muted);line-height:1.55;margin-bottom:16px}
+.pin-box{background:linear-gradient(135deg,var(--acc-soft) 0%,#F0FDFA 100%);border-radius:var(--r-md);padding:22px 16px;margin:0 0 16px;position:relative;overflow:hidden}
+.pin-box::before{content:"";position:absolute;top:-60px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,.7),transparent 70%);border-radius:50%;pointer-events:none}
+.pin-box>*{position:relative;z-index:1}
+.pin-value{font-size:var(--fs-2xl);font-weight:800;letter-spacing:8px;color:var(--acc-text);font-variant-numeric:tabular-nums;line-height:1}
+.pin-tip{display:flex;gap:10px;align-items:flex-start;background:#F8FAFC;border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;text-align:left}
+.pin-tip .lucide{width:16px;height:16px;color:var(--warn);flex-shrink:0;margin-top:1px}
+.pin-tip span{font-size:var(--fs-sm);color:var(--text-muted);line-height:1.55}
+
+/* ================= TOAST ================= */
+#toastContainer{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:16px;right:16px;display:flex;flex-direction:column;gap:10px;z-index:1100;align-items:stretch;pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;background:#0F172A;color:#fff;padding:12px 16px;border-radius:var(--r-md);box-shadow:var(--sh-md);animation:slidein var(--dur-base) var(--ease);font-size:var(--fs-base);pointer-events:auto}
+.toast .lucide{width:17px;height:17px}
+.toast.success .lucide{color:#34D399}
+.toast.error .lucide{color:#F87171}
+.toast.out{opacity:0;transform:translateX(12px);transition:opacity var(--dur-slow),transform var(--dur-slow)}
+@keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ================= DESKTOP ================= */
+@media(min-width:640px){
+  .card{padding:28px 26px}
+  .brand h1{font-size:26px}
+  .brand .sub{font-size:14px}
+  .modal{align-items:center;justify-content:center;padding:16px}
+  .modal-card{width:100%;max-width:460px;border-radius:var(--r-lg)}
+  #toastContainer{left:auto;width:380px;bottom:24px;right:24px}
+}
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <img src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo" class="logo" />
-      <h1>Pendaftaran Akun Guru Berbagi</h1>
-      <p class="subtitle">Korwilcambidik Kecamatan Selogiri</p>
-    </div>
+<main class="wrap">
+  <header class="brand">
+    <div class="logo"><img src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo Guru Berbagi Selogiri"/></div>
+    <h1>Buat Akun Baru</h1>
+    <p class="sub">Guru Berbagi · Korwilcambidik Selogiri</p>
+  </header>
 
-    <form id="formDaftar" autocomplete="off">
-      <div class="form-group">
-        <label for="nama">Nama Lengkap (dengan gelar)</label>
-        <input type="text" id="nama" required />
-      </div>
-      <div class="form-group">
-        <label for="email">Email Aktif</label>
-        <input type="email" id="email" required />
-        <div id="emailSuggest" class="suggest hidden">
-          <span>Maksud Anda: <b id="emailSuggestVal"></b>?</span>
-          <button type="button" id="emailSuggestBtn">Gunakan</button>
+  <div class="card">
+    <form id="formDaftar" novalidate>
+      <section class="form-section">
+        <div class="kicker">Data Pribadi</div>
+        <div class="field">
+          <label for="nama">Nama Lengkap (dengan gelar)</label>
+          <input type="text" id="nama" autocomplete="name" required/>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="nip">NIP</label>
-        <input type="text" id="nip" placeholder="18 digit NIP" />
-        <div class="checkbox-group">
-          <input type="checkbox" id="noNip" />
-          <label for="noNip">Saya belum memiliki NIP (Non ASN) — NIP dikosongkan</label>
+        <div class="field">
+          <label for="email">Email Aktif</label>
+          <input type="email" id="email" autocomplete="email" inputmode="email" required/>
+          <div id="emailSuggest" class="email-suggest hidden" role="status">
+            <i data-lucide="alert-triangle" aria-hidden="true"></i>
+            <span>Maksud Anda: <b id="emailSuggestVal"></b>?</span>
+            <button type="button" id="emailSuggestBtn">Gunakan</button>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="jabatan">Jabatan</label>
-        <select id="jabatan" required><option value="">Memuat data...</option></select>
-        <input type="text" id="jabatanLainnya" placeholder="Sebutkan Jabatan Lainnya" style="display:none;margin-top:8px" />
-      </div>
-      <div class="form-group">
-        <label for="satuan">Satuan Pendidikan</label>
-        <select id="satuan" required><option value="">Memuat data...</option></select>
-      </div>
-      <div class="form-group">
-        <label for="npsn">NPSN</label>
-        <input type="text" id="npsn" readonly />
-      </div>
-      <button type="submit" id="btnSubmit" class="btn-primary">
-        <span class="btn-text"><i data-lucide="user-plus"></i> Daftarkan & Generate PIN</span>
-        <span class="btn-loader" style="display:none">Sedang memproses... Mohon tunggu.</span>
+        <div class="field">
+          <label for="nip">NIP</label>
+          <input type="text" id="nip" inputmode="numeric" placeholder="18 digit NIP" autocomplete="off"/>
+          <label class="checkbox-row">
+            <input type="checkbox" id="noNip"/>
+            <span>Belum memiliki NIP (Non ASN)</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <div class="kicker">Instansi & Jabatan</div>
+        <div class="field">
+          <label for="jabatan">Jabatan</label>
+          <select id="jabatan" required><option value="">Memuat data...</option></select>
+          <input type="text" id="jabatanLainnya" class="field-extra" placeholder="Sebutkan jabatan lainnya" style="display:none" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label for="satuan">Satuan Pendidikan</label>
+          <select id="satuan" required><option value="">Memuat data...</option></select>
+        </div>
+        <div class="field">
+          <label for="npsn">NPSN</label>
+          <input type="text" id="npsn" readonly placeholder="Terisi otomatis dari sekolah"/>
+        </div>
+      </section>
+
+      <button type="submit" id="btnSubmit" class="btn btn-primary btn-block">
+        <span class="btn-text"><i data-lucide="user-plus" aria-hidden="true"></i> Daftar & Buat PIN</span>
+        <span class="btn-loader"><i data-lucide="loader" class="spin" aria-hidden="true"></i> Memproses...</span>
       </button>
     </form>
-
-    <div class="footer-link">
-      <a href="index.html"><i data-lucide="arrow-left"></i> Beranda</a> &nbsp;·&nbsp;
-      <a href="guru.html"><i data-lucide="log-in"></i> Masuk Guru</a> &nbsp;·&nbsp;
-      <a href="admin.html"><i data-lucide="shield-check"></i> Admin</a>
-    </div>
   </div>
 
-  <div id="modalPinContainer" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header" id="modalHeader"><h2>Pendaftaran Berhasil!</h2></div>
-      <div class="modal-body">
-        <p>Halo, <strong id="modalNama"></strong>.</p>
-        <p id="modalPesan">PIN Anda adalah:</p>
-        <div class="pin-box"><span id="modalPinValue" class="pin-number"></span></div>
-        <p class="pin-note">*Simpan PIN ini. Jangan bagikan kepada siswa. Lupa PIN? Buka menu "Masuk Guru".</p>
+  <footer class="footer">
+    <a href="index.html"><i data-lucide="arrow-left" aria-hidden="true"></i> Beranda</a>
+    <span class="sep">·</span>
+    <a href="guru.html"><i data-lucide="log-in" aria-hidden="true"></i> Masuk</a>
+    <span class="sep">·</span>
+    <a href="admin.html"><i data-lucide="shield-check" aria-hidden="true"></i> Admin</a>
+  </footer>
+</main>
+
+<!-- ============ MODAL HASIL ============ -->
+<div id="modalPin" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalPinTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="modalPinTitle">Pendaftaran Berhasil</h3>
+      <button class="modal-close" data-close="modalPin" aria-label="Tutup">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="result-icon" id="modalIcon">
+        <i data-lucide="check" aria-hidden="true"></i>
       </div>
-      <div class="modal-actions">
-        <button id="btnTutupModal" class="btn-primary"><i data-lucide="x"></i> Tutup</button>
-        <a href="guru.html" class="btn-primary"><i data-lucide="log-in"></i> Masuk Pusat Akun</a>
+      <h2 class="result-heading" id="modalHeading">Selamat, <span id="modalNama"></span>!</h2>
+      <p class="result-text" id="modalPesan">PIN Anda siap digunakan.</p>
+      <div class="pin-box">
+        <div class="pin-value" id="modalPinValue"></div>
+      </div>
+      <div class="pin-tip">
+        <i data-lucide="lightbulb" aria-hidden="true"></i>
+        <span id="modalTip">Simpan PIN ini di tempat aman. Jangan bagikan ke siapa pun. Kalau lupa, Anda bisa memulihkan lewat menu "Lupa PIN" di halaman masuk.</span>
       </div>
     </div>
-  </div>
-
-  <div id="modalError" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header error"><h2>Terjadi Kesalahan</h2></div>
-      <div class="modal-body"><p id="errorPesan"></p></div>
-      <div class="modal-actions"><button id="btnTutupError" class="btn-primary"><i data-lucide="x"></i> Tutup</button></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close="modalPin">Tutup</button>
+      <a href="guru.html" class="btn btn-primary"><i data-lucide="log-in" aria-hidden="true"></i> Masuk Sekarang</a>
     </div>
   </div>
+</div>
+
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-  const SUPABASE_URL = "https://qamqqwfzhyiihqyzliwq.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x";
-  const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/register-guru`;
-  const $ = (id) => document.getElementById(id);
-  let db = null, lastSuggestion = null;
+const $=id=>document.getElementById(id);
+const SUPABASE_URL="https://qamqqwfzhyiihqyzliwq.supabase.co";
+const ANON="sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x";
+const FUNCTION_URL=`${SUPABASE_URL}/functions/v1/register-guru`;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let db=null,lastSuggestion=null,_lastFocus=null;
 
-  // Penjaga sesi: yang sudah punya akun dilempar ke Pusat Akun
-  (async () => {
-    const t = localStorage.getItem("gb_token");
-    if (!t) return;
-    try {
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/verify-guru`, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${t}` } });
-      const r = await res.json();
-      if (r.valid) location.replace("guru.html"); else localStorage.removeItem("gb_token");
-    } catch (e) {}
-  })();
+/* ================= MODAL HELPERS ================= */
+function openModal(id){
+  _lastFocus=document.activeElement;
+  const m=$(id);
+  m.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+  setTimeout(()=>m.querySelector(".modal-close").focus(),80);
+  lucide.createIcons();
+}
+function closeModal(id){
+  $(id).classList.add("hidden");
+  if(!document.querySelector(".modal:not(.hidden)"))document.body.style.overflow="";
+  if(_lastFocus&&_lastFocus.focus)_lastFocus.focus();
+  _lastFocus=null;
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    const open=document.querySelector(".modal:not(.hidden)");
+    if(open){closeModal(open.id);e.preventDefault();}
+    return;
+  }
+  if(e.key==="Tab"){
+    const open=document.querySelector(".modal:not(.hidden)");
+    if(!open)return;
+    const fs=open.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+    if(!fs.length){e.preventDefault();return;}
+    const first=fs[0],last=fs[fs.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+});
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id);}));
 
-  document.addEventListener("DOMContentLoaded", () => {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    loadDropdowns(); setupEventListeners(); lucide.createIcons();
+/* ================= TOAST ================= */
+function toast(msg,type="success"){
+  const t=document.createElement("div");t.className="toast "+type;
+  t.innerHTML=`<i data-lucide="${type==="success"?"check":"alert-triangle"}" aria-hidden="true"></i><span>${esc(msg)}</span>`;
+  $("toastContainer").appendChild(t);lucide.createIcons();
+  setTimeout(()=>{t.classList.add("out");setTimeout(()=>t.remove(),300);},3400);
+}
+
+/* ================= SESSION GUARD ================= */
+(async()=>{
+  const t=localStorage.getItem("gb_token");
+  if(!t)return;
+  try{
+    const r=await(await fetch(`${SUPABASE_URL}/functions/v1/verify-guru`,{headers:{apikey:ANON,Authorization:`Bearer ${t}`}})).json();
+    if(r.valid)location.replace("guru.html");
+    else localStorage.removeItem("gb_token");
+  }catch(e){}
+})();
+
+/* ================= EMAIL CORRECTOR ================= */
+function fixDomain(d){
+  d=d.toLowerCase().trim();
+  const M={"g.mail.com":"gmail.com","gmail.co":"gmail.com","gmail.con":"gmail.com","gmal.com":"gmail.com","gmial.com":"gmail.com","gmail.cm":"gmail.com","gmail.cim":"gmail.com","yahooo.com":"yahoo.com","addmin.sd.belajar.id":"admin.sd.belajar.id"};
+  if(M[d])return M[d];
+  if(d.startsWith("gmail")&&d!=="gmail.com")return "gmail.com";
+  if(d.includes("belajar.id"))return d.replace("addmin","admin");
+  return d;
+}
+function checkEmailSuggestion(){
+  const v=$("email").value.trim().toLowerCase();
+  const at=v.indexOf("@");
+  const box=$("emailSuggest");
+  if(at<1||!v.includes(".")){box.classList.add("hidden");lastSuggestion=null;return;}
+  const local=v.slice(0,at),dom=v.slice(at+1);
+  const fixed=fixDomain(dom);
+  if(fixed!==dom){lastSuggestion=`${local}@${fixed}`;$("emailSuggestVal").textContent=lastSuggestion;box.classList.remove("hidden");lucide.createIcons();}
+  else{box.classList.add("hidden");lastSuggestion=null;}
+}
+$("emailSuggestBtn").addEventListener("click",()=>{
+  if(lastSuggestion){$("email").value=lastSuggestion;$("emailSuggest").classList.add("hidden");lastSuggestion=null;}
+});
+
+/* ================= LOAD DROPDOWNS ================= */
+async function loadDropdowns(){
+  try{
+    db=window.supabase.createClient(SUPABASE_URL,ANON);
+    const [{data:jabatanData},{data:sekolahData}]=await Promise.all([
+      db.from("jabatan").select("nama").order("nama"),
+      db.from("sekolah").select("nama, npsn").eq("aktif",true).order("nama"),
+    ]);
+    const j=$("jabatan");
+    j.innerHTML='<option value="">-- Pilih Jabatan --</option>';
+    (jabatanData||[]).forEach(x=>j.add(new Option(x.nama,x.nama)));
+    j.add(new Option("Lainnya...","__lainnya__"));
+    const s=$("satuan");
+    s.innerHTML='<option value="">-- Pilih Satuan Pendidikan --</option>';
+    window.sekolahMap={};
+    (sekolahData||[]).forEach(x=>{s.add(new Option(x.nama,x.nama));window.sekolahMap[x.nama]=x.npsn;});
+  }catch(e){toast("Gagal memuat data. Silakan refresh halaman.","error");}
+}
+
+/* ================= FORM EVENTS ================= */
+function setupEvents(){
+  $("email").addEventListener("input",checkEmailSuggestion);
+
+  $("noNip").addEventListener("change",e=>{
+    const nip=$("nip");
+    nip.value="";
+    nip.readOnly=e.target.checked;
+    nip.placeholder=e.target.checked?"Non ASN: NIP dikosongkan":"18 digit NIP";
   });
 
-  function fixDomain(d) {
-    d = d.toLowerCase().trim();
-    const M = { "g.mail.com": "gmail.com", "gmail.co": "gmail.com", "gmail.con": "gmail.com", "gmal.com": "gmail.com", "gmial.com": "gmail.com", "gmail.cm": "gmail.com", "gmail.cim": "gmail.com", "yahooo.com": "yahoo.com", "addmin.sd.belajar.id": "admin.sd.belajar.id" };
-    if (M[d]) return M[d];
-    if (d.startsWith("gmail") && d !== "gmail.com") return "gmail.com";
-    if (d.includes("belajar.id")) return d.replace("addmin", "admin");
-    return d;
-  }
-  function checkEmailSuggestion() {
-    const v = $("email").value.trim().toLowerCase();
-    const at = v.indexOf("@");
-    const box = $("emailSuggest");
-    if (at < 1 || !v.includes(".")) { box.classList.add("hidden"); lastSuggestion = null; return; }
-    const local = v.slice(0, at), dom = v.slice(at + 1);
-    const fixed = fixDomain(dom);
-    if (fixed !== dom) { lastSuggestion = `${local}@${fixed}`; $("emailSuggestVal").textContent = lastSuggestion; box.classList.remove("hidden"); }
-    else { box.classList.add("hidden"); lastSuggestion = null; }
-  }
-  $("emailSuggestBtn").addEventListener("click", () => { if (lastSuggestion) { $("email").value = lastSuggestion; $("emailSuggest").classList.add("hidden"); } });
+  $("jabatan").addEventListener("change",e=>{
+    const lain=$("jabatanLainnya");
+    const show=e.target.value==="__lainnya__";
+    lain.style.display=show?"block":"none";
+    if(show){setTimeout(()=>lain.focus(),80);}
+    else{lain.value="";}
+  });
 
-  async function loadDropdowns() {
-    try {
-      const [{ data: jabatanData }, { data: sekolahData }] = await Promise.all([
-        db.from("jabatan").select("nama").order("nama"),
-        db.from("sekolah").select("nama, npsn").eq("aktif", true).order("nama"),
-      ]);
-      const j = $("jabatan");
-      j.innerHTML = '<option value="">-- Pilih Jabatan --</option>';
-      (jabatanData || []).forEach((x) => j.add(new Option(x.nama, x.nama)));
-      j.add(new Option("Lainnya...", "__lainnya__"));
-      const s = $("satuan");
-      s.innerHTML = '<option value="">-- Pilih Satuan Pendidikan --</option>';
-      window.sekolahMap = {};
-      (sekolahData || []).forEach((x) => { s.add(new Option(x.nama, x.nama)); window.sekolahMap[x.nama] = x.npsn; });
-    } catch (e) { alert("Gagal memuat data. Silakan refresh."); }
-  }
+  $("satuan").addEventListener("change",e=>{
+    $("npsn").value=(window.sekolahMap&&window.sekolahMap[e.target.value])||"";
+  });
 
-  function setupEventListeners() {
-    $("email").addEventListener("input", checkEmailSuggestion);
-    $("noNip").addEventListener("change", (e) => {
-      const nip = $("nip");
-      nip.value = "";
-      nip.readOnly = e.target.checked;
-      nip.placeholder = e.target.checked ? "Non ASN: NIP dikosongkan" : "18 digit NIP";
+  $("formDaftar").addEventListener("submit",handleSubmit);
+}
+
+/* ================= SUBMIT ================= */
+async function handleSubmit(e){
+  e.preventDefault();
+  const btn=$("btnSubmit");
+  const nama=$("nama").value.trim();
+  const email=$("email").value.trim().toLowerCase();
+  const nip=$("noNip").checked?null:($("nip").value.trim()||null);
+  const jRaw=$("jabatan").value;
+  const jLain=$("jabatanLainnya").value.trim();
+  const jabatan=jRaw==="__lainnya__"?jLain:jRaw;
+  const satuan=$("satuan").value;
+  const npsn=$("npsn").value.trim();
+
+  if(!nama)return toast("Nama lengkap wajib diisi.","error");
+  if(!email)return toast("Email wajib diisi.","error");
+  if(!jabatan)return toast("Jabatan wajib dipilih.","error");
+  if(!satuan)return toast("Satuan pendidikan wajib dipilih.","error");
+
+  btn.disabled=true;btn.dataset.loading="true";
+  try{
+    const res=await fetch(FUNCTION_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json",apikey:ANON,Authorization:`Bearer ${ANON}`},
+      body:JSON.stringify({nama,nip,jabatan,satuan,npsn,email}),
     });
-    $("jabatan").addEventListener("change", (e) => {
-      const lain = $("jabatanLainnya");
-      const show = e.target.value === "__lainnya__";
-      lain.style.display = show ? "block" : "none";
-      lain.required = show;
-      if (!show) lain.value = "";
-    });
-    $("satuan").addEventListener("change", (e) => { $("npsn").value = (window.sekolahMap && window.sekolahMap[e.target.value]) || ""; });
-    $("formDaftar").addEventListener("submit", handleSubmit);
-    $("btnTutupModal").addEventListener("click", () => $("modalPinContainer").classList.add("hidden"));
-    $("btnTutupError").addEventListener("click", () => $("modalError").classList.add("hidden"));
+    const r=await res.json();
+    if(r.status==="sukses"){
+      tampilkanModal(r.nama,r.pin,"sukses");
+      $("formDaftar").reset();
+      $("nip").readOnly=false;
+      $("nip").placeholder="18 digit NIP";
+      $("jabatanLainnya").style.display="none";
+      $("jabatanLainnya").value="";
+      $("emailSuggest").classList.add("hidden");
+      $("npsn").value="";
+    }else if(r.status==="duplikat"){
+      tampilkanModal(r.nama,r.pin,"duplikat");
+    }else{
+      toast(r.error||"Terjadi kesalahan. Coba lagi.","error");
+    }
+  }catch(err){
+    toast("Gagal terhubung ke server. Periksa koneksi Anda.","error");
+  }finally{
+    btn.disabled=false;delete btn.dataset.loading;
   }
+}
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const btn = $("btnSubmit"), txt = btn.querySelector(".btn-text"), lod = btn.querySelector(".btn-loader");
-    const nama = $("nama").value.trim(), email = $("email").value.trim();
-    const nip = $("noNip").checked ? null : ($("nip").value.trim() || null);
-    const jRaw = $("jabatan").value, jLain = $("jabatanLainnya").value.trim();
-    const jabatan = jRaw === "__lainnya__" ? jLain : jRaw;
-    const satuan = $("satuan").value, npsn = $("npsn").value.trim();
-    if (!jabatan) { tampilkanError("Mohon pilih atau isi jabatan."); return; }
-    btn.disabled = true; txt.style.display = "none"; lod.style.display = "inline";
-    try {
-      const res = await fetch(FUNCTION_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-        body: JSON.stringify({ nama, nip, jabatan, satuan, npsn, email }),
-      });
-      const r = await res.json();
-      if (r.status === "sukses") { tampilkanModal(r.nama, r.pin, "sukses"); $("formDaftar").reset(); $("nip").readOnly = false; $("jabatanLainnya").style.display = "none"; $("emailSuggest").classList.add("hidden"); }
-      else if (r.status === "duplikat") { tampilkanModal(r.nama, r.pin, "duplikat"); }
-      else { tampilkanError(r.error || "Terjadi kesalahan tidak diketahui."); }
-    } catch (err) { tampilkanError("Gagal terhubung ke server: " + err.message); }
-    finally { btn.disabled = false; txt.style.display = "inline"; lod.style.display = "none"; }
-  }
+/* ================= MODAL HASIL ================= */
+function tampilkanModal(nama,pin,tipe){
+  const isDup=tipe==="duplikat";
+  $("modalPinTitle").textContent=isDup?"Akun Sudah Terdaftar":"Pendaftaran Berhasil";
+  $("modalIcon").classList.toggle("is-warn",isDup);
+  $("modalIcon").innerHTML=`<i data-lucide="${isDup?"alert-circle":"check"}" aria-hidden="true"></i>`;
+  $("modalHeading").innerHTML=isDup?"Selamat datang kembali, <span></span>!":"Selamat, <span></span>!";
+  $("modalHeading").querySelector("span").textContent=nama||"";
+  $("modalPesan").textContent=isDup?"Kami menemukan akun Anda. Gunakan PIN ini untuk masuk.":"PIN Anda siap digunakan. Simpan sekarang.";
+  $("modalTip").textContent=isDup?"PIN yang sama masih berlaku untuk akun Anda. Kalau lupa, gunakan menu Lupa PIN di halaman masuk.":"Simpan PIN ini di tempat aman. Jangan bagikan ke siapa pun. Kalau lupa, Anda bisa memulihkan lewat menu Lupa PIN di halaman masuk.";
+  $("modalPinValue").textContent=pin||"";
+  openModal("modalPin");
+}
 
-  function tampilkanModal(nama, pin, tipe) {
-    const h = $("modalHeader");
-    if (tipe === "duplikat") { h.querySelector("h2").textContent = "Akun Sudah Terdaftar"; h.className = "modal-header duplikat"; $("modalPesan").textContent = "Kami menemukan akun Anda. PIN Anda adalah:"; }
-    else { h.querySelector("h2").textContent = "Pendaftaran Berhasil!"; h.className = "modal-header"; $("modalPesan").textContent = "PIN Anda adalah:"; }
-    $("modalNama").textContent = nama;
-    $("modalPinValue").textContent = pin;
-    $("modalPinContainer").classList.remove("hidden");
-  }
-  function tampilkanError(p) { $("errorPesan").textContent = p; $("modalError").classList.remove("hidden"); }
+/* ================= BOOT ================= */
+document.addEventListener("DOMContentLoaded",()=>{
+  loadDropdowns();
+  setupEvents();
+  lucide.createIcons();
+});
 </script>
 </body>
 </html>
