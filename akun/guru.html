@@ -2,129 +2,170 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0D9488"/>
 <title>Pusat Akun Guru · Guru Berbagi Selogiri</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--p:#0D9488;--p6:#0F766E;--ps:#CCFBF1;--bg:#f1f5f9;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--g:#059669;--gs:#ecfdf5;--r:#dc2626;--rs:#fef2f2;--a:#d97706;--as:#fffbeb;--sh:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.07)}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
-body{background:var(--bg);color:var(--tx);font-size:14px;min-height:100vh}
+:root{--p:#0D9488;--p6:#0F766E;--ps:#CCFBF1;--bg:#f4f6f8;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--g:#059669;--gs:#ecfdf5;--r:#dc2626;--rs:#fef2f2;--a:#d97706;--as:#fffbeb}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font-size:14px}
 .hidden{display:none!important}
-button,input,select,textarea{font-family:inherit}
+button,input,select,textarea{font-family:inherit;font-size:14px}
 .lucide{width:18px;height:18px}
-.muted{color:var(--mu);font-size:12.5px}
-/* login */
-.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0D9488,#0891B2);padding:20px}
-.login-card{background:#fff;border-radius:20px;padding:36px 32px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
-.logo{width:76px;height:76px;object-fit:contain;background:#fff;border-radius:20px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.18);margin:0 auto 12px;display:block}
+/* ---------- LOGIN ---------- */
+#loginView{min-height:100dvh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0D9488,#0891B2);padding:20px}
+.login-card{background:#fff;border-radius:24px;padding:32px 26px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.28);text-align:center}
+.login-card img{width:72px;height:72px;object-fit:contain;border-radius:18px;padding:6px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.15);margin-bottom:12px}
 .login-card h1{font-size:20px;font-weight:800}
 .login-card .sub{color:var(--mu);font-size:12.5px;margin:4px 0 22px}
-.field{margin-bottom:14px;text-align:left}
-.field label{display:block;font-size:12.5px;font-weight:600;color:var(--mu);margin-bottom:6px}
+.form-field{margin-bottom:14px;text-align:left}
+.form-field label{display:block;font-size:12.5px;font-weight:600;color:var(--mu);margin-bottom:6px}
 .input-icon{position:relative;display:flex;align-items:center}
 .input-icon>.lucide{position:absolute;left:12px;width:16px;height:16px;color:var(--mu);pointer-events:none}
-.input-icon input{width:100%;padding:11px 12px 11px 38px;border:1px solid var(--bd);border-radius:10px;font-size:14px;outline:none}
-.input-icon input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
-.input{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;font-size:14px;outline:none}
-.input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+.input-icon input{width:100%;padding:12px 12px 12px 38px;border:1px solid var(--bd);border-radius:12px;outline:none;background:#fff}
+.input-icon input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(13,148,136,.14)}
+.input{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;outline:none;background:#fff}
+.input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(13,148,136,.14)}
 textarea.input{resize:vertical;min-height:90px}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;text-decoration:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer;transition:.15s;text-decoration:none}
 .btn .lucide{width:17px;height:17px}
-.btn-primary{background:var(--p6);color:#fff}.btn-primary:hover{background:#115E59}
-.btn-primary:disabled{opacity:.6;cursor:not-allowed}
-.btn-ghost{background:#f1f5f9;color:#475569}.btn-ghost:hover{background:#e2e8f0}
-.btn-sm{width:auto;padding:9px 14px;font-size:13px;border-radius:9px}
-.links{display:flex;justify-content:center;gap:14px;margin-top:16px;font-size:12.5px;flex-wrap:wrap}
-.links a,.links button{color:#0F766E;font-weight:600;text-decoration:none;background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:12.5px}
+.btn-primary{background:var(--p6);color:#fff}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed}
+.btn-ghost{background:#fff;color:#475569;border:1px solid var(--bd)}
+.btn-quiet{width:auto;background:none;border:none;color:var(--p6);font-size:13px;font-weight:600;padding:6px 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-quiet .lucide{width:14px;height:14px}
+.links{display:flex;justify-content:center;gap:16px;margin-top:16px;flex-wrap:wrap}
+.links button,.links a{background:none;border:none;color:#0F766E;font-weight:600;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
 .links .lucide{width:13px;height:13px}
-/* dashboard */
-.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;padding:12px 20px}
-.topbar-left{display:flex;align-items:center;gap:10px}
-.brand-icon{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#0D9488,#0891B2);color:#fff;display:flex;align-items:center;justify-content:center}
-.brand-icon .lucide{width:19px;height:19px}
-.topbar-left h1{font-size:15px;font-weight:800}
-.topbar-left span{font-size:11.5px;color:var(--mu);display:block}
-.content{max-width:760px;margin:0 auto;padding:20px 16px 60px}
-.card{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh);padding:20px;margin-bottom:16px}
-.card h3{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.card h3 .lucide{width:17px;height:17px;color:var(--p6)}
-.profile-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+/* ---------- SHELL ---------- */
+#appShell{display:flex;flex-direction:column;min-height:100dvh}
+#sidebar{display:none}
+#mainArea{flex:1;display:flex;flex-direction:column;min-width:0}
+#appBar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top))}
+.bar-title{font-size:16px;font-weight:800}
+.user-chip{display:flex;align-items:center;gap:8px;background:none;border:none;padding:0}
+.user-chip .uname{font-size:13px;font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#contentArea{flex:1;width:100%;max-width:760px;margin:0 auto;padding:16px 16px calc(88px + env(safe-area-inset-bottom))}
+.view{animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* cards & rows (native list style) */
+.card{background:#fff;border:1px solid var(--bd);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.card-title{padding:14px 16px 10px;font-size:11.5px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
+.row{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.row+.row{border-top:1px solid var(--bd)}
+.row .r-icon{color:var(--mu);flex-shrink:0}
+.row .r-icon .lucide{width:17px;height:17px}
+.row .r-body{flex:1;min-width:0}
+.row .r-lbl{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.row .r-val{font-size:14px;font-weight:600;word-break:break-all}
+.row-btn{background:none;border:none;display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;cursor:pointer;font-weight:600;color:var(--tx);text-align:left}
+.row-btn .lucide{width:17px;height:17px;color:var(--mu)}
+.row-btn.danger{color:var(--r)}
+.row-btn.danger .lucide{color:var(--r)}
+/* profile hero */
+.profile-hero{display:flex;align-items:center;gap:14px;padding:18px 16px}
 .thumbwrap{width:56px;height:56px;border-radius:50%;background:var(--ps);color:var(--p6);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;position:relative;overflow:hidden;flex-shrink:0}
 .thumbwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumbwrap.xl{width:72px;height:72px;font-size:26px}
+.thumbwrap.xs{width:30px;height:30px;font-size:12px}
 .tw-init{font-style:normal;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
-.profile-head b{display:block;font-size:16px}
-.profile-head span{font-size:12.5px;color:var(--mu)}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;background:var(--gs);color:var(--g);margin-top:5px}
+.hero-name{font-size:17px;font-weight:800;line-height:1.25}
+.hero-sub{font-size:13px;color:var(--mu);margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:var(--gs);color:var(--g);margin-top:6px}
 .badge .lucide{width:12px;height:12px}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.info-item{background:#f8fafc;border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
-.info-item .lbl{display:flex;align-items:center;gap:6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mu);font-weight:700;margin-bottom:4px}
-.info-item .lbl .lucide{width:12px;height:12px}
-.info-item .val{font-weight:600;font-size:13px;word-break:break-all;display:flex;align-items:center;gap:8px}
-.eye-btn{background:none;border:none;color:var(--mu);cursor:pointer;padding:2px;display:flex;border-radius:6px}
-.eye-btn:hover{color:var(--p6);background:var(--ps)}
-.eye-btn .lucide{width:15px;height:15px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.note{margin-top:12px;font-size:12px;color:var(--mu);display:flex;gap:8px;align-items:flex-start;background:var(--as);border:1px solid #fde68a;border-radius:10px;padding:10px 12px}
-.note .lucide{width:14px;height:14px;color:var(--a);flex-shrink:0;margin-top:1px}
-/* ULT */
-.count-pill{background:var(--r);color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:2px 8px}
-.tcard{border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;background:#fff;transition:.15s}
-.tcard:hover{border-color:var(--p);box-shadow:var(--sh)}
-.tcard .t1{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.tcard .t1 b{font-size:13.5px}
-.tcard .t2{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
-.chip{font-size:11px;font-weight:600;background:var(--ps);color:var(--p6);border-radius:999px;padding:3px 9px}
-.tcard .tm{font-size:11px;color:var(--mu);margin-top:6px}
-.sbadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
-.sbadge .lucide{width:12px;height:12px}
-.sb-baru{background:var(--as);color:var(--a)}.sb-diproses{background:var(--ps);color:var(--p6)}.sb-selesai{background:var(--gs);color:var(--g)}.sb-ditutup{background:#f1f5f9;color:#64748b}
-.thread{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;padding:4px 2px}
-.bub{border-radius:12px;padding:10px 12px;font-size:13px;max-width:88%;line-height:1.5;white-space:pre-wrap}
+.cam-btn{margin-left:auto;width:38px;height:38px;border-radius:12px;border:1px solid var(--bd);background:#fff;color:var(--mu);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cam-btn .lucide{width:16px;height:16px}
+/* pin view (tenang) */
+.pin-row{display:flex;align-items:center;gap:12px;padding:16px}
+.pin-dots{font-size:20px;letter-spacing:5px;font-weight:800}
+.eye-btn{margin-left:auto;width:38px;height:38px;border-radius:12px;border:1px solid var(--bd);background:#fff;color:var(--mu);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.eye-btn .lucide{width:16px;height:16px}
+.collapse{padding:0 16px 16px;border-top:1px dashed var(--bd);margin-top:4px;padding-top:14px}
+.note-muted{padding:0 16px 16px;font-size:12px;color:var(--mu);line-height:1.6}
+/* bantuan (minimalis) */
+.help-intro{padding:14px 16px;font-size:12.5px;color:var(--mu);line-height:1.65}
+.ticket-row{display:flex;align-items:center;gap:10px;width:100%;padding:13px 16px;background:none;border:none;border-top:1px solid var(--bd);cursor:pointer;text-align:left}
+.ticket-row .t-sub{flex:1;min-width:0;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ticket-row .t-date{font-size:11px;color:var(--mu);flex-shrink:0}
+.ticket-row .lucide.chev{width:15px;height:15px;color:var(--mu)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sd-Baru{background:var(--a)}.sd-Diproses{background:var(--p)}.sd-Selesai{background:var(--g)}.sd-Ditutup{background:#94a3b8}
+.empty-muted{padding:18px 16px;font-size:12.5px;color:var(--mu)}
+/* bottom nav */
+#bottomNav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--bd);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+#bottomNav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--mu);font-size:10.5px;font-weight:600;padding:6px 0;cursor:pointer}
+#bottomNav button .lucide{width:20px;height:20px}
+#bottomNav button.active{color:var(--p6)}
+/* modal: bottom sheet (mobile) */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:100}
+.modal-card{background:#fff;width:100%;max-height:92dvh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:sheet .22s ease}
+@keyframes sheet{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 12px;border-bottom:1px solid var(--bd)}
+.modal-head h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-head h3 .lucide{width:17px;height:17px;color:var(--p6)}
+.modal-close{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px;display:flex;border-radius:8px}
+.modal-body{padding:18px 20px;overflow-y:auto}
+.modal-foot{padding:12px 20px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--bd);display:flex;gap:10px;background:#f8fafc}
+.found-box{background:var(--gs);border:1px solid #a7f3d0;border-radius:12px;padding:12px;margin-bottom:14px;text-align:center}
+.found-box .nm{font-weight:700}
+.found-box .em{color:var(--g);font-weight:600;font-size:12.5px;margin-top:2px}
+.owner-box{display:flex;gap:8px;align-items:flex-start;background:#f8fafc;border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.owner-box label{font-size:12.5px;color:var(--mu);line-height:1.5}
+.pin-reveal{background:var(--ps);border:2px dashed var(--p);border-radius:14px;padding:16px;text-align:center;margin:12px 0}
+.pin-reveal span{font-size:32px;font-weight:800;letter-spacing:6px;color:var(--p6)}
+.sep{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:var(--mu);font-size:12px}
+.sep:before,.sep:after{content:"";flex:1;height:1px;background:var(--bd)}
+.thread{display:flex;flex-direction:column;gap:10px;max-height:45dvh;overflow-y:auto;padding:2px}
+.bub{border-radius:14px;padding:10px 12px;font-size:13px;max-width:88%;line-height:1.5;white-space:pre-wrap}
 .bub .who{font-size:11px;font-weight:700;margin-bottom:4px;display:flex;gap:6px;align-items:center}
 .bub .who .lucide{width:12px;height:12px}
 .bub.guru{background:var(--ps);color:#134e4a;align-self:flex-end}
 .bub.admin{background:#f1f5f9;color:#334155;align-self:flex-start}
 .bub .tm{font-size:10.5px;opacity:.7;margin-top:6px}
-/* modal */
-.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
-.modal-card{background:#fff;border-radius:20px;width:100%;max-width:460px;box-shadow:0 24px 80px rgba(0,0,0,.3);animation:pop .25s ease;overflow:hidden;max-height:92vh;display:flex;flex-direction:column}
-@keyframes pop{from{transform:translateY(14px) scale(.98);opacity:0}to{transform:none;opacity:1}}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--bd)}
-.modal-head h3{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px}
-.modal-head h3 .lucide{width:17px;height:17px;color:var(--p6)}
-.modal-close{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px;display:flex;border-radius:8px}
-.modal-close:hover{background:#f1f5f9}
-.modal-body{padding:18px 20px;overflow-y:auto}
-.modal-foot{padding:12px 20px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;background:#f8fafc}
-.found-box{background:var(--gs);border:1px solid #a7f3d0;border-radius:12px;padding:12px;margin-bottom:14px;text-align:center}
-.found-box .nm{font-weight:700}
-.found-box .em{color:var(--g);font-weight:600;font-size:12.5px;margin-top:2px}
 .success-box{text-align:center;padding:8px 0}
 .success-icon{width:54px;height:54px;border-radius:16px;background:var(--gs);color:var(--g);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
 .success-icon .lucide{width:25px;height:25px}
 /* toast */
-#toastContainer{position:fixed;bottom:18px;right:16px;left:16px;display:flex;flex-direction:column;gap:10px;z-index:300;align-items:stretch}
-.toast{display:flex;align-items:center;gap:10px;background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:slidein .25s ease;font-size:13.5px}
+#toastContainer{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom));left:16px;right:16px;display:flex;flex-direction:column;gap:10px;z-index:300;align-items:stretch}
+.toast{display:flex;align-items:center;gap:10px;background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:slidein .22s ease;font-size:13.5px}
 .toast .lucide{width:17px;height:17px;flex-shrink:0}
 .toast.success .lucide{color:#34d399}.toast.error .lucide{color:#f87171}
 .toast.out{opacity:0;transform:translateX(12px);transition:.3s}
 @keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media(max-width:560px){.info-grid,.grid3{grid-template-columns:1fr}.modal{align-items:flex-end;padding:0}.modal-card{max-width:100%;border-radius:20px 20px 0 0}}
+/* ---------- DESKTOP ---------- */
+@media(min-width:1024px){
+  #appShell{flex-direction:row}
+  #sidebar{display:flex;flex-direction:column;width:240px;position:sticky;top:0;height:100dvh;background:#fff;border-right:1px solid var(--bd);padding:18px 12px;gap:4px;flex-shrink:0}
+  .side-logo{display:flex;align-items:center;gap:10px;padding:6px 10px 18px;font-weight:800;color:var(--p6);font-size:15px}
+  .side-logo .lucide{width:24px;height:24px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border:none;background:none;border-radius:10px;color:var(--mu);font-weight:600;font-size:13.5px;cursor:pointer;text-align:left;width:100%}
+  .nav-item .lucide{width:18px;height:18px}
+  .nav-item:hover{background:#f1f5f9;color:var(--tx)}
+  .nav-item.active{background:var(--ps);color:var(--p6)}
+  .side-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--bd)}
+  #bottomNav{display:none}
+  #appBar{padding-top:12px}
+  #contentArea{padding:24px 28px 48px}
+  #contentArea{max-width:860px}
+  .modal{align-items:center;justify-content:center;padding:16px}
+  .modal-card{width:100%;max-width:460px;border-radius:20px}
+  #toastContainer{left:auto;width:360px;bottom:24px;right:24px}
+}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="loginView" class="wrap">
+<div id="loginView">
   <div class="login-card">
-    <img class="logo" src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo"/>
+    <img src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo"/>
     <h1>Pusat Akun Guru</h1>
     <p class="sub">Guru Berbagi · Korwilcambidik Selogiri</p>
     <form id="loginForm" autocomplete="off">
-      <div class="field"><label>Email</label>
+      <div class="form-field"><label>Email</label>
         <div class="input-icon"><i data-lucide="mail"></i><input type="email" id="loginEmail" required/></div></div>
-      <div class="field"><label>PIN</label>
+      <div class="form-field"><label>PIN</label>
         <div class="input-icon"><i data-lucide="key-round"></i><input type="password" id="loginPin" inputmode="numeric" maxlength="5" placeholder="•••••" required/></div></div>
       <button class="btn btn-primary" id="loginBtn" type="submit"><i data-lucide="log-in"></i> Masuk</button>
     </form>
@@ -136,64 +177,95 @@ textarea.input{resize:vertical;min-height:90px}
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashView" class="hidden">
-  <header class="topbar">
-    <div class="topbar-left">
-      <div class="brand-icon"><i data-lucide="graduation-cap"></i></div>
-      <div><h1>Pusat Akun Guru</h1><span>Guru Berbagi · Selogiri</span></div>
+<!-- APP SHELL -->
+<div id="appShell" class="hidden">
+  <aside id="sidebar">
+    <div class="side-logo"><i data-lucide="graduation-cap"></i> Guru Berbagi</div>
+    <button class="nav-item active" data-view="profil"><i data-lucide="user-round"></i> Profil Saya</button>
+    <button class="nav-item" data-view="pin"><i data-lucide="key-round"></i> PIN & Keamanan</button>
+    <button class="nav-item" data-view="bantuan"><i data-lucide="life-buoy"></i> Layanan Bantuan</button>
+    <div class="side-foot">
+      <button class="nav-item" id="sideLogout"><i data-lucide="log-out"></i> Keluar</button>
     </div>
-    <button class="btn btn-ghost btn-sm" id="logoutBtn"><i data-lucide="log-out"></i> Keluar</button>
-  </header>
-  <main class="content">
-    <section class="card">
-      <div class="profile-head">
-        <span class="thumbwrap" id="fotoWrap"><i id="fotoInit" class="tw-init">G</i><img id="fotoProfil" src="" alt="" onerror="this.style.display='none'" onload="this.style.display=''"/></span>
-        <div style="flex:1">
-          <b id="dashNama"></b>
-          <span id="dashJabatan"></span>
-          <div><span class="badge"><i data-lucide="shield-check"></i> Akun Aktif</span></div>
-        </div>
-        <div>
-          <input type="file" id="fileFoto" accept="image/*" style="display:none"/>
-          <button class="btn btn-ghost btn-sm" id="btnGantiFoto"><i data-lucide="camera"></i> Ganti Foto</button>
-        </div>
-      </div>
-      <div class="info-grid">
-        <div class="info-item"><div class="lbl"><i data-lucide="mail"></i> Email</div><div class="val" id="dashEmail"></div></div>
-        <div class="info-item"><div class="lbl"><i data-lucide="building-2"></i> Sekolah</div><div class="val" id="dashSekolah"></div></div>
-        <div class="info-item"><div class="lbl"><i data-lucide="hash"></i> NPSN</div><div class="val" id="dashNpsn"></div></div>
-        <div class="info-item"><div class="lbl"><i data-lucide="badge-check"></i> Jenis GTK</div><div class="val" id="dashJenis"></div></div>
-      </div>
-    </section>
+  </aside>
 
-    <section class="card">
-      <h3><i data-lucide="key-round"></i> PIN Saya</h3>
-      <div class="info-item" style="background:#f8fafc">
-        <div class="val" style="font-size:22px;letter-spacing:4px;font-weight:800;color:var(--p6)">
-          <span id="pinText">•••••</span>
-          <button class="eye-btn" id="togglePinBtn" title="Tampilkan / sembunyikan PIN"><i data-lucide="eye"></i></button>
-        </div>
-      </div>
-      <form id="gantiForm" autocomplete="off" style="margin-top:14px">
-        <div class="grid3">
-          <div class="field"><label>PIN Lama</label><input class="input" type="password" id="pinLama" inputmode="numeric" maxlength="5" required/></div>
-          <div class="field"><label>PIN Baru</label><input class="input" type="password" id="pinBaru" inputmode="numeric" maxlength="5" required/></div>
-          <div class="field"><label>Ulangi</label><input class="input" type="password" id="pinKonfirm" inputmode="numeric" maxlength="5" required/></div>
-        </div>
-        <button class="btn btn-primary" type="submit"><i data-lucide="save"></i> Simpan PIN Baru</button>
-      </form>
-      <div class="note"><i data-lucide="info"></i> PIN berlaku untuk semua aplikasi ekosistem Guru Berbagi. Setelah diganti, sesi lama di perangkat lain akan keluar otomatis.</div>
-    </section>
+  <div id="mainArea">
+    <header id="appBar">
+      <div class="bar-title" id="viewTitle">Profil Saya</div>
+      <button class="user-chip">
+        <span class="thumbwrap xs" id="chipWrap"><i id="chipInit" class="tw-init">G</i><img id="chipImg" src="" alt="" onerror="this.style.display='none'" onload="this.style.display=''"/></span>
+        <span class="uname" id="chipName"></span>
+      </button>
+    </header>
 
-    <section class="card">
-      <h3><i data-lucide="life-buoy"></i> Layanan (ULT) <span id="ultBadge" class="count-pill hidden">0</span>
-        <span style="flex:1"></span>
-        <button class="btn btn-primary btn-sm" id="ultAdd"><i data-lucide="message-square-plus"></i> Ajukan Layanan</button>
-      </h3>
-      <div id="ultList"></div>
-    </section>
-  </main>
+    <main id="contentArea">
+      <!-- VIEW: PROFIL -->
+      <section class="view" id="view-profil">
+        <div class="card">
+          <div class="profile-hero">
+            <span class="thumbwrap xl" id="heroWrap"><i id="heroInit" class="tw-init">G</i><img id="heroImg" src="" alt="" onerror="this.style.display='none'" onload="this.style.display=''"/></span>
+            <div style="flex:1;min-width:0">
+              <div class="hero-name" id="dashNama"></div>
+              <div class="hero-sub" id="dashJabatan"></div>
+              <span class="badge"><i data-lucide="shield-check"></i> Akun Aktif</span>
+            </div>
+            <input type="file" id="fileFoto" accept="image/*" style="display:none"/>
+            <button class="cam-btn" id="btnGantiFoto" title="Ganti foto"><i data-lucide="camera"></i></button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Informasi Akun</div>
+          <div class="row"><span class="r-icon"><i data-lucide="mail"></i></span><div class="r-body"><div class="r-lbl">Email</div><div class="r-val" id="dashEmail"></div></div></div>
+          <div class="row"><span class="r-icon"><i data-lucide="building-2"></i></span><div class="r-body"><div class="r-lbl">Sekolah</div><div class="r-val" id="dashSekolah"></div></div></div>
+          <div class="row"><span class="r-icon"><i data-lucide="hash"></i></span><div class="r-body"><div class="r-lbl">NPSN</div><div class="r-val" id="dashNpsn"></div></div></div>
+          <div class="row"><span class="r-icon"><i data-lucide="badge-check"></i></span><div class="r-body"><div class="r-lbl">Jenis GTK</div><div class="r-val" id="dashJenis"></div></div></div>
+        </div>
+        <div class="card">
+          <button class="row-btn danger" id="rowKeluar"><i data-lucide="log-out"></i> Keluar dari Perangkat Ini</button>
+        </div>
+      </section>
+
+      <!-- VIEW: PIN -->
+      <section class="view hidden" id="view-pin">
+        <div class="card">
+          <div class="card-title">PIN Saya</div>
+          <div class="pin-row">
+            <span class="pin-dots" id="pinText">•••••</span>
+            <button class="eye-btn" id="togglePinBtn" title="Tampilkan / sembunyikan"><i data-lucide="eye"></i></button>
+          </div>
+          <div style="padding:0 16px 12px"><button class="btn-quiet" id="btnGantiPinToggle"><i data-lucide="pencil"></i> Ganti PIN…</button></div>
+          <div class="collapse hidden" id="gantiBox">
+            <form id="gantiForm" autocomplete="off">
+              <div class="form-field"><label>PIN Lama</label><input class="input" type="password" id="pinLama" inputmode="numeric" maxlength="5" required/></div>
+              <div class="form-field"><label>PIN Baru (5 digit)</label><input class="input" type="password" id="pinBaru" inputmode="numeric" maxlength="5" required/></div>
+              <div class="form-field"><label>Ulangi PIN Baru</label><input class="input" type="password" id="pinKonfirm" inputmode="numeric" maxlength="5" required/></div>
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-primary" type="submit" style="flex:1"><i data-lucide="save"></i> Simpan</button>
+                <button class="btn btn-ghost" type="button" id="gantiCancel" style="flex:1">Batal</button>
+              </div>
+            </form>
+          </div>
+          <p class="note-muted">PIN adalah kunci seluruh aplikasi ekosistem Guru Berbagi. Ganti hanya bila Anda memang membutuhkannya — sesi di perangkat lain akan keluar otomatis setelah penggantian.</p>
+        </div>
+      </section>
+
+      <!-- VIEW: BANTUAN (ULT, minimalis) -->
+      <section class="view hidden" id="view-bantuan">
+        <div class="card">
+          <div class="card-title">Layanan Darurat (ULT)</div>
+          <p class="help-intro">Kanal ini khusus keperluan darurat seputar akun, data, dan penugasan. Untuk hal rutin, silakan hubungi Korwil secara langsung.</p>
+          <div id="ultList"></div>
+          <div style="padding:12px 16px 16px"><button class="btn btn-ghost" id="ultAdd"><i data-lucide="plus"></i> Ajukan Tiket</button></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav id="bottomNav">
+    <button data-view="profil" class="active"><i data-lucide="user-round"></i> Profil</button>
+    <button data-view="pin"><i data-lucide="key-round"></i> PIN</button>
+    <button data-view="bantuan"><i data-lucide="life-buoy"></i> Bantuan</button>
+  </nav>
 </div>
 
 <!-- MODAL PEMULIHAN -->
@@ -201,37 +273,33 @@ textarea.input{resize:vertical;min-height:90px}
   <div class="modal-head"><h3><i data-lucide="life-buoy"></i> Pemulihan Akun & PIN</h3><button class="modal-close" data-close="recoveryModal"><i data-lucide="x"></i></button></div>
   <div class="modal-body">
     <div id="recStep1">
-      <div class="field"><label>Email Terdaftar</label><input class="input" id="recEmail" type="email"/></div>
-      <div class="field"><label>Satuan Pendidikan (verifikasi)</label><select class="input" id="recSekolah"><option value="">Memuat data...</option></select></div>
+      <div class="form-field"><label>Email Terdaftar</label><input class="input" id="recEmail" type="email"/></div>
+      <div class="form-field"><label>Satuan Pendidikan (verifikasi)</label><select class="input" id="recSekolah"><option value="">Memuat data...</option></select></div>
       <button class="btn btn-primary" id="btnCari"><i data-lucide="search"></i> Cari Akun Saya</button>
     </div>
     <div id="recStep2" class="hidden">
       <div class="found-box"><div class="nm" id="recFoundNama"></div><div class="em" id="recFoundEmail"></div></div>
-      <div style="display:flex;gap:8px;align-items:flex-start;background:#f8fafc;border:1px solid var(--bd);border-radius:10px;padding:10px 12px">
+      <div class="owner-box">
         <input type="checkbox" id="recOwner" style="margin-top:2px"/>
-        <label for="recOwner" style="font-size:12.5px;color:var(--mu);line-height:1.5">Saya menyatakan bahwa saya adalah <b>pemilik sah</b> akun ini dan bertanggung jawab atas kerahasiaan PIN.</label>
+        <label for="recOwner">Saya menyatakan bahwa saya adalah <b>pemilik sah</b> akun ini dan bertanggung jawab atas kerahasiaan PIN.</label>
       </div>
-      <button class="btn btn-primary" id="btnShowPin" disabled style="margin-top:10px"><i data-lucide="eye"></i> Tampilkan PIN Saya</button>
-      <div id="recPinBox" class="hidden" style="margin-top:12px">
-        <div style="background:var(--ps);border:2px dashed var(--p);border-radius:14px;padding:16px;text-align:center">
-          <span id="recPinValue" style="font-size:32px;font-weight:800;letter-spacing:6px;color:var(--p6)"></span>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="btn btn-primary" id="btnShowPin" disabled><i data-lucide="eye"></i> Tampilkan PIN Saya</button>
+      <div id="recPinBox" class="hidden">
+        <div class="pin-reveal"><span id="recPinValue"></span></div>
+        <div style="display:flex;gap:10px">
           <button class="btn btn-ghost" id="recCopyPin" style="flex:1"><i data-lucide="copy"></i> Salin</button>
-          <button class="btn btn-ghost" id="recWaPin" style="flex:1;color:#16a34a;border:1px solid #bbf7d0"><i data-lucide="message-circle"></i> Catat via WhatsApp</button>
+          <button class="btn btn-ghost" id="recWaPin" style="flex:1;color:#16a34a;border-color:#bbf7d0"><i data-lucide="message-circle"></i> Catat via WA</button>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:var(--mu);font-size:12px">
-        <span style="flex:1;height:1px;background:var(--bd)"></span> atau ganti dengan PIN baru <span style="flex:1;height:1px;background:var(--bd)"></span>
-      </div>
-      <div class="field"><label>PIN Baru (5 digit)</label><input class="input" id="recPinBaru" inputmode="numeric" maxlength="5"/></div>
-      <div class="field"><label>Ulangi PIN Baru</label><input class="input" id="recPinKonfirm" inputmode="numeric" maxlength="5"/></div>
+      <div class="sep">atau ganti dengan PIN baru</div>
+      <div class="form-field"><label>PIN Baru (5 digit)</label><input class="input" id="recPinBaru" inputmode="numeric" maxlength="5"/></div>
+      <div class="form-field"><label>Ulangi PIN Baru</label><input class="input" id="recPinKonfirm" inputmode="numeric" maxlength="5"/></div>
       <button class="btn btn-ghost" id="btnReset"><i data-lucide="refresh-cw"></i> Atur PIN Baru</button>
     </div>
     <div id="recStep3" class="hidden">
       <div class="success-box"><div class="success-icon"><i data-lucide="check"></i></div>
         <b>PIN berhasil diatur ulang!</b>
-        <p class="muted" style="margin-top:4px">Silakan masuk menggunakan PIN baru Anda.</p></div>
+        <p style="color:var(--mu);font-size:12.5px;margin-top:4px">Silakan masuk menggunakan PIN baru Anda.</p></div>
       <button class="btn btn-primary" id="btnKeLogin"><i data-lucide="log-in"></i> Masuk Sekarang</button>
     </div>
   </div>
@@ -241,24 +309,24 @@ textarea.input{resize:vertical;min-height:90px}
 <div id="ultModal" class="modal hidden"><div class="modal-card">
   <div class="modal-head"><h3><i data-lucide="message-square-plus"></i> Ajukan Layanan</h3><button class="modal-close" data-close="ultModal"><i data-lucide="x"></i></button></div>
   <div class="modal-body">
-    <div class="field"><label>Kategori</label>
+    <div class="form-field"><label>Kategori</label>
       <select class="input" id="ultKategori">
         <option>Akun & PIN</option><option>Perbaikan Data</option><option>Mutasi / Penugasan</option><option>Kendala Pendaftaran</option><option>Lainnya</option>
       </select></div>
-    <div class="field"><label>Subjek</label><input class="input" id="ultSubjek" placeholder="Ringkasan permintaan Anda"/></div>
-    <div class="field"><label>Uraian</label><textarea class="input" id="ultPesan" placeholder="Jelaskan kebutuhan Anda secara singkat dan jelas..."></textarea></div>
+    <div class="form-field"><label>Subjek</label><input class="input" id="ultSubjek" placeholder="Ringkasan permintaan"/></div>
+    <div class="form-field"><label>Uraian</label><textarea class="input" id="ultPesan" placeholder="Jelaskan singkat dan jelas..."></textarea></div>
   </div>
-  <div class="modal-foot"><button class="btn btn-ghost btn-sm" data-close="ultModal">Batal</button><button class="btn btn-primary btn-sm" id="ultSave"><i data-lucide="send"></i> Kirim</button></div>
+  <div class="modal-foot"><button class="btn btn-ghost" data-close="ultModal" style="flex:1">Batal</button><button class="btn btn-primary" id="ultSave" style="flex:1"><i data-lucide="send"></i> Kirim</button></div>
 </div></div>
 
 <!-- MODAL DETAIL TIKET -->
 <div id="ultDetailModal" class="modal hidden"><div class="modal-card">
   <div class="modal-head"><h3><i data-lucide="ticket"></i> <span id="ultDetSubjek"></span></h3><button class="modal-close" data-close="ultDetailModal"><i data-lucide="x"></i></button></div>
   <div class="modal-body">
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><span class="chip" id="ultDetKategori"></span><span id="ultDetStatus"></span></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><span class="status-dot" id="ultDetDot"></span><span id="ultDetStatus" style="font-size:12px;font-weight:700;color:var(--mu)"></span><span class="badge" style="margin:0;background:var(--ps);color:var(--p6)" id="ultDetKategori"></span></div>
     <div class="thread" id="ultThread"></div>
     <div id="ultReplyBox" style="margin-top:14px">
-      <div class="field"><label>Balasan Anda</label><textarea class="input" id="ultReply" style="min-height:70px" placeholder="Tulis balasan..."></textarea></div>
+      <div class="form-field"><label>Balasan Anda</label><textarea class="input" id="ultReply" style="min-height:70px" placeholder="Tulis balasan..."></textarea></div>
       <button class="btn btn-primary" id="ultReplySend"><i data-lucide="send"></i> Kirim Balasan</button>
     </div>
   </div>
@@ -277,10 +345,6 @@ const FOTO_BASE=`${SUPABASE_URL}/storage/v1/object/public/foto-gtk`;
 const db=window.supabase.createClient(SUPABASE_URL,ANON);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmtT=w=>new Date(w).toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
-const sBadge=s=>({"Baru":'<span class="sbadge sb-baru"><i data-lucide="clock"></i> Baru</span>',
-"Diproses":'<span class="sbadge sb-diproses"><i data-lucide="loader"></i> Diproses</span>',
-"Selesai":'<span class="sbadge sb-selesai"><i data-lucide="check-circle"></i> Selesai</span>',
-"Ditutup":'<span class="sbadge sb-ditutup"><i data-lucide="x-circle"></i> Ditutup</span>'}[s]||"");
 let token=null,profile=null,myPin=null,pinVisible=false,curTiket=null,recPin=null;
 
 (async()=>{
@@ -288,7 +352,7 @@ let token=null,profile=null,myPin=null,pinVisible=false,curTiket=null,recPin=nul
   if(token){
     try{
       const r=await(await fetch(F("verify-guru"),{headers:{apikey:ANON,Authorization:`Bearer ${token}`}})).json();
-      if(r.valid){profile=r.profile;showDash();}else{localStorage.removeItem("gb_token");token=null;}
+      if(r.valid){profile=r.profile;enterApp();}else{localStorage.removeItem("gb_token");token=null;}
     }catch(e){}
   }
   loadSekolah();
@@ -300,19 +364,38 @@ function loadSekolah(){db.from("sekolah").select("nama").eq("aktif",true).order(
   const s=$("recSekolah");s.innerHTML='<option value="">-- Pilih Sekolah --</option>';
   (data||[]).forEach(x=>{const o=document.createElement("option");o.value=x.nama;o.textContent=x.nama;s.add(o);});});}
 
-function showDash(){
-  $("loginView").classList.add("hidden");$("dashView").classList.remove("hidden");
+/* ---------- NAVIGASI VIEW ---------- */
+const TITLES={profil:"Profil Saya",pin:"PIN & Keamanan",bantuan:"Layanan Bantuan"};
+function showView(v){
+  document.querySelectorAll(".view").forEach(el=>el.classList.add("hidden"));
+  $("view-"+v).classList.remove("hidden");
+  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
+  $("viewTitle").textContent=TITLES[v];
+  window.scrollTo(0,0);lucide.createIcons();
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+
+function enterApp(){
+  $("loginView").classList.add("hidden");$("appShell").classList.remove("hidden");
   $("dashNama").textContent=profile.nama;
   $("dashJabatan").textContent=profile.jabatan;
   $("dashEmail").textContent=profile.email;
   $("dashSekolah").textContent=profile.sekolah;
   $("dashNpsn").textContent=profile.npsn;
   $("dashJenis").textContent=profile.jenis_gtk||"-";
-  $("fotoInit").textContent=(profile.nama||"G").trim().charAt(0).toUpperCase();
-  const fp=$("fotoProfil");fp.style.display="";fp.src=FOTO_BASE+"/"+profile.sub+".webp";
+  $("chipName").textContent=profile.nama;
+  const init=(profile.nama||"G").trim().charAt(0).toUpperCase();
+  $("heroInit").textContent=init;$("chipInit").textContent=init;
+  setFoto(FOTO_BASE+"/"+profile.sub+".webp",FOTO_BASE+"/"+profile.sub+"_t.webp");
   pinVisible=false;myPin=null;$("pinText").textContent="•••••";
   $("togglePinBtn").innerHTML='<i data-lucide="eye"></i>';
-  loadULT();lucide.createIcons();
+  $("gantiBox").classList.add("hidden");
+  showView("profil");loadULT();
+}
+function setFoto(full,thumb){
+  const h=$("heroImg"),c=$("chipImg");
+  h.style.display="";h.src=full;
+  c.style.display="";c.src=thumb;
 }
 
 $("loginForm").addEventListener("submit",async e=>{
@@ -321,11 +404,13 @@ $("loginForm").addEventListener("submit",async e=>{
     const r=await(await fetch(F("login-guru"),{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON},body:JSON.stringify({email:$("loginEmail").value.trim(),pin:$("loginPin").value.trim()})})).json();
     if(r.error){toast(r.error,"error");return;}
     token=r.token;profile=r.profile;localStorage.setItem("gb_token",token);
-    showDash();toast("Selamat datang, "+profile.nama,"success");
+    enterApp();toast("Selamat datang, "+profile.nama,"success");
   }catch(err){toast("Gagal terhubung ke server.","error");}
   finally{$("loginBtn").disabled=false;}
 });
-$("logoutBtn").addEventListener("click",()=>{localStorage.removeItem("gb_token");location.reload();});
+const doLogout=()=>{localStorage.removeItem("gb_token");location.reload();};
+$("rowKeluar").addEventListener("click",doLogout);
+$("sideLogout").addEventListener("click",doLogout);
 
 /* ---------- PIN ---------- */
 $("togglePinBtn").addEventListener("click",async()=>{
@@ -340,6 +425,8 @@ $("togglePinBtn").addEventListener("click",async()=>{
   }
   pinVisible=true;$("pinText").textContent=myPin;$("togglePinBtn").innerHTML='<i data-lucide="eye-off"></i>';lucide.createIcons();
 });
+$("btnGantiPinToggle").addEventListener("click",()=>{$("gantiBox").classList.toggle("hidden");lucide.createIcons();});
+$("gantiCancel").addEventListener("click",()=>{$("gantiBox").classList.add("hidden");$("gantiForm").reset();});
 $("gantiForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const lama=$("pinLama").value.trim(),baru=$("pinBaru").value.trim(),konf=$("pinKonfirm").value.trim();
@@ -347,11 +434,12 @@ $("gantiForm").addEventListener("submit",async e=>{
   if(baru!==konf)return toast("Ulangan PIN tidak cocok.","error");
   const r=await(await fetch(F("ganti-pin"),{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:`Bearer ${token}`},body:JSON.stringify({pin_lama:lama,pin_baru:baru})})).json();
   if(r.error)return toast(r.error,"error");
-  $("gantiForm").reset();myPin=baru;pinVisible=false;$("pinText").textContent="•••••";$("togglePinBtn").innerHTML='<i data-lucide="eye"></i>';lucide.createIcons();
+  $("gantiForm").reset();$("gantiBox").classList.add("hidden");
+  myPin=baru;pinVisible=false;$("pinText").textContent="•••••";$("togglePinBtn").innerHTML='<i data-lucide="eye"></i>';lucide.createIcons();
   toast("PIN berhasil diganti.","success");
 });
 
-/* ---------- FOTO PROFIL ---------- */
+/* ---------- FOTO ---------- */
 function kompresFoto(file,maxSize,quality){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();
 img.onload=()=>{URL.revokeObjectURL(url);let w=img.width,h=img.height;const sc=Math.min(1,maxSize/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
 const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
@@ -364,7 +452,7 @@ try{
   const thumb=await kompresFoto(file,96,0.7);
   const r=await(await fetch(F("simpan-foto-gtk"),{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:`Bearer ${token}`},body:JSON.stringify({foto,thumb})})).json();
   if(r.error)throw new Error(r.error);
-  const fp=$("fotoProfil");fp.style.display="";fp.src=r.url+"?v="+Date.now();
+  setFoto(r.url+"?v="+Date.now(),r.thumb_url+"?v="+Date.now());
   toast("Foto profil diperbarui.","success");
 }catch(err){toast(err.message||"Gagal unggah foto.","error");}
 e.target.value="";});
@@ -374,15 +462,14 @@ async function loadULT(){
   try{
     const r=await(await fetch(F("ult-guru"),{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:`Bearer ${token}`},body:JSON.stringify({aksi:"daftar"})})).json();
     if(r.error)return toast(r.error,"error");
-    const b=$("ultBadge");
-    if(r.jumlah_aktif>0){b.textContent=r.jumlah_aktif;b.classList.remove("hidden");}else b.classList.add("hidden");
     $("ultList").innerHTML=(r.tiket||[]).length?r.tiket.map(t=>`
-      <div class="tcard" data-tiket="${t.id}">
-        <div class="t1"><b>${esc(t.subjek)}</b>${sBadge(t.status)}</div>
-        <div class="t2"><span class="chip">${esc(t.kategori)}</span></div>
-        <div class="tm">Diperbarui ${fmtT(t.diperbarui_pada)}</div>
-      </div>`).join("")
-      :`<div class="note" style="background:#f8fafc;border-color:var(--bd)"><i data-lucide="inbox" style="color:var(--mu)"></i> Belum ada tiket layanan. Klik "Ajukan Layanan" untuk memulai.</div>`;
+      <button class="ticket-row" data-tiket="${t.id}">
+        <span class="status-dot sd-${esc(t.status)}"></span>
+        <span class="t-sub">${esc(t.subjek)}</span>
+        <span class="t-date">${fmtT(t.diperbarui_pada)}</span>
+        <i data-lucide="chevron-right" class="chev"></i>
+      </button>`).join("")
+      :`<p class="empty-muted">Belum ada tiket. Semoga tidak pernah dibutuhkan.</p>`;
     lucide.createIcons();
   }catch(e){}
 }
@@ -401,7 +488,8 @@ async function openTiket(id){
   if(r.error)return toast(r.error,"error");
   $("ultDetSubjek").textContent=r.tiket.subjek;
   $("ultDetKategori").textContent=r.tiket.kategori;
-  $("ultDetStatus").innerHTML=sBadge(r.tiket.status);
+  $("ultDetStatus").textContent=r.tiket.status;
+  $("ultDetDot").className="status-dot sd-"+esc(r.tiket.status);
   $("ultThread").innerHTML=(r.pesan||[]).map(p=>`
     <div class="bub ${p.pengirim}">
       <div class="who"><i data-lucide="${p.pengirim==="guru"?"user":"headphones"}"></i> ${p.pengirim==="guru"?"Anda":"Admin"}</div>
