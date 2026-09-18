@@ -2,78 +2,215 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0D9488"/>
 <title>Guru Berbagi Selogiri — Pusat Akun & Layanan</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--p:#0D9488;--p6:#0F766E;--ps:#CCFBF1}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
-body{min-height:100vh;background:linear-gradient(135deg,#0D9488,#0891B2);display:flex;align-items:center;justify-content:center;padding:20px}
-.wrap{width:100%;max-width:440px;text-align:center;color:#fff}
-.logo{width:84px;height:84px;border-radius:24px;background:#fff;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.25);margin:0 auto 16px}
-.logo img{width:100%;height:100%;object-fit:contain}
-h1{font-size:24px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.2)}
-.sub{opacity:.92;font-size:13.5px;margin:6px 0 22px}
-.card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.28);text-align:left}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:none;border-radius:12px;font-size:14.5px;font-weight:700;cursor:pointer;margin-bottom:10px;text-decoration:none}
-.btn .lucide{width:18px;height:18px}
-.btn-primary{background:var(--p6);color:#fff}.btn-primary:hover{background:#115E59}
-.btn-outline{background:#fff;color:var(--p6);border:2px solid var(--ps)}.btn-outline:hover{background:var(--ps)}
-.btn-ghost{background:#f1f5f9;color:#475569}.btn-ghost:hover{background:#e2e8f0}
-.halo{text-align:center;margin-bottom:14px}
-.halo b{display:block;font-size:17px;color:#0f172a}
-.halo span{font-size:12.5px;color:#64748b}
-.layanan{margin-top:14px;border-top:1px dashed #e2e8f0;padding-top:12px;font-size:12px;color:#64748b;line-height:1.7}
-.layanan b{color:#0F766E}
-.admin-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:#fff;opacity:.85;font-size:12.5px;text-decoration:none}
-.admin-link .lucide{width:14px;height:14px}
-.admin-link:hover{opacity:1;text-decoration:underline}
+/* ================= TOKENS v5 ================= */
+:root{
+  --acc:#0D9488;--acc-hover:#0F766E;--acc-soft:#CCFBF1;--acc-text:#0F766E;
+  --bg:#F4F6F8;--card:#FFFFFF;--border:#E2E8F0;
+  --text:#0F172A;--text-muted:#64748B;--text-soft:#94A3B8;
+  --ok:#059669;--ok-soft:#ECFDF5;
+  --fs-xs:11px;--fs-sm:12px;--fs-base:14px;--fs-md:16px;--fs-lg:20px;--fs-xl:24px;--fs-2xl:32px;
+  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-full:999px;
+  --sh-sm:0 1px 2px rgba(15,23,42,.05);
+  --sh-md:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.07);
+  --sh-float:0 1px 2px rgba(15,23,42,.06),0 16px 40px rgba(15,23,42,.18);
+  --dur-fast:120ms;--dur-base:180ms;--dur-slow:260ms;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;background:linear-gradient(160deg,#0D9488,#0891B2);display:flex;align-items:center;justify-content:center;padding:20px;font-size:var(--fs-base);color:var(--text);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:var(--fs-base);color:inherit}
 .hidden{display:none!important}
+.lucide{width:18px;height:18px;flex-shrink:0}
+:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:var(--r-sm)}
+.card :focus-visible{outline-color:var(--acc)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ================= SKELETON ================= */
+.skeleton{background:linear-gradient(90deg,#EEF1F5 25%,#F8FAFC 50%,#EEF1F5 75%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-md)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ================= WRAP & BRAND ================= */
+.wrap{width:100%;max-width:440px;text-align:center;color:#fff}
+.brand{margin-bottom:22px}
+.logo{width:80px;height:80px;border-radius:var(--r-lg);background:#fff;padding:10px;box-shadow:0 12px 32px rgba(0,0,0,.22);margin:0 auto 16px}
+.logo img{width:100%;height:100%;object-fit:contain}
+.brand h1{font-size:var(--fs-xl);font-weight:800;letter-spacing:-.015em;line-height:1.15;text-shadow:0 2px 12px rgba(0,0,0,.15)}
+.brand .sub{font-size:13px;line-height:1.5;margin-top:8px;color:rgba(255,255,255,.9);font-weight:500}
+
+/* ================= CARD ================= */
+.card{background:var(--card);border-radius:var(--r-lg);padding:20px 18px;box-shadow:var(--sh-float);text-align:left}
+
+/* ================= BUTTONS ================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border:none;border-radius:var(--r-md);font-weight:700;font-size:var(--fs-base);cursor:pointer;transition:transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease);text-decoration:none;line-height:1.2}
+.btn .lucide{width:17px;height:17px}
+.btn:active{transform:scale(.98)}
+.btn-block{width:100%}
+.btn-block + .btn-block{margin-top:10px}
+.btn-primary{background:var(--acc);color:#fff}
+.btn-primary:hover{background:var(--acc-hover)}
+.btn-secondary{background:var(--card);color:var(--acc-text);border:1px solid var(--acc)}
+.btn-secondary:hover{background:var(--acc-soft)}
+.btn-ghost{background:#F1F5F9;color:var(--text-muted);border:none}
+.btn-ghost:hover{background:#E2E8F0;color:var(--text)}
+
+/* ================= LAYANAN NOTE ================= */
+.layanan-note{margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}
+.layanan-kicker{font-size:var(--fs-xs);font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.layanan-chips{display:flex;flex-wrap:wrap;gap:6px}
+.layanan-chip{font-size:var(--fs-xs);font-weight:600;background:#F1F5F9;color:var(--text-muted);padding:4px 10px;border-radius:var(--r-full);white-space:nowrap;line-height:1.3}
+
+/* ================= SESSION GREETING ================= */
+.sesi-greet{display:flex;align-items:center;gap:14px;padding:14px;background:linear-gradient(135deg,var(--acc-soft),#F0FDFA);border-radius:var(--r-md);margin-bottom:18px;position:relative;overflow:hidden}
+.sesi-greet::before{content:"";position:absolute;top:-40px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,.7),transparent 70%);border-radius:50%;pointer-events:none}
+.sesi-greet>*{position:relative;z-index:1}
+.sesi-info{flex:1;min-width:0}
+.sesi-hi{font-size:var(--fs-xs);font-weight:700;color:var(--acc-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;opacity:.85}
+.sesi-nama{font-size:var(--fs-base);font-weight:700;color:var(--text);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sesi-sekolah{font-size:var(--fs-sm);color:var(--text-muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ================= THUMBWRAP ================= */
+.thumbwrap{width:52px;height:52px;border-radius:var(--r-full);background:#fff;color:var(--acc-text);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--fs-lg);position:relative;overflow:hidden;flex-shrink:0;border:2px solid #fff;box-shadow:0 4px 12px rgba(13,148,136,.18)}
+.thumbwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tw-init{font-style:normal;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+
+/* ================= LOADING SKELETON ================= */
+.sk-loading-1{height:80px;border-radius:var(--r-md);margin-bottom:18px}
+.sk-loading-2{height:46px;border-radius:var(--r-md);margin-bottom:10px}
+.sk-loading-3{height:46px;border-radius:var(--r-md)}
+
+/* ================= ADMIN LINK ================= */
+.admin-link{display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:rgba(255,255,255,.88);font-size:var(--fs-sm);font-weight:500;text-decoration:none;padding:6px 10px;border-radius:var(--r-full);transition:background var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.admin-link .lucide{width:14px;height:14px}
+.admin-link:hover{color:#fff;background:rgba(255,255,255,.12)}
+
+/* ================= DESKTOP ================= */
+@media(min-width:640px){
+  .wrap{max-width:460px}
+  .card{padding:24px 22px}
+  .brand h1{font-size:26px}
+  .brand .sub{font-size:14px}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="logo"><img src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo"/></div>
-  <h1>Guru Berbagi Selogiri</h1>
-  <p class="sub">Pusat Akun GTK & Unit Layanan Terpadu (ULT)<br>Korwilcambidik Kecamatan Selogiri</p>
+<main class="wrap">
+  <header class="brand">
+    <div class="logo"><img src="https://raw.githubusercontent.com/slg-timkreatif/app/refs/heads/main/1768315347206.png" alt="Logo Guru Berbagi Selogiri"/></div>
+    <h1>Guru Berbagi Selogiri</h1>
+    <p class="sub">Pusat Akun & Layanan<br>Korwilcambidik Kecamatan Selogiri</p>
+  </header>
+
   <div class="card">
-    <div id="boxSesi" class="halo hidden"></div>
+    <!-- Loading state (saat verifikasi token) -->
+    <div id="boxLoading" class="hidden">
+      <div class="skeleton sk-loading-1"></div>
+      <div class="skeleton sk-loading-2"></div>
+      <div class="skeleton sk-loading-3"></div>
+    </div>
+
+    <!-- Guest state -->
     <div id="boxTamu">
-      <a class="btn btn-primary" href="daftar.html"><i data-lucide="user-plus"></i> Daftar Akun Baru</a>
-      <a class="btn btn-outline" href="guru.html"><i data-lucide="log-in"></i> Masuk / Pusat Akun</a>
-      <a class="btn btn-ghost" href="guru.html?pemulihan=1"><i data-lucide="key-round"></i> Lupa PIN / Akun</a>
+      <a class="btn btn-primary btn-block" href="daftar.html">
+        <i data-lucide="user-plus" aria-hidden="true"></i> Daftar Akun Baru
+      </a>
+      <a class="btn btn-secondary btn-block" href="guru.html">
+        <i data-lucide="log-in" aria-hidden="true"></i> Masuk / Pusat Akun
+      </a>
+      <a class="btn btn-ghost btn-block" href="guru.html?pemulihan=1">
+        <i data-lucide="key-round" aria-hidden="true"></i> Lupa PIN / Akun
+      </a>
+      <div class="layanan-note">
+        <div class="layanan-kicker">Layanan Tersedia</div>
+        <div class="layanan-chips">
+          <span class="layanan-chip">Akun & PIN</span>
+          <span class="layanan-chip">Perbaikan Data</span>
+          <span class="layanan-chip">Mutasi / Penugasan</span>
+          <span class="layanan-chip">Kendala Pendaftaran</span>
+          <span class="layanan-chip">Lainnya</span>
+        </div>
+      </div>
     </div>
-    <div id="boxLogin" class="hidden">
-      <a class="btn btn-primary" href="guru.html"><i data-lucide="arrow-right"></i> Lanjut ke Pusat Akun</a>
-      <button class="btn btn-ghost" id="btnKeluar"><i data-lucide="log-out"></i> Keluar dari Perangkat Ini</button>
+
+    <!-- Logged-in state -->
+    <div id="boxSesi" class="hidden">
+      <div class="sesi-greet">
+        <span class="thumbwrap" id="sesiWrap">
+          <i id="sesiInit" class="tw-init">G</i>
+          <img id="sesiImg" src="" alt="" style="display:none" onerror="this.style.display='none'" onload="this.style.display=''"/>
+        </span>
+        <div class="sesi-info">
+          <div class="sesi-hi">Selamat datang</div>
+          <div class="sesi-nama" id="sesiNama"></div>
+          <div class="sesi-sekolah" id="sesiSekolah"></div>
+        </div>
+      </div>
+      <a class="btn btn-primary btn-block" href="guru.html">
+        <i data-lucide="arrow-right" aria-hidden="true"></i> Lanjut ke Pusat Akun
+      </a>
+      <button class="btn btn-ghost btn-block" id="btnKeluar" type="button">
+        <i data-lucide="log-out" aria-hidden="true"></i> Keluar dari Perangkat Ini
+      </button>
     </div>
-    <div class="layanan"><b>Layanan ULT:</b> Akun & PIN · Perbaikan Data · Mutasi/Penugasan · Kendala Pendaftaran · Lainnya — ajukan melalui Pusat Akun setelah masuk.</div>
   </div>
-  <a class="admin-link" href="admin.html"><i data-lucide="shield-check"></i> Login Admin</a>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <a class="admin-link" href="admin.html">
+    <i data-lucide="shield-check" aria-hidden="true"></i> Login Admin
+  </a>
+</main>
+
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
 const $=id=>document.getElementById(id);
 const SUPABASE_URL="https://qamqqwfzhyiihqyzliwq.supabase.co";
 const ANON="sb_publishable_O_qwmOBPSU8dylEPCrPRAA_GC25Ii5x";
+const FOTO_BASE=`${SUPABASE_URL}/storage/v1/object/public/foto-gtk`;
+
 (async()=>{
   const token=localStorage.getItem("gb_token");
   if(token){
+    $("boxTamu").classList.add("hidden");
+    $("boxLoading").classList.remove("hidden");
     try{
-      const res=await fetch(`${SUPABASE_URL}/functions/v1/verify-guru`,{headers:{apikey:ANON,Authorization:`Bearer ${token}`}});
-      const r=await res.json();
-      if(r.valid){
-        $("boxTamu").classList.add("hidden");
-        $("boxLogin").classList.remove("hidden");
+      const r=await(await fetch(`${SUPABASE_URL}/functions/v1/verify-guru`,{
+        headers:{apikey:ANON,Authorization:`Bearer ${token}`}
+      })).json();
+      if(r.valid&&r.profile){
+        const p=r.profile;
+        $("sesiNama").textContent=p.nama||"";
+        $("sesiSekolah").textContent=p.sekolah||"";
+        const init=(p.nama||"G").trim().charAt(0).toUpperCase();
+        $("sesiInit").textContent=init;
+        if(p.sub){
+          const img=$("sesiImg");
+          img.src=`${FOTO_BASE}/${p.sub}_t.webp`;
+          img.style.display="";
+        }
+        $("boxLoading").classList.add("hidden");
         $("boxSesi").classList.remove("hidden");
-        $("boxSesi").innerHTML=`<b>Halo, ${r.profile.nama}</b><span>${r.profile.sekolah}</span>`;
-      } else localStorage.removeItem("gb_token");
-    }catch(e){}
+      }else{
+        localStorage.removeItem("gb_token");
+        $("boxLoading").classList.add("hidden");
+        $("boxTamu").classList.remove("hidden");
+      }
+    }catch(e){
+      $("boxLoading").classList.add("hidden");
+      $("boxTamu").classList.remove("hidden");
+    }
   }
   lucide.createIcons();
 })();
-$("btnKeluar").addEventListener("click",()=>{localStorage.removeItem("gb_token");location.reload();});
+
+$("btnKeluar").addEventListener("click",()=>{
+  localStorage.removeItem("gb_token");
+  location.reload();
+});
 </script>
 </body>
 </html>
