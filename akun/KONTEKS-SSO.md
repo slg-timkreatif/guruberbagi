@@ -178,11 +178,99 @@ KONTEKS PROJECT: EKOSISTEM GURU BERBAGI SELOGIRI (v4)
 - Aplikasi lama mendeteksi KS via tabel guru (bekerja berkat baris
   bayangan); aplikasi baru disarankan pakai v_kepala_sekolah.
 
-[14. INSTRUKSI UNTUK AI]
-- Setelah membaca konteks ini, tunggu perintah saya berikutnya.
-- Tabel data aplikasi baru dibuat di project pusat dengan kolom
-  pemilik merujuk guru(id)/email; pembatasan akses memakai
-  profile.role, profile.sekolah_id, dan profile.penugasan dari
-  verify-guru; foto memakai konvensi bagian [9]; deteksi KS memakai
-  view bagian [4].
+[14. KONVENSI MIGRATION TABEL BARU (kebijakan Supabase 30 Okt 2026)]
+
+Mulai 30 Oktober 2026, Supabase tidak lagi otomatis memberi Data API
+access ke tabel baru di schema `public`. Setiap tabel baru WAJIB
+menyertakan GRANT eksplisit di migration yang sama. Migration yang
+membuat tabel tanpa GRANT → tabel langsung tidak bisa diakses via
+PostgREST / supabase-js (Edge Function yang pakai service_role tetap
+bisa selama grant ke service_role ada).
+
+Tabel existing di project ini AMAN — grant-nya dipertahankan. Aturan
+ini hanya berlaku untuk tabel yang dibuat setelah 30 Okt 2026.
+
+--- Prinsip Grant di Project Ini ---
+
+JANGAN ikuti template generik dari email Supabase (yang memberi full
+CRUD ke authenticated dan anon). Untuk project ini:
+
+- service_role  → select, insert, update, delete (SEMUA tabel)
+                  Wajib. Semua Edge Function pakai ini.
+- authenticated → hanya sesuai kebutuhan admin dashboard
+                  (umumnya select; write hanya bila admin memang
+                  butuh menulis langsung via supabase-js)
+- anon          → HANYA bila data benar-benar publik untuk pengguna
+                  tanpa login (mis. dropdown sekolah / jabatan di
+                  form pendaftaran)
+
+Ingat: guru BUKAN Supabase Auth user. Guru tidak pernah pakai token
+`authenticated`. Semua operasi sisi guru lewat Edge Function dengan
+token SSO + service_role di backend.
+
+--- Template Minimal (tabel domain aplikasi baru) ---
+
+  create table public.<nama_tabel> (
+    id bigserial primary key,
+    guru_id bigint not null references public.guru(id),
+    -- kolom lain...
+    dibuat_pada timestamptz default now()
+  );
+
+  -- Grant
+  grant select, insert, update, delete
+    on public.<nama_tabel> to service_role;
+  grant select
+    on public.<nama_tabel> to authenticated;
+  -- TIDAK grant ke anon (kecuali benar-benar publik)
+
+  -- RLS wajib aktif
+  alter table public.<nama_tabel> enable row level security;
+
+  -- Policy untuk admin dashboard
+  create policy "<nama_tabel>_admin_read"
+    on public.<nama_tabel>
+    for select to authenticated
+    using (true);  -- atau kondisi spesifik, mis. sekolah_id in (...)
+
+  -- Index FK (opsional tapi disarankan)
+  create index on public.<nama_tabel>(guru_id);
+
+--- Template Minimal (tabel referensi publik) ---
+
+Untuk tabel yang boleh dibaca anon (mis. daftar sekolah, jabatan):
+
+  create table public.<nama_tabel> (...);
+
+  grant select
+    on public.<nama_tabel> to anon, authenticated;
+  grant select, insert, update, delete
+    on public.<nama_tabel> to service_role;
+
+  alter table public.<nama_tabel> enable row level security;
+  create policy "<nama_tabel>_public_read"
+    on public.<nama_tabel>
+    for select to anon, authenticated
+    using (true);
+  -- Write tetap hanya via service_role (Edge Function / admin)
+
+--- Checklist saat membuat migration baru ---
+
+1. [ ] Tabel dibuat.
+2. [ ] GRANT service_role ditulis (select, insert, update, delete).
+3. [ ] GRANT authenticated ditulis sesuai kebutuhan (biasanya select).
+4. [ ] GRANT anon ditulis HANYA bila publik (jarang).
+5. [ ] RLS aktif.
+6. [ ] Policy sesuai peran (jangan hanya andalkan grant).
+7. [ ] FK ke guru(id) / sekolah(id) bila relevan.
+8. [ ] Kalau ragu, tanyakan dulu di sesi perancangan sebelum eksekusi.
+
+--- Yang TIDAK Terdampak ---
+
+- Storage bucket foto-gtk (bukan bagian dari Data API public schema).
+- Edge Functions (pakai service_role langsung).
+- Auth Supabase.
+- Tabel existing (grant dipertahankan).
+
+[15. INSTRUKSI UNTUK AI]
 =====================================================
