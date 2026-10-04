@@ -295,6 +295,12 @@ tbody tr:hover{background:#F8FAFC}
   #sidebar{display:none}
   #bottomNav{display:flex}
   #content{padding:16px 14px 96px}
+  /* Sembunyikan judul di card-head karena sudah ada di topbar */
+  #page-gtk > .card > .card-head > h2,
+  #page-sekolah > .card > .card-head > h2,
+  #page-ult > .card > .card-head > h2,
+  #page-kesehatan > .card > .card-head > h2{display:none}
+  #content{padding:16px 14px 96px}
   .stats{grid-template-columns:repeat(2,1fr);gap:12px}
   .stat-icon{width:40px;height:40px;border-radius:var(--r-sm)}
   .stat-icon .lucide{width:19px;height:19px}
@@ -905,8 +911,9 @@ function renderGtk(){
   const rows=gtkFiltered();
   $("gtkCount").textContent=`Menampilkan ${rows.length} dari ${allGuru.length} data`;
   $("gtkTbody").innerHTML=rows.map((g,i)=>`<tr><td class="col-no">${i+1}</td><td><div class="cell-guru">${thumbImg(g)}<div><strong>${esc(g.nama_lengkap)}</strong><span>${esc(g.email)}</span></div></div></td><td class="mono">${esc(g.nip||"—")}</td><td>${esc(g.jabatan)}</td><td><div class="cell-guru"><span>${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span>NPSN ${esc(g.npsn)}</span></div></td><td><span class="pin-mask">•••••</span></td><td>${badge(g.status_akun)}</td><td>${gtkActs(g)}</td></tr>`).join("")||emptyRow(8);
-  $("gtkCards").innerHTML=rows.map(g=>`<div class="mcard"><div class="mcard-top">${thumbImg(g)}<div style="flex:1;min-width:0"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div></div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("")||`<p class="muted">Tidak ada data.</p>`;
-}
+  $("gtkCards").innerHTML = rows.map(g => `<div class="mcard"><div class="mcard-top">${thumbImg(g)}<div style="flex:1;min-width:0"><b>${esc(g.nama_lengkap)}</b>${badge(g.status_akun)}</div></div><span class="mcard-sub">${esc(g.jabatan)} · ${esc(g.satuan_pendidikan)}${rangkapChip(g.id)}</span><span class="mcard-sub">${esc(g.email)}</span><div class="acts" style="margin-top:10px">${gtkActs(g)}</div></div>`).join("") || `<p class="muted">Tidak ada data.</p>`;
+  lucide.createIcons();
+  }
 
 /* ================= SEKOLAH ================= */
 function renderSekolah(){
@@ -916,8 +923,9 @@ function renderSekolah(){
   $("sekCount").textContent=`${rows.length} sekolah terdaftar`;
   const acts=s=>`<div class="acts"><button class="act-btn view" data-act="sekview" data-name="${esc(s.nama)}" title="Lihat GTK" aria-label="Lihat GTK"><i data-lucide="users" aria-hidden="true"></i></button><button class="act-btn edit" data-act="sekedit" data-id="${s.id}" title="Edit" aria-label="Edit"><i data-lucide="pencil" aria-hidden="true"></i></button><button class="act-btn ${s.aktif?"disable":"view"}" data-act="sektoggle" data-id="${s.id}" title="${s.aktif?"Nonaktifkan":"Aktifkan"}" aria-label="${s.aktif?"Nonaktifkan":"Aktifkan"}"><i data-lucide="${s.aktif?"user-x":"user-check"}" aria-hidden="true"></i></button></div>`;
   $("sekBody").innerHTML=rows.map(s=>`<tr><td><b>${esc(s.nama)}</b></td><td class="mono">${esc(s.npsn)}</td><td>${esc(s.jenjang||"SD")}</td><td>${esc(s.status_sekolah||"—")}</td><td><b>${c[s.nama]||0}</b></td><td>${s.aktif?'<span class="badge badge-aktif"><span class="dot"></span>Aktif</span>':'<span class="badge badge-non"><span class="dot"></span>Non Aktif</span>'}</td><td>${acts(s)}</td></tr>`).join("")||emptyRow(7);
-  $("sekCards").innerHTML=rows.map(s=>`<div class="mcard"><div class="mcard-top"><b>${esc(s.nama)}</b>${s.aktif?'<span class="badge badge-aktif"><span class="dot"></span>Aktif</span>':'<span class="badge badge-non"><span class="dot"></span>Non</span>'}</div><span class="mcard-sub">NPSN ${esc(s.npsn)} · ${esc(s.status_sekolah||"—")}</span><span class="mcard-sub">${c[s.nama]||0} GTK aktif</span><div class="acts" style="margin-top:10px">${acts(s)}</div></div>`).join("")||`<p class="muted">Tidak ada data.</p>`;
-}
+  $("sekCards").innerHTML = rows.map(s => `<div class="mcard"><div class="mcard-top"><b>${esc(s.nama)}</b>${s.aktif?'<span class="badge badge-aktif"><span class="dot"></span>Aktif</span>':'<span class="badge badge-non"><span class="dot"></span>Non</span>'}</div><span class="mcard-sub">NPSN ${esc(s.npsn)} · ${esc(s.status_sekolah||"—")}</span><span class="mcard-sub">${c[s.nama]||0} GTK aktif</span><div class="acts" style="margin-top:10px">${acts(s)}</div></div>`).join("") || `<p class="muted">Tidak ada data.</p>`;
+  lucide.createIcons();
+  }
 
 /* ================= MASTER ================= */
 function renderMaster(){
@@ -927,8 +935,9 @@ function renderMaster(){
   $("tabJabBtn").classList.toggle("active",jab);
   $("tabRoleBtn").classList.toggle("active",!jab);
   $("jabBody").innerHTML=jabatanList.map(j=>`<tr><td><b>${esc(j.nama)}</b></td><td>${esc(j.kategori||"—")}</td><td>${j.level??"—"}</td><td><div class="acts"><button class="act-btn edit" data-act="jabedit" data-id="${j.id}" aria-label="Edit"><i data-lucide="pencil" aria-hidden="true"></i></button></div></td></tr>`).join("")||emptyRow(4);
-  $("roleBody").innerHTML=roleList.map(r=>`<tr><td class="mono">${esc(r.kode)}</td><td><b>${esc(r.nama)}</b></td><td>Level ${r.level}</td><td class="muted">${esc(r.deskripsi||"")}</td></tr>`).join("")||emptyRow(4);
-}
+  $("roleBody").innerHTML = roleList.map(r => `<tr><td class="mono">${esc(r.kode)}</td><td><b>${esc(r.nama)}</b></td><td>Level ${r.level}</td><td class="muted">${esc(r.deskripsi||"")}</td></tr>`).join("") || emptyRow(4);
+  lucide.createIcons();
+  }
 $("tabJabBtn").onclick=()=>{curTab="jabatan";renderMaster();lucide.createIcons();};
 $("tabRoleBtn").onclick=()=>{curTab="role";renderMaster();lucide.createIcons();};
 
@@ -962,7 +971,8 @@ function renderKesehatan(){
   $("healthList").innerHTML=issues.length
     ? issues.map(i=>`<div class="health-item"><div style="min-width:0;flex:1"><b>${esc(i.n)}</b><span>${esc(i.j)} — ${esc(i.d)}</span></div>${i.t==="guru"?`<button class="btn btn-ghost btn-sm hi-fix" data-act="fixguru" data-id="${i.id}">Perbaiki</button>`:i.t==="sek"?`<button class="btn btn-ghost btn-sm hi-fix" data-act="fixsek" data-id="${i.id}">Perbaiki</button>`:""}</div>`).join("")
     : `<div class="empty"><i data-lucide="check-circle" aria-hidden="true"></i><h3>Semua data sehat</h3><p>Tidak ada masalah terdeteksi pada saat ini.</p></div>`;
-}
+    lucide.createIcons();
+    }
 
 /* ================= DELEGASI AKSI ================= */
 $("content").addEventListener("click",async e=>{
