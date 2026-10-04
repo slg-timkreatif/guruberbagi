@@ -308,9 +308,12 @@ tbody tr:hover{background:#F8FAFC}
   .grid2,.grid-2{grid-template-columns:1fr}
   .table-wrap{display:none}
   .cards{display:grid}
-  .search-box{flex:1;min-width:0}
-  .search-box input{width:100%}
-  .tools{width:100%}
+.tools{width:100%;gap:8px}
+.search-box{flex:1 1 100%;min-width:0}
+.search-box input{width:100%}
+.tools > select{flex:1 1 calc(50% - 4px);min-width:0}
+.tools > .icon-btn,
+.tools > .btn-sm{flex:0 0 auto}
   .modal{align-items:flex-end;padding:0}
   .modal-card{max-width:100%;border-radius:var(--r-lg) var(--r-lg) 0 0}
   .bar-lbl{width:110px}
