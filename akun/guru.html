@@ -814,6 +814,7 @@ function renderPinAudit(){
   }
   el.innerHTML=`PIN terakhir dilihat: <b style="color:var(--text)">${fmtT(t)}</b> · lewat pemulihan.<br>Jika bukan Anda, segera ganti PIN.`;
 }
+function renderPenugasan(){
   const list=(profile.penugasan||[]).filter(p=>p.jenis==="Rangkap");
   const sec=$("sectionPenugasan"),wrap=$("penugasanList");
   if(!list.length){sec.classList.add("hidden");return;}
