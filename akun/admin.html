@@ -1174,7 +1174,28 @@ $("copyPin").onclick=async()=>{try{await navigator.clipboard.writeText($("pinVal
 $("waPin").onclick=()=>{
   const g=allGuru.find(x=>x.id===curPinId);if(!g)return;
   const link=location.origin+location.pathname.replace(/admin\.html.*$/,"")+"guru.html";
-  const msg=`Yth. ${g.nama_lengkap},\nBerikut PIN akses akun Guru Berbagi Anda: *${g.pin}*\nSimpan dan gunakan untuk masuk: ${link}\n\n- Admin Korwilcambidik Selogiri`;
+  const idLine=[g.nip?"NIP "+g.nip:null,g.jabatan||null].filter(Boolean).join(" · ");
+  const msg=[
+    `Yth. ${g.nama_lengkap},`,
+    idLine||null,
+    g.satuan_pendidikan||null,
+    "",
+    "Akun Guru Berbagi Anda sudah siap digunakan.",
+    "",
+    `Email: ${g.email}`,
+    `PIN: *${g.pin}*`,
+    "",
+    "Cara masuk:",
+    `1. Buka ${link}`,
+    "2. Isi email dan PIN di atas",
+    "",
+    "Simpan PIN dengan aman. Jangan bagikan ke siapa pun.",
+    'Lupa PIN? Gunakan menu "Lupa PIN / Akun" di halaman masuk.',
+    "",
+    "Kalau bukan Anda yang mendaftar, abaikan pesan ini.",
+    "",
+    "- Admin Guru Berbagi Selogiri"
+  ].filter(l=>l!==null).join("\n");
   window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
 };
 $("toggleUbahPin").onclick=()=>{$("ubahPinBox").classList.toggle("hidden");$("inputPinBaru").value="";$("pinBaruInfo").textContent="";};
