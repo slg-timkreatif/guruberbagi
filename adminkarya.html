@@ -166,7 +166,7 @@ input,select{font-family:inherit}
 
 <script>
 /* ============================================================
-   ADMIN: login via Supabase Auth project PUSAT.
+   ADMIN PANEL — login via Supabase Auth project PUSAT.
    Semua operasi data via Edge Function admin-karya (project lama).
    ============================================================ */
 const SSO_URL  = 'https://qamqqwfzhyiihqyzliwq.supabase.co';
@@ -215,8 +215,27 @@ function masukApp(session){
   muatData();
 }
 
-/* ================= PANGGIL EDGE FUNCTION ================= */
+/* ================= DEKOMPRESI GZIP (karya baru ber-prefix GZ:) ================= */
+async function gzDecompress(stored){
+  if (!stored) return '';
+  if (!stored.startsWith('GZ:')) return stored;            // karya lama: raw
+  if (!('DecompressionStream' in window)) return stored;   // browser sangat lama
+  try{
+    const bin = atob(stored.slice(3));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return await new Response(stream).text();
+  }catch(e){ return ''; }
+}
+
+/* ================= PANGGIL EDGE FUNCTION (token auto-refresh) ================= */
 async function callAdmin(payload){
+  /* perbarui access token bila sudah di-refresh oleh client */
+  try{
+    const s = await authClient.auth.getSession();
+    if (s.session) ADMIN_TOKEN = s.session.access_token;
+  }catch(e){}
   const res = await fetch(DATA_URL + '/functions/v1/admin-karya', {
     method: 'POST',
     headers: { 'Content-Type':'application/json', apikey: DATA_ANON, Authorization: 'Bearer ' + ADMIN_TOKEN },
@@ -351,7 +370,7 @@ async function preview(id){
     const d = out.data || {};
     document.getElementById('previewTitle').textContent = d['Judul Media'] || 'Preview';
     const body = document.getElementById('previewBody');
-    const html = d['Kode HTML/Canvas'] || '';
+    const html = await gzDecompress(d['Kode HTML/Canvas'] || '');   // dekompresi otomatis
     const link = d['Link Media Luar'] || '';
     if (html && html.length > 10) {
       body.innerHTML = `<iframe sandbox="allow-scripts allow-same-origin" srcdoc="${escAttr(html)}"></iframe>`;
